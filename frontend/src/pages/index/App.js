@@ -33,7 +33,7 @@ function App() {
     const [filteredLayouts, setFilteredLayouts] = useState(layouts);
 
     const [openSettingsDialog, setOpenSettingsDialog] = React.useState(false);
-    const [wallPaper, setWallPaper] = React.useState("/assets/video/wave.mp4");
+    const [wallPaper, setWallPaper] = React.useState("/assets/video/动态/wave.mp4");
     const [themeMode, setThemeMode] = React.useState('system');
 
     const [addAppOpen, setAddAppOpen] = React.useState(false);

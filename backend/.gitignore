@@ -3,3 +3,5 @@ react_app/assets/web/*
 data/apps/*
 .idea
 __pycache__
+react_app/index.html
+react_app/static
