@@ -1,0 +1,5 @@
+venv
+react_app/assets/web/*
+data/apps/*
+.idea
+__pycache__

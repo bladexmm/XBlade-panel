@@ -1,0 +1,43 @@
+.horizontal-scrollbar {
+    width: 100%;
+    height: 100%;
+    overflow-x: auto;
+    overflow-y: hidden;
+    white-space: nowrap;
+}
+
+.horizontal-scrollbar-content {
+    display: inline-block;
+    width: 100%;
+}
+
+/* 当滚动条处于滚动状态时，显示滚动条 */
+.horizontal-scrollbar.scrolling::-webkit-scrollbar {
+    height: 0.2rem;
+    transition: opacity 0.3s ease; /* 添加渐变动画 */
+    background:none;
+}
+
+.horizontal-scrollbar::-webkit-scrollbar {
+    height: 0;
+    background:none;
+    transition: opacity 0.3s ease; /* 添加渐变动画 */
+
+}
+
+/* 隐藏滚动条轨道 */
+.horizontal-scrollbar::-webkit-scrollbar-track {
+    display: none;
+    border-radius: 10px;
+    background: rgba(0,0,0,0.1);
+}
+
+/* 定义滚动条样式 */
+.horizontal-scrollbar::-webkit-scrollbar-thumb {
+    background-color: #ccc;
+    border-radius: 4px;
+}
+.horizontal-scrollbar::-webkit-scrollbar-thumb {
+    border-radius: 10px;
+    border: 1px solid #aaa;
+}

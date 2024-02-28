@@ -1,0 +1,95 @@
+.video-background {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    z-index: -1;
+}
+
+.video-background video {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    min-width: 100%;
+    min-height: 100%;
+    width: auto;
+    height: auto;
+    z-index: -1;
+}
+
+.Pane{
+    width: 80%;
+    height: 43rem;
+    overflow-x: auto;
+    overflow-y: hidden;
+    padding: 0.25rem 0.75rem 0rem 0.75rem;
+    box-sizing: border-box;
+    /*background-color: rgb(59 59 59);*/
+    border-radius: 1rem;
+    margin-left: 10%;
+    margin-top: 1rem;
+    user-select: none;
+}
+
+.Dock{
+    width: 80%;
+    margin: 1rem auto;
+    background: rgb(147 147 147 / 36%);
+    border-radius: 2.25rem;
+    box-sizing: border-box;
+    padding: 0.25rem 0.3rem 0 0.3rem;
+    height: 7rem;
+    position: fixed;
+    bottom: 0.5rem;
+    left: 50%;
+    transform:  translateX(-50%);
+    user-select: none;
+}
+
+.Pane .GridItem:nth-child(2n):not(.dragging) > *,
+.Dock .GridItem:nth-child(2n):not(.dragging) > * {
+    animation-name: keyframes1;
+    animation-iteration-count: infinite;
+    transform-origin: 50% 10%;
+    animation-duration: 0.3s;
+}
+.xBlade-icons{
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+}
+
+.Pane .GridItem:nth-child(2n-1):not(.dragging) > *,
+.Dock .GridItem:nth-child(2n-1):not(.dragging) > * {
+    animation-name: keyframes2;
+    animation-iteration-count: infinite;
+    animation-direction: alternate;
+    transform-origin: 30% 5%;
+    animation-duration: 0.25s;
+}
+
+@keyframes keyframes1 {
+    0% {
+        transform: rotate(-1.5deg);
+        animation-timing-function: ease-in;
+    }
+    50% {
+        transform: rotate(2deg);
+        animation-timing-function: ease-out;
+    }
+}
+
+@keyframes keyframes2 {
+    0% {
+        transform: rotate(1.5deg);
+        animation-timing-function: ease-in;
+    }
+    50% {
+        transform: rotate(-2deg);
+        animation-timing-function: ease-out;
+    }
+}

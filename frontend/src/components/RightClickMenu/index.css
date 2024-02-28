@@ -1,0 +1,38 @@
+.right-click-menu {
+    position: fixed;
+    z-index: 9999;
+    padding: 7px;
+    backdrop-filter: blur(30px);
+    background-color: rgba(0, 0, 0, 0.2);
+    border-radius: 0.5rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 2px 12px 0 #00000026;
+    color:rgb(200, 200, 204);
+}
+
+.right-click-menu ul {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+
+.divider{
+    border:1px solid rgba(255, 255, 255, 0.2);
+    border-top: none;
+}
+
+.right-click-menu ul li {
+    padding: 0.3rem 1rem;
+    cursor: pointer;
+    font-size: 14px;
+    transition-duration:.15s;
+    transition-property:color, background-color, border-color, text-decoration-color, fill, stroke;
+    transition-timing-function:cubic-bezier(0.4, 0, 0.2, 1);
+}
+
+
+.right-click-menu ul li:hover{
+    background-color: rgba(255, 255, 255, 0.08);
+    border-radius: 6px;
+    color: rgb(255, 255, 255);
+}
