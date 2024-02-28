@@ -49,8 +49,7 @@ function App() {
     const [rightClickMenuDel, setRightClickMenuDel] = useState(false);
 
 
-    const host = 'http://192.168.0.173:5000';
-    // const host = 'http://192.168.3.3:5000';
+    const host = '';
 
     const [dockLayouts, setDockLayouts] = React.useState([]);
     const [systemApps, setSystemApps] = React.useState([
