@@ -234,7 +234,7 @@ def windows():
     image = Image.open("data/blade.png")
     icon = pystray.Icon("data/blade.ico", image, "XBlade", menu)
     win = tk.Tk()
-    win.title("My Window")
+    win.title("XBlade-Panel")
     win.iconbitmap("data/blade.ico")
     win.wm_iconbitmap('data/blade.ico')
 
