@@ -5,3 +5,6 @@ data/apps/*
 __pycache__
 react_app/index.html
 react_app/static
+main.build
+main.dist
+nuitka-crash-report.xml
