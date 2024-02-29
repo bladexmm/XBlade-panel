@@ -117,3 +117,20 @@ def open_with_default_program(file_path):
             print("不支持的操作系统")
     except Exception as e:
         print("打开文件时出错:", e)
+
+
+import socket
+
+
+def get_local_ip():
+    try:
+        # 获取本机主机名
+        host_name = socket.gethostname()
+
+        # 使用主机名获取本地IP地址
+        local_ip = socket.gethostbyname(host_name)
+
+        return local_ip
+    except Exception as e:
+        print(f"获取本地IP时发生错误：{e}")
+        return None

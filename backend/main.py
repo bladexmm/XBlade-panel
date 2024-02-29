@@ -4,7 +4,7 @@ from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 
 from libs.utils.tools import read_json, list_to_dict, write_json, generate_random_md5_with_timestamp, \
-    extract_icon_from_exe, open_with_default_program
+    extract_icon_from_exe, open_with_default_program, get_local_ip
 from libs.utils.website import get_page_info, get_domain, get_domain_md5, md5
 import webbrowser
 from glob import glob
@@ -210,6 +210,9 @@ from PIL import Image
 
 
 def windows():
+    host = get_local_ip()
+    port = 54321
+
     def quit_window(icon: pystray.Icon):
         icon.stop()
         flask_App.join(timeout=1)
@@ -222,7 +225,14 @@ def windows():
         win.withdraw()
 
     def open_panel():
-        webbrowser.open('http://localhost:5000')
+
+        webbrowser.open(f'http://{host}:{port}')
+
+    def run_flask():
+        try:
+            app.run(host="0.0.0.0", port=port, debug=False)
+        except Exception as e:
+            print(f"Flask app failed to start: {e}")
 
     menu = (
         # MenuItem('显示面板地址', show_window, default=True),
@@ -237,15 +247,14 @@ def windows():
     win.title("XBlade-Panel")
     win.iconbitmap("data/blade.ico")
     win.wm_iconbitmap('data/blade.ico')
-
     win.geometry("500x300")
-    #
-    # 重新定义点击关闭按钮的处理
     win.protocol('WM_DELETE_WINDOW', on_exit)
 
     threading.Thread(target=icon.run, daemon=True).start()
-    flask_App = threading.Thread(target=app.run, daemon=True)
+    flask_App = threading.Thread(target=run_flask, daemon=True)
     flask_App.start()
+    open_panel()
+    # on_exit()
     win.mainloop()
 
 
