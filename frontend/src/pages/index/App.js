@@ -49,8 +49,9 @@ function App() {
     const [rightClickMenuDel, setRightClickMenuDel] = useState(false);
 
 
-    // const host = '';
-    const host = 'http://192.168.0.173:54321';
+    const host = '';
+    // const host = 'http://localhost:54321';
+    document.title = 'XBlade Panel';
 
     const [dockLayouts, setDockLayouts] = React.useState([]);
     const systemApps =[
