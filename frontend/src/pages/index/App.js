@@ -49,13 +49,14 @@ function App() {
     const [rightClickMenuDel, setRightClickMenuDel] = useState(false);
 
 
-    const host = '';
+    // const host = '';
+    const host = 'http://192.168.0.173:54321';
 
     const [dockLayouts, setDockLayouts] = React.useState([]);
-    const [systemApps, setSystemApps] = React.useState([
+    const systemApps =[
         {'i': 'btn|search', x: 1, y: 0, w: 1, h: 1, static: true},
         {'i': 'btn|settings', x: 0, y: 0, w: 1, h: 1, static: true},
-    ]);
+    ];
 
 
     /**
@@ -90,6 +91,8 @@ function App() {
 
     // 当组件挂载时获取用户设置
     useState(() => {
+        saveUserSettings('settings.host', host)
+        saveUserSettings('settings.wallpaper', wallPaper)
         const wallpaper = getUserSettings('settings.host', host) + getUserSettings('settings.wallpaper', wallPaper);
         setWallPaper(wallpaper);
         setThemeMode(getUserSettings('settings.theme', 'dark'))
@@ -307,7 +310,10 @@ function App() {
                             setMenuVisible(false);
                         }}
                         changeSize={changeSize}
-                        deleteBtn={deleteApp}
+                        deleteBtn={(layoutType)=>{
+                            console.log(layoutType)
+                            deleteApp(layoutType);
+                        }}
                         editBtn={() => {
                             setAppName(appsAll[rightClickMenuId]['name'])
                             setAppPath(appsAll[rightClickMenuId]['path'])

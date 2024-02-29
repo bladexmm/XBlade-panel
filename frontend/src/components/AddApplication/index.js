@@ -16,7 +16,6 @@ import Grid from '@mui/joy/Grid';
 import SvgIcon from '@mui/joy/SvgIcon';
 import {styled} from '@mui/joy';
 import {useState} from "react";
-import {Transition} from 'react-transition-group';
 import FadeIn from "../FadeIn";
 
 

@@ -1,11 +1,10 @@
 import React, {useRef, useEffect, useState} from 'react';
 import './index.css';
-import { Transition } from 'react-transition-group';
 import FadeIn from "../FadeIn";
 
 const RightClickMenu = ({
                             xPos, yPos, hideMenu, layoutType, changeSize,
-                            deleteBtn = () => {
+                            deleteBtn = layoutType => {
                             },
                             editBtn = () => {
                             },
@@ -50,7 +49,7 @@ const RightClickMenu = ({
                             <React.Fragment>
                                 <li onClick={() => pinBtn()}>固定到任务栏</li>
                                 <li onClick={() => editBtn()}>编辑</li>
-                                <li onClick={() => deleteBtn()}>删除</li>
+                                <li onClick={() => deleteBtn(layoutType)}>删除</li>
                                 <hr className="divider"/>
                                 <li onClick={() => changeSize(1)}>小</li>
                                 <li onClick={() => changeSize(2)}>中</li>
@@ -63,7 +62,7 @@ const RightClickMenu = ({
                             <React.Fragment>
                                 <li onClick={() => pinBtn()}>添加</li>
                                 <li onClick={() => editBtn()}>编辑</li>
-                                <li onClick={() => deleteBtn()}>删除</li>
+                                <li onClick={() => deleteBtn(layoutType)}>删除</li>
                             </React.Fragment>
 
                         )}
