@@ -11,7 +11,10 @@ function request(options) {
         delete param.body;
     }
     const host = getUserSettings('settings.host');
-    return fetch(`${host}${options.url}`, param)
+    return fetch(
+        `${host}${options.url}`,
+        param,
+    )
         .then((response) => {
             // 请求成功，检查响应状态码
             if (response.ok) {

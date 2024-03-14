@@ -16,21 +16,22 @@ import Header from "../../components/Header";
 import RightClickMenu from "../../components/RightClickMenu";
 import Search from "../../components/Search";
 import Grid from '@mui/joy/Grid';
-import TabPanel from "@mui/joy/TabPanel";
 import WallpaperBasicGrid from "../../components/Settings/Wallpapers";
 import {CssVarsProvider} from '@mui/joy/styles';
 import {ThemeProvider} from "@mui/joy";
-import AboutUs from "../../components/Settings/AboutUs";
+import Layouts from "../../components/Layouts";
+import Commands from "../../components/Commands";
 
 function App() {
     const widthBox = 3600;
     const [paneDraggable, setPaneDraggable] = React.useState(false);
-    const [overLap, setOverLap] = React.useState(false);
-    const [layouts, setLayouts] = React.useState([]);
+    const [paneLayouts, setPaneLayouts] = React.useState([]);
     const [appsAll, setAppsAll] = React.useState([]);
 
+    const [commandOpen,setCommandOpen] = React.useState(false);
+
     const [searchOpen, setSearchOpen] = React.useState(false);
-    const [filteredLayouts, setFilteredLayouts] = useState(layouts);
+    const [filteredLayouts, setFilteredLayouts] = useState(paneLayouts);
 
     const [openSettingsDialog, setOpenSettingsDialog] = React.useState(false);
     const [wallPaper, setWallPaper] = React.useState("/assets/video/动态/wave.mp4");
@@ -47,16 +48,17 @@ function App() {
     const [rightClickMenuId, setRightClickMenuId] = useState(null);
     const [rightClickMenuLayout, setRightClickMenuLayout] = useState(null);
     const [rightClickMenuDel, setRightClickMenuDel] = useState(false);
+    const [rightClickMenuApp, setRightClickMenuApp] = useState(null);
 
 
-    const host = '';
-    // const host = 'http://localhost:54321';
+    // const host = '';
+    const host = 'http://192.168.0.173:5000';
     document.title = 'XBlade Panel';
 
     const [dockLayouts, setDockLayouts] = React.useState([]);
-    const systemApps =[
-        {'i': 'btn|search', x: 1, y: 0, w: 1, h: 1, static: true},
+    const systemApps = [
         {'i': 'btn|settings', x: 0, y: 0, w: 1, h: 1, static: true},
+        {'i': 'btn|search', x: 1, y: 0, w: 1, h: 1, static: true},
     ];
 
 
@@ -64,60 +66,46 @@ function App() {
      * 获取最新布局
      */
     const updateLayouts = () => {
+
         request({
-            url: "/api/apps/list",
+            url: "/api/layouts?name=pane",
             method: "GET",
             headers: {"Content-Type": "application/json"},
         }).then((data) => {
-            setAppsAll(data.data.apps)
-            let paneAppsAll = []
-            const appList = data.data.layouts
-            let appIDs = [];
-            for (let i = 0; i < appList.length; i++) {
-                if (!appIDs.includes(appList[i]['i'])) {
-                    paneAppsAll.push(appList[i]);
-                    appIDs.push(appList[i]['i'])
-                }
+            let apps = []
+            for (let i = 0; i < data.data.apps.length; i++) {
+                apps[data.data.apps[i]['id']] = data.data.apps[i]
             }
-            setLayouts(paneAppsAll);
-            let appsSearch = Object.values(data.data.apps)
-            for (let i = 0; i < appsSearch.length; i++) {
-                appsSearch[i]['i'] = appsSearch[i]['id']
-            }
-
-            setFilteredLayouts(appsSearch);
+            setAppsAll(apps)
+            setPaneLayouts(data.data.layouts);
+            setFilteredLayouts(data.data.apps);
             updateDockLayouts()
         });
     };
 
+    const updateDockLayouts = () => {
+        request({
+            url: "/api/layouts?name=dock",
+            method: "GET",
+            headers: {"Content-Type": "application/json"},
+        }).then((data) => {
+            let serverDockLayouts = data.data.layouts;
+            let mergedAndDeDuplicatedLayouts = [
+                ...serverDockLayouts,
+                ...systemApps.filter(app => !serverDockLayouts.some(layout => layout.i === app.i))
+            ];
+            setDockLayouts(mergedAndDeDuplicatedLayouts);
+        });
+    }
+
     // 当组件挂载时获取用户设置
     useState(() => {
         saveUserSettings('settings.host', host)
-        saveUserSettings('settings.wallpaper', wallPaper)
         const wallpaper = getUserSettings('settings.host', host) + getUserSettings('settings.wallpaper', wallPaper);
         setWallPaper(wallpaper);
         setThemeMode(getUserSettings('settings.theme', 'dark'))
         updateLayouts()
     }, [appsAll, wallPaper]);
-    const updateDockLayouts = () => {
-        request({
-            url: "/api/dock/list",
-            method: "GET",
-            headers: {"Content-Type": "application/json"},
-        }).then((data) => {
-            const dockAppsAll = []
-            const appList = data.data
-            let appIDs = [systemApps['i']];
-            dockAppsAll.push(systemApps[0])
-            for (let i = 0; i < appList.length; i++) {
-                if (!appIDs.includes(appList[i]['i'])) {
-                    dockAppsAll.push(appList[i]);
-                    appIDs.push(appList[i]['i'])
-                }
-            }
-            setDockLayouts(dockAppsAll);
-        });
-    }
 
 
     /**
@@ -131,8 +119,11 @@ function App() {
                 url: "/api/apps/open",
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
-                body: {"id": id},
+                body: {"id": id, "type": "apps"},
             }).then((data) => {
+                if(data.msg === 'empty'){
+                    setCommandOpen(true);
+                }
             });
         }
 
@@ -153,18 +144,18 @@ function App() {
             }
         }
         if (table === 'pane') {
-            setLayouts(layoutNew)
+            setPaneLayouts(layoutNew)
         } else if (table === 'dock') {
             setDockLayouts(layoutNew)
         }
         request({
-            url: "/api/apps/save",
+            url: "/api/layouts/save",
             method: "POST",
             headers: {"Content-Type": "application/json"},
             body: {"layouts": layoutNew, "table": table},
         }).then((data) => {
             if (table === 'pane') {
-                setLayouts(data.data.layouts);
+                setPaneLayouts(data.data.layouts);
             } else if (table === 'dock') {
                 setDockLayouts(data.data.layouts);
             }
@@ -209,7 +200,7 @@ function App() {
      * @param size
      */
     const changeSize = (size) => {
-        const layoutsNew = layouts
+        const layoutsNew = paneLayouts
         for (let i = 0; i < layoutsNew.length; i++) {
             if (layoutsNew[i]['i'] === rightClickMenuId) {
                 layoutsNew[i]['w'] = size;
@@ -226,7 +217,7 @@ function App() {
     const deleteApp = (table = 'pane') => {
         let layoutsNew = []
         if (table === 'pane' || table === 'search') {
-            layoutsNew = layouts
+            layoutsNew = paneLayouts
         } else if (table === 'dock') {
             layoutsNew = dockLayouts
         }
@@ -238,17 +229,17 @@ function App() {
         }
         if (table === "search" && rightClickMenuDel === true) {
             request({
-                url: "/api/apps/del",
-                method: "POST",
+                url: "/api/apps",
+                method: "DELETE",
                 headers: {"Content-Type": "application/json"},
                 body: {"id": rightClickMenuId},
             }).then((data) => {
-                setAppsAll(data.data);
-                let appsSearch = Object.values(data.data)
-                for (let i = 0; i < appsSearch.length; i++) {
-                    appsSearch[i]['i'] = appsSearch[i]['id']
+                let apps = []
+                for (let i = 0; i < data.data.length; i++) {
+                    apps[data.data[i]['id']] = data.data[i]
                 }
-                setFilteredLayouts(appsSearch)
+                setAppsAll(apps);
+                setFilteredLayouts(data.data);
             });
         }
         saveLayouts(layoutsNew, table === "dock" ? "dock" : "pane")
@@ -262,10 +253,10 @@ function App() {
             layoutOld = dockLayouts.slice();
             table = 'dock'
         } else if (rightClickMenuLayout === 'dock') {
-            layoutOld = layouts.slice();
+            layoutOld = paneLayouts.slice();
             table = 'pane'
         } else if (rightClickMenuLayout === 'search') {
-            layoutOld = layouts.slice();
+            layoutOld = paneLayouts.slice();
             table = 'pane';
         }
 
@@ -286,7 +277,6 @@ function App() {
         for (let i = 0; i < appsSearch.length; i++) {
             appsSearch[i]['i'] = appsSearch[i]['id']
         }
-
         const filtered = appsSearch.filter(app => {
             // 获取应用名称的拼音
             const appFind = appsAll[app['id']];
@@ -311,18 +301,21 @@ function App() {
                             setMenuVisible(false);
                         }}
                         changeSize={changeSize}
-                        deleteBtn={(layoutType)=>{
-                            console.log(layoutType)
+                        deleteBtn={(layoutType) => {
                             deleteApp(layoutType);
                         }}
                         editBtn={() => {
-                            setAppName(appsAll[rightClickMenuId]['name'])
-                            setAppPath(appsAll[rightClickMenuId]['path'])
-                            setAppIcons([appsAll[rightClickMenuId]['icon']])
+                            setAppName(appsAll[rightClickMenuId]['name']);
+                            setAppPath(appsAll[rightClickMenuId]['path']);
+                            setAppIcons([appsAll[rightClickMenuId]['icon']]);
+                            setRightClickMenuApp(appsAll[rightClickMenuId]);
                             setAddAppOpen(true);
                             setMenuVisible(false);
                         }}
                         pinBtn={pinApp}
+                        commandBtn={()=>{
+                            setCommandOpen(true);
+                        }}
                         closeBtn={() => {
                             setMenuVisible(false);
                         }}
@@ -331,21 +324,29 @@ function App() {
                     />
                 )}
                 <div className="video-background">
+                    {commandOpen && (
+                        <Commands app_id={rightClickMenuId}
+                                  filteredLayouts={filteredLayouts}
+                                  closeBtn={()=>{
+                                      setCommandOpen(false);
+                                  }}
 
+                        />
+                    )}
                     <SettingsDialog open={openSettingsDialog} onClose={() => {
                         setOpenSettingsDialog(false); // 关闭弹窗
                     }}>
-                        <TabPanel value={0} style={{width: "35rem", height: "35rem"}}>
-                            <WallpaperBasicGrid onClick={(videoSource) => {
-                                setWallPaper(host + videoSource);
-                            }}></WallpaperBasicGrid>
-                        </TabPanel>
-                        <TabPanel value={1} style={{width: "35rem", height: "35rem"}}><AboutUs /></TabPanel>
+                        <WallpaperBasicGrid onClick={(videoSource) => {
+                            setWallPaper(host + videoSource);
+                        }}></WallpaperBasicGrid>
 
                     </SettingsDialog>
                     {addAppOpen && (
                         <AddApplication
                             open={addAppOpen}
+                            app_id={rightClickMenuId}
+                            app={rightClickMenuApp}
+                            apps={filteredLayouts}
                             appName={appName}
                             appPath={appPath}
                             appIcons={appIcons}
@@ -368,20 +369,18 @@ function App() {
                             {filteredLayouts.map((app, index) => (
                                 <Grid xs={1} sx={{height: "6rem"}}>
 
-                                    <div key={app['i']}
+                                    <div key={app['id']}
                                          unselectable="on"
                                          className="xBlade-icons"
-                                         onContextMenu={(e) => handleContextMenu(e, 'search', app['i'], true)}
+                                         onContextMenu={(e) => handleContextMenu(e, 'search', app['id'], true)}
                                     >
                                         <XBladeIcon
-                                            id={app['i']}
-                                            size={app['w']}
-                                            name={app['i'] in appsAll ? appsAll[app['i']]['name'] : ''}
-                                            appType={app['i'] in appsAll ? appsAll[app['i']]['type'] : 'link'}
-                                            path={(app['i'] in appsAll && appsAll[app['i']]['icon'] && appsAll[app['i']]['icon'].length > 0) ?
-                                                host + appsAll[app['i']]['icon'] : ''}
-                                            appPath={(app['i'] in appsAll && appsAll[app['i']]['path'] && appsAll[app['i']]['path'].length > 0) ?
-                                                host + appsAll[app['i']]['path'] : ''}
+                                            id={app['id']}
+                                            size={1}
+                                            name={app['name']}
+                                            appType={app['type']}
+                                            iconPath={app['icon'] !== '' ? host + app['icon'] : ''}
+                                            appPath={app['path']}
                                             onClickedBtn={onClicked}
                                             doubleClickBtn={(e) => handleContextMenu(e, 'search', app['i'], false, true)}
                                         />
@@ -398,7 +397,7 @@ function App() {
                         editing={paneDraggable}
                         StopPaneEditing={() => {
                             setPaneDraggable(false);
-                            saveLayouts(layouts, 'pane');
+                            saveLayouts(paneLayouts, 'pane');
                         }}
                         themeMode={themeMode}
                         themeModeChange={(theme) => {
@@ -410,61 +409,44 @@ function App() {
                             setAppName('');
                             setAppIcons([]);
                             setAppPath('');
-                            setMenuVisible(false)
+                            setRightClickMenuId(null);
+                            setRightClickMenuApp(null);
+                            setMenuVisible(false);
                             setAddAppOpen(true);
                         }}/>
-
-
                     <div className="Pane">
 
-                        <HorizontalScrollbar>
-
-                            <GridLayout
-                                className="layout"
-                                layout={layouts}
-                                cols={36}
-                                rowHeight={90}
-                                compactType={'horizontal'}
-                                width={widthBox}
-                                isDraggable={paneDraggable}
-                                isResizable={false}
-                                allowOverlap={overLap}
-                                onLayoutChange={(layoutIn) => {
-                                    setLayouts(layoutIn)
-                                }}
-                                onLongPress={() => {
-                                    setPaneDraggable(true)
-                                }}
-                            >
-                                {layouts.map((app, index) => (
-                                    <div key={app['i']}
-                                         className={paneDraggable === true ? 'xBlade-icons GridItem' : 'xBlade-icons'}
-                                         unselectable="on"
-                                         onContextMenu={(e) => handleContextMenu(e, 'pane', app['i'], true)}
-                                    >
-                                        <XBladeIcon
-                                            id={app['i']}
-                                            size={app['w']}
-                                            name={app['i'] in appsAll ? appsAll[app['i']]['name'] : ''}
-                                            appType={app['i'] in appsAll ? appsAll[app['i']]['type'] : 'link'}
-                                            path={(app['i'] in appsAll && appsAll[app['i']]['icon'] && appsAll[app['i']]['icon'].length > 0) ?
-                                                host + appsAll[app['i']]['icon'] : ''}
-                                            appPath={(app['i'] in appsAll && appsAll[app['i']]['path'] && appsAll[app['i']]['path'].length > 0) ?
-                                                host + appsAll[app['i']]['path'] : ''}
-                                            onClickedBtn={onClicked}
-                                            onLongPress={() => {
-                                                setMenuVisible(false);
-                                                setPaneDraggable(true);
-                                            }}
-                                            doubleClickBtn={(e) => handleContextMenu(e, 'pane', app['i'], false, true)}
-                                        />
-                                    </div>
-                                ))}
-
-                            </GridLayout>
-                        </HorizontalScrollbar>
+                        <Layouts
+                            layouts={paneLayouts}
+                            appsAll={appsAll}
+                            paneLayouts={paneLayouts}
+                            setPaneLayouts={(value) => {
+                                setPaneLayouts(value);
+                            }}
+                            setMenuVisible={(value) => {
+                                setMenuVisible(value);
+                            }}
+                            setMenuPosition={(value) => {
+                                setMenuPosition(value);
+                            }}
+                            setRightClickMenuDel={(value) => {
+                                setRightClickMenuDel(value);
+                            }}
+                            setRightClickMenuId={(value) => {
+                                setRightClickMenuId(value);
+                            }}
+                            setRightClickMenuLayout={(value) => {
+                                setRightClickMenuLayout(value);
+                            }}
+                            setPaneDraggable={(value) => {
+                                setPaneDraggable(value);
+                            }}
+                            setCommandOpen={(value) => {
+                                setCommandOpen(value);
+                            }}
+                            paneDraggable={paneDraggable}
+                        />
                     </div>
-
                     <div className="Dock">
                         <HorizontalScrollbar>
                             <GridLayout
@@ -484,7 +466,7 @@ function App() {
                                     <XBladeIcon
                                         id="btn|settings"
                                         name="设置"
-                                        path={host + "/assets/icons/settings-light.png"}
+                                        iconPath={host + "/assets/icons/settings-light.png"}
                                         onClickedBtn={() => {
                                             setOpenSettingsDialog(true);
                                             setMenuVisible(false);
@@ -495,12 +477,14 @@ function App() {
                                     <XBladeIcon
                                         id="btn|search"
                                         name="搜索"
-                                        path={host + "/assets/icons/apps.png"}
+                                        iconPath={host + "/assets/icons/apps.png"}
                                         onClickedBtn={() => {
                                             setSearchOpen(true);
                                             setMenuVisible(false);
                                         }}/>
                                 </div>
+
+
                                 {dockLayouts.map((app, index) => {
                                     if (!app['i'].startsWith('btn|')) {
                                         return (
@@ -513,7 +497,7 @@ function App() {
                                                     size={app['w']}
                                                     appType={app['i'] in appsAll ? appsAll[app['i']]['type'] : ''}
                                                     name={app['i'] in appsAll ? appsAll[app['i']]['name'] : ''}
-                                                    path={(app['i'] in appsAll && appsAll[app['i']]['icon'] && appsAll[app['i']]['icon'].length > 0) ?
+                                                    iconPath={(app['i'] in appsAll && appsAll[app['i']]['icon'] && appsAll[app['i']]['icon'].length > 0) ?
                                                         host + appsAll[app['i']]['icon'] : ''}
                                                     appPath={(app['i'] in appsAll && appsAll[app['i']]['path'] && appsAll[app['i']]['path'].length > 0) ?
                                                         host + appsAll[app['i']]['path'] : ''}

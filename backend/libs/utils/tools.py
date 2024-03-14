@@ -7,25 +7,26 @@ import os
 import win32gui
 import win32ui
 import win32con
+import pyautogui
 import win32api
 from PIL import Image
 import subprocess
 import platform
 
 
-def read_json(file_path, encoding='utf-8'):
+def read_json(file_path, encoding = 'utf-8'):
     if not os.path.exists(file_path):
         return None
-    with open(file_path, 'r', encoding=encoding) as file:
+    with open(file_path, 'r', encoding = encoding) as file:
         data = json.load(file)
     return data
 
 
-def write_json(file, content, mode='w', encoding='utf-8'):
+def write_json(file, content, mode = 'w', encoding = 'utf-8'):
     dir_name = os.path.dirname(file)  # 获取目录名
     if not os.path.isdir(dir_name):
         os.makedirs(dir_name)
-    with open(file, mode, encoding=encoding) as file:
+    with open(file, mode, encoding = encoding) as file:
         json.dump(content, file)
 
 
@@ -36,7 +37,7 @@ def list_to_dict(rows, key):
     return new_arr
 
 
-def image2base64(fileName, fileType="png"):
+def image2base64(fileName, fileType = "png"):
     image = Image.open(fileName)  # 打开 PNG 文件
     data = image.tobytes()  # 转换为字节串
     encoded = base64.b64encode(data)  # 转换为 base64 编码的字节串
@@ -45,32 +46,25 @@ def image2base64(fileName, fileType="png"):
 
 
 def generate_random_md5_with_timestamp():
-    # 生成随机的 16 字节（128位）数据
     random_bytes = os.urandom(16)
-
-    # 添加当前时间戳到随机数据中
     timestamp = str(time.time()).encode('utf-8')
     data_with_timestamp = random_bytes + timestamp
-
-    # 使用 hashlib 计算 MD5 哈希值
     md5_hash = hashlib.md5(data_with_timestamp)
-
-    # 返回十六进制表示的 MD5 哈希值
     return md5_hash.hexdigest()
 
 
-def extract_icon_from_exe(icon_in_path, icon_name, icon_out_path, out_width=56, out_height=56):
+def extract_icon_from_exe(icon_in_path, icon_name, icon_out_path, out_width = 56, out_height = 56):
     """Given an icon path (exe file) extract it and output at the desired width/height as a png image.
 
-    Args:
-        icon_in_path (string): path to the exe to extract the icon from
-        icon_name (string): name of the icon so we can save it out with the correct name
-        icon_out_path (string): final destination (FOLDER) - Gets combined with icon_name for full icon_path
-        out_width (int, optional): desired icon width
-        out_height (int, optional): desired icon height
+    Args                      : 
+    icon_in_path (string)     : path to the exe to extract the icon from
+    icon_name (string)        : name of the icon so we can save it out with the correct name
+    icon_out_path (string)    : final destination (FOLDER) - Gets combined with icon_name for full icon_path
+    out_width (int, optional) : desired icon width
+    out_height (int, optional): desired icon height
 
-    Returns:
-        string: path to the final icon
+    Returns: 
+    string : path to the final icon
     """
 
     ico_x = win32api.GetSystemMetrics(win32con.SM_CXICON)
@@ -97,18 +91,25 @@ def extract_icon_from_exe(icon_in_path, icon_name, icon_out_path, out_width=56, 
     full_outpath = os.path.join(icon_out_path, "{}.png".format(icon_name))
     icon.resize((out_width, out_height))
     icon.save(full_outpath)
-    # return the final path to the image
     return full_outpath
 
 
-def open_with_default_program(file_path):
+
+
+def exec_command(commands):
+    path = [row['command'] for row in commands]
+    pyautogui.hotkey(*path)
+
+
+def open_with_default_program(file_path, type = 'shell'):
     # 确定操作系统
     system = platform.system()
 
     try:
         # 根据操作系统选择打开程序的命令
         if system == "Windows":
-            subprocess.Popen(['start', '', file_path], shell=True)
+            subprocess.Popen(['start', '', file_path], shell = True)
+
         elif system == "Darwin":  # macOS
             subprocess.Popen(['open', file_path])
         elif system == "Linux":
@@ -124,13 +125,18 @@ import socket
 
 def get_local_ip():
     try:
-        # 获取本机主机名
         host_name = socket.gethostname()
 
-        # 使用主机名获取本地IP地址
         local_ip = socket.gethostbyname(host_name)
 
         return local_ip
     except Exception as e:
         print(f"获取本地IP时发生错误：{e}")
         return None
+
+
+from flask import jsonify
+
+
+def result(code = 1, data = None, msg = "success"):
+    return jsonify({"code": code, "data": data, "msg": msg})

@@ -7,11 +7,11 @@
 * 网页远程访问： 提供简单的界面，用户可以远程打开特定网页，方便快捷地获取需要的信息。
 * 多平台支持： 该软件兼容多种操作系统，包括但不限于Windows、Linux和macOS，以确保用户在不同设备上都能方便地使用。
 ## 项目预览
-![Image text](https://raw.githubusercontent.com/bladexmm/XBlade-panel/main/static/imgs/1.png)
-![Image text](https://raw.githubusercontent.com/bladexmm/XBlade-panel/main/static/imgs/2.png)
-![Image text](https://raw.githubusercontent.com/bladexmm/XBlade-panel/main/static/imgs/3.png)
-![Image text](https://raw.githubusercontent.com/bladexmm/XBlade-panel/main/static/imgs/4.png)
-![Image text](https://raw.githubusercontent.com/bladexmm/XBlade-panel/main/static/imgs/5.png)
+![首页](https://raw.githubusercontent.com/bladexmm/XBlade-panel/main/static/imgs/1.png)
+![首页](https://raw.githubusercontent.com/bladexmm/XBlade-panel/main/static/imgs/2.png)
+![新增应用](https://raw.githubusercontent.com/bladexmm/XBlade-panel/main/static/imgs/3.png)
+![搜索](https://raw.githubusercontent.com/bladexmm/XBlade-panel/main/static/imgs/4.png)
+![设置壁纸](https://raw.githubusercontent.com/bladexmm/XBlade-panel/main/static/imgs/5.png)
 
 
 ## 项目功能
@@ -19,17 +19,17 @@
 ### 项目进度
 - [x] 新增应用
   - [x] 手动添加
-  - [x] 自动提取链接中的图标
-  - [x] 自动提取exe的图标
   - [x] 自定义图标
+  - [x] 自动提取exe的图标
+  - [x] 自动提取链接中的图标
   - [ ] 添加自定义指令
+  - [ ] 系统右键添加应用 
+  - [ ] 浏览器右键添加应用
   - [ ] 自定义组件
     - [ ] 天气
     - [ ] 系统性能监控
     - [ ] 媒体控制(音量控制，上/下曲)
     - [ ] . . . . . .
-  - [ ] 浏览器右键添加应用
-  - [ ] 系统右键添加应用 
 - [x] 应用管理
   - [x] 可多拽布局
   - [x] 可固定至DOCK栏
@@ -40,24 +40,27 @@
   - [ ] 应用文件夹
   - [ ] 分享应用内容及配置
   - [ ] 应用控制模式
-    - [ ] 自动识别当前应用并激活
-    - [ ] 预设应用快捷键
     - [ ] 发送快捷键
+    - [ ] 预设应用快捷键
     - [ ] 远程监控应用内容
+    - [ ] 自动识别当前应用并激活
 - [x] 系统配置
+  - [x] 面板二维码
   - [x] 修改壁纸
     - [x] 自定义壁纸
     - [x] 自动识别本地壁纸 
   - [x] 修改项目模式
     - [x] 暗黑模式
-    - [x] 白天模式 
+    - [x] 白天模式
 - [x] 桌面应用
   - [x] 系统托盘
     - [x] 打开面板
     - [x] 关闭软件
-  - [ ] 软件界面
-    - [ ] 面板二维码
 - [ ] 系统支持
   - [x] windows10/11 64位
   - [ ] macos
   - [ ] linux
+- [ ] 使用教程
+  - [ ] 新增应用
+  - [ ] 修改布局
+  - [ ] 修改壁纸

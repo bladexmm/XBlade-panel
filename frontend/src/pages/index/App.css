@@ -37,8 +37,10 @@
 .Dock{
     width: 80%;
     margin: 1rem auto;
-    background: rgb(147 147 147 / 36%);
+    backdrop-filter: blur(30px);
+    background-color: rgba(255, 255, 255, 0.2);
     border-radius: 2.25rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
     box-sizing: border-box;
     padding: 0.25rem 0.3rem 0 0.3rem;
     height: 7rem;
@@ -49,8 +51,8 @@
     user-select: none;
 }
 
-.Pane .GridItem:nth-child(2n):not(.dragging) > *,
-.Dock .GridItem:nth-child(2n):not(.dragging) > * {
+.GridItem:nth-child(2n):not(.dragging) > *,
+.GridItem:nth-child(2n):not(.dragging) > * {
     animation-name: keyframes1;
     animation-iteration-count: infinite;
     transform-origin: 50% 10%;
@@ -63,8 +65,8 @@
     align-items: center;
 }
 
-.Pane .GridItem:nth-child(2n-1):not(.dragging) > *,
-.Dock .GridItem:nth-child(2n-1):not(.dragging) > * {
+.GridItem:nth-child(2n-1):not(.dragging) > *,
+.GridItem:nth-child(2n-1):not(.dragging) > * {
     animation-name: keyframes2;
     animation-iteration-count: infinite;
     animation-direction: alternate;

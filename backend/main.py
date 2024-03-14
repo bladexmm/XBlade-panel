@@ -3,8 +3,10 @@ import os
 from flask import Flask, jsonify, request, send_from_directory
 from flask_cors import CORS
 
+from libs.model import apps
+from libs.model.apps import read_apps, read_layout, add_commands
 from libs.utils.tools import read_json, list_to_dict, write_json, generate_random_md5_with_timestamp, \
-    extract_icon_from_exe, open_with_default_program, get_local_ip
+    extract_icon_from_exe, open_with_default_program, get_local_ip, exec_command
 from libs.utils.website import get_page_info, get_domain, get_domain_md5, md5
 import webbrowser
 from glob import glob
@@ -17,22 +19,6 @@ cors = CORS(app, resources={r"/api/*": {"origins": "*"}})
 
 def result(code=1, data=None, msg="success"):
     return jsonify({"code": code, "data": data, "msg": msg})
-
-
-def read_apps(type="list"):
-    apps_all = read_json('./data/apps/all.json')
-    apps_all = apps_all if apps_all is not None else []
-    if type == "list":
-        return apps_all
-    return list_to_dict(apps_all, 'id')
-
-
-def read_layout(type="list", filename="layouts"):
-    layouts = read_json(f'./data/apps/{filename}.json')
-    layouts = layouts if layouts is not None else []
-    if type == "list":
-        return layouts
-    return list_to_dict(layouts, 'i')
 
 
 # Serve React App
@@ -60,8 +46,10 @@ def wallpaperList():
 
 @app.route("/api/apps/list", methods=["GET"])
 def appList():
-    apps = read_apps('dict')
-    layouts = read_layout('list')
+    apps_name = request.args.get('apps', 'all')
+    layout_name = request.args.get('layouts', 'layouts')
+    apps = read_apps('dict', apps_name)
+    layouts = read_layout('list', layout_name)
     return result(1, {"layouts": layouts, "apps": apps}, 'success')
 
 
@@ -71,27 +59,21 @@ def layoutList():
     return result(1, layouts, 'success')
 
 
+@app.route("/api/commands/list", methods=["GET"])
+def commands():
+    rows = read_json('./data/commands.json')
+    return result(1, {'commands': rows, 'apps': read_apps('list')}, 'success')
+
+
 @app.route("/api/apps/add", methods=["POST"])
 def addApp():
     if not request.is_json:
         return result(0, [], 'Invalid JSON format')
     data = request.get_json()
-    data['type'] = 'file'
-    if 'http' in data['path']:
-        data['type'] = "link"
-    # 添加
-    apps_all = read_apps('dict')
-    data['id'] = md5(f"{data['type']}|{data['path']}")
-    apps_all[data['id']] = data
-    write_json('./data/apps/all.json', list(apps_all.values()))
-    layouts = read_layout('dict')
-    x = 0
-    for row in list(layouts.values()):
-        if x <= row['x']:
-            x = row['x'] + 1
-    if data['id'] not in layouts:
-        layouts[data['id']] = {'i': data['id'], 'x': x, 'y': 0, 'w': 1, 'h': 1}
-    write_json('./data/apps/layouts.json', list(layouts.values()))
+    if data['type'] == 'default':
+        data = apps.add(data)
+    elif data['type'] == 'command':
+        data = add_commands(data)
     return result(1, data, 'success')
 
 
@@ -174,10 +156,16 @@ def openUrl():
     if data['id'] not in apps_all:
         return result(0, data, '未找到该应用')
     app = apps_all[data['id']]
-    if 'http' in app['path']:
-        webbrowser.open(app['path'])
-    else:
-        open_with_default_program(app['path'])
+    if data['type'] == 'apps':
+        if 'http' in app['path']:
+            webbrowser.open(app['path'])
+        else:
+            if app['path'] != '':
+                open_with_default_program(app['path'])
+        data = read_layout('list', f"layouts/{data['id']}")
+    elif data['type'] == 'command':
+        exec_command(data['id'])
+        data = []
     return result(1, data, 'opened')
 
 
@@ -259,4 +247,5 @@ def windows():
 
 
 if __name__ == "__main__":
-    windows()
+    # windows()
+    app.run(host="0.0.0.0", port=54321, debug=True)

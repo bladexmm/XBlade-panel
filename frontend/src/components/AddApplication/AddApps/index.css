@@ -1,0 +1,9 @@
+.avatars{
+    cursor: pointer;
+    transition: transform 0.4s ease, border-color 0.4s ease; /* 添加过渡效果 */
+
+}
+.select{
+    border: cornflowerblue solid 2px;
+    box-sizing: border-box;
+}

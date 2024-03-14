@@ -38,6 +38,11 @@ export default function Search({open, onClose = () => {}, onSearchInput = () => 
                             opacity: 0,
                             width:"80%",
                             height:"80%",
+                            backdropFilter:"blur(30px)",
+                            backgroundColor: "rgba(255, 255, 255, 0.2)",
+                            border:"1px solid rgba(255, 255, 255, 0.1)",
+                            boxShadow:"None",
+                            borderRadius: "2.25rem",
                             transition: `opacity 300ms`,
                             ...{
                                 entering: {opacity: 1},
@@ -56,6 +61,7 @@ export default function Search({open, onClose = () => {}, onSearchInput = () => 
                                     '--Input-radius': '0px',
                                     borderBottom: '2px solid',
                                     borderColor: 'neutral.outlinedBorder',
+                                    backgroundColor:"rgba(255, 255, 255, 0.2)",
                                     width: "100%",
                                     '&:hover': {
                                         borderColor: 'neutral.outlinedHoverBorder',

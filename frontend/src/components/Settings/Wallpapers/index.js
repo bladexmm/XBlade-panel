@@ -25,7 +25,7 @@ export default function WallpaperBasicGrid({
 
     useState(() => {
         request({
-            url: "/api/wallpaper/list",
+            url: "/api/wallpaper",
             method: "GET",
             headers: {"Content-Type": "application/json"},
             body: {},
@@ -47,6 +47,7 @@ export default function WallpaperBasicGrid({
                             boxShadow: 'sm',
                             bgcolor: 'background.surface',
                         },
+                        margin:"auto !important"
                     }}
                 >
 
@@ -54,14 +55,14 @@ export default function WallpaperBasicGrid({
                         <Tab disableIndicator>{wallpaper.name}</Tab>
                     ))}
                 </TabList>
-                <Box style={{width: "35rem", height: "35rem"}}>
+                <Box>
 
                     {wallpapers.map((wallpaper, index) => (
                         <TabPanel value={index}>
                             <Grid container className="container" spacing={2}>
 
                                 {wallpaper['videos'].map((video, index) => (
-                                    <Grid item xs={6} className="wallpaper-items" onClick={() => handleItemClick(video)}
+                                    <Grid item xs={4} className="wallpaper-items" onClick={() => handleItemClick(video)}
                                           key={index}>
                                         <video className="wallpaper-video" loop muted>
                                             <source src={host + video} type="video/mp4"/>

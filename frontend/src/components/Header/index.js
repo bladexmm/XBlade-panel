@@ -57,23 +57,25 @@ const Header = ({
                     </Typography>
 
                 </Grid>
-                <Grid xs={9}>
+                <Grid xs={7}>
                 </Grid>
 
-                <Grid xs={2} className='items-right'>
+                <Grid xs={4} className='items-right'>
                     <Tooltip title="新增应用" size="sm">
                         <IconButton
                             size="sm"
                             variant="soft"
                             onClick={openAddDiag}
-                            color="neutral"
+                            color="primary"
                             className='right-btn'
                             sx={{
                                 minWidth: "1.5rem",
                                 minHeight: "1.5rem"
                             }}
                         >
-                            <PlaylistAddIcon fontSize="small"/>
+                            <PlaylistAddIcon fontSize="small"
+                                 sx={{color: "#fff", margin: "auto"}}
+                            />
                         </IconButton>
                     </Tooltip>
 
@@ -82,7 +84,7 @@ const Header = ({
                             size="sm"
                             variant="soft"
                             onClick={handleFullScreen}
-                            color="neutral"
+                            color="primary"
                             className='right-btn'
                             sx={{
                                 minWidth: "1.5rem",
@@ -91,43 +93,45 @@ const Header = ({
                         >
                             {
                                 fullscreen === true ?
-                                <FullscreenExitIcon fontSize="small"/> :
-                                <FullscreenIcon fontSize="small"/>
+                                <FullscreenExitIcon fontSize="small" sx={{color: "#fff", margin: "auto"}}/> :
+                                <FullscreenIcon fontSize="small" sx={{color: "#fff", margin: "auto"}}/>
                             }
                         </IconButton>
                     </Tooltip>
 
-                    <Tooltip title="显示模式" size="sm">
-                        <IconButton
-                            size="sm"
-                            variant="soft"
-                            onClick={() => {themeModeChange(themeMode === 'dark' ? 'light' : 'dark');}}
-                            color="neutral"
-                            className='right-btn'
-                            sx={{
-                                minWidth:"1.5rem",
-                                minHeight:"1.5rem"
-                            }}
-                        >
-                            {themeMode === 'dark' ? <DarkModeIcon fontSize="small"/> : <LightModeIcon fontSize="small"/>}
 
-                        </IconButton>
-                    </Tooltip>
 
-                    {editing && (
+                    {editing ? (
                         <Tooltip title="保存布局" size="sm">
                             <IconButton
                                 size="sm"
                                 variant="soft"
                                 onClick={StopPaneEditing}
-                                color="neutral"
+                                color="primary"
                                 className='right-btn'
                                 sx={{
                                     minWidth: "1.5rem",
                                     minHeight: "1.5rem"
                                 }}
                             >
-                                <SaveIcon fontSize="small"/>
+                                <SaveIcon fontSize="small" sx={{color: "#fff", margin: "auto"}}/>
+                            </IconButton>
+                        </Tooltip>
+                    ) :(
+                        <Tooltip title="显示模式" size="sm">
+                            <IconButton
+                                size="sm"
+                                variant="soft"
+                                onClick={() => {themeModeChange(themeMode === 'dark' ? 'light' : 'dark');}}
+                                color="primary"
+                                className='right-btn'
+                                sx={{
+                                    minWidth:"1.5rem",
+                                    minHeight:"1.5rem"
+                                }}
+                            >
+                                {themeMode === 'dark' ? <DarkModeIcon fontSize="small" sx={{color: "#fff", margin: "auto"}}/> : <LightModeIcon fontSize="small" sx={{color: "#fff", margin: "auto"}}/>}
+
                             </IconButton>
                         </Tooltip>
                     )}

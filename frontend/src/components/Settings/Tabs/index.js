@@ -22,11 +22,10 @@ export default function TabsSettings({children}) {
                     },
                 }}
             >
+                <Tab disableIndicator className="dialog-title">访问面板</Tab>
                 <Tab disableIndicator className="dialog-title">壁纸中心</Tab>
                 <Tab disableIndicator className="dialog-title">关于我们</Tab>
                 <ModalClose/>
-
-
             </TabList>
             <Box>
                 {children}

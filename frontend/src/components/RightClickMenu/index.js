@@ -4,14 +4,11 @@ import FadeIn from "../FadeIn";
 
 const RightClickMenu = ({
                             xPos, yPos, hideMenu, layoutType, changeSize,
-                            deleteBtn = layoutType => {
-                            },
-                            editBtn = () => {
-                            },
-                            pinBtn = () => {
-                            },
-                            closeBtn = () => {
-                            }
+                            deleteBtn = layoutType => {},
+                            editBtn = () => {},
+                            pinBtn = () => {},
+                            closeBtn = () => {},
+                            commandBtn = () => {}
                         }) => {
     const menuRef = useRef(null);
     const [menuDimensions, setMenuDimensions] = useState({width: 0, height: 0});
@@ -47,6 +44,8 @@ const RightClickMenu = ({
 
                         {layoutType === 'pane' && (
                             <React.Fragment>
+                                <li onClick={() => commandBtn()}>打开命令面板</li>
+                                <hr className="divider"/>
                                 <li onClick={() => pinBtn()}>固定到任务栏</li>
                                 <li onClick={() => editBtn()}>编辑</li>
                                 <li onClick={() => deleteBtn(layoutType)}>删除</li>
@@ -63,6 +62,18 @@ const RightClickMenu = ({
                                 <li onClick={() => pinBtn()}>添加</li>
                                 <li onClick={() => editBtn()}>编辑</li>
                                 <li onClick={() => deleteBtn(layoutType)}>删除</li>
+                            </React.Fragment>
+
+                        )}
+
+                        {layoutType === 'command' && (
+                            <React.Fragment>
+                                <li onClick={() => editBtn()}>编辑</li>
+                                <li onClick={() => deleteBtn(layoutType)}>删除</li>
+                                <hr className="divider"/>
+                                <li onClick={() => changeSize(1)}>小</li>
+                                <li onClick={() => changeSize(2)}>中</li>
+                                <li onClick={() => changeSize(3)}>大</li>
                             </React.Fragment>
 
                         )}

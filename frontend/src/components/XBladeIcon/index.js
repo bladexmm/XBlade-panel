@@ -1,6 +1,7 @@
 import React, {useState, useEffect} from 'react';
 import "./index.css"
 import {FileIcon, defaultStyles} from "react-file-icon";
+import {getUserSettings} from "../../utils/settings";
 
 let styles = defaultStyles;
 for (let style in styles) {
@@ -17,7 +18,7 @@ for (let style in styles) {
 }
 
 const XBladeIcon = ({
-                        id, name, path, appType = "link", appPath = '', onClickedBtn,
+                        id, name, iconPath, appType = "link", appPath = '', onClickedBtn,
                         doubleClickBtn = () => {
                         },
                         onLongPress = () => {
@@ -33,7 +34,7 @@ const XBladeIcon = ({
     const [timer, setTimer] = useState(null);
     const [icon, setIcon] = useState('');
     const sizeIcon = (size - 1) * 5;
-
+    let host = getUserSettings('settings.host')
 
     /**
      * 处理点击按钮事件
@@ -67,7 +68,6 @@ const XBladeIcon = ({
      */
     const handleMouseDown = () => {
         const timeout = setTimeout(() => {
-            // 触发长按处理函数
             onLongPress();
         }, 700); // 2秒钟
 
@@ -77,13 +77,18 @@ const XBladeIcon = ({
 
     useEffect(() => {
         if (appType === 'file') {
-
-            const isFolder = appPath.endsWith('/') || appPath.endsWith('\\');
+            const app_path = appPath.replace(host, '')
+            const isFolder = app_path.endsWith('/') || app_path.endsWith('\\');
             // 获取文件扩展名
-            let extension = isFolder ? '' : appPath.split('.').pop();
-            extension = extension === '' ? appPath.split('/').pop() : extension;
-            extension = extension === '' ? appPath.split('\\').pop() : extension;
+            let extension = isFolder ? '' : app_path.split('.').pop();
+            extension = extension === '' ? app_path.split('/').pop() : extension;
+            extension = extension === '' ? app_path.split('\\').pop() : extension;
             setIcon(extension);
+        }
+        if (appType === 'command') {
+            let commands = JSON.parse(appPath.replace(host, ''));
+            let keysString = commands.map(command => command.key).join(' ');
+            setIcon(keysString);
         }
 
         const textContainer = document.getElementById("icon-" + id);
@@ -105,7 +110,7 @@ const XBladeIcon = ({
             handleDoubleClick(lastClickEvent);
             setClickCount(0);
         }
-    }, [id, clickCount, path, appPath, appType, lastClickEvent]);
+    }, [id, clickCount, icon, appPath, appType, lastClickEvent]);
 
     return (
         <div className="icon-container"
@@ -120,7 +125,7 @@ const XBladeIcon = ({
                  clearTimeout(timer);
              }}
              style={{width: 4 + sizeIcon + "rem", height: 4 + sizeIcon + 2 + "rem"}}>
-            {(appType === 'file' && path === '') ? (
+            {(iconPath === '') ? (
                 <div className='file-icon' style={{
                     marginBottom: (size - 1) + "rem",
                     width: 3 + sizeIcon + "rem",
@@ -133,8 +138,12 @@ const XBladeIcon = ({
 
                 </div>
             ) : (
-                <img src={path} alt={name} className="icon"
-                     style={{width: 4 + sizeIcon + "rem", height: 4 + sizeIcon + "rem", marginBottom: ((size - 1.5) < 0 ? 0 : size -1.5) + "rem"}}/>
+                <img src={iconPath} alt={name} className="icon"
+                     style={{
+                         width: 4 + sizeIcon + "rem",
+                         height: 4 + sizeIcon + "rem",
+                         marginBottom: ((size - 1.5) < 0 ? 0 : size - 1.5) + "rem"
+                     }}/>
             )}
 
 

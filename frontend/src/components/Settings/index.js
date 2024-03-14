@@ -1,51 +1,76 @@
 import React from 'react';
-import { Transition } from 'react-transition-group';
 import Modal from '@mui/joy/Modal';
-import ModalDialog from '@mui/joy/ModalDialog';
-import DialogContent from '@mui/joy/DialogContent';
-import TabsSettings from "./Tabs";
+import TabsAdd from "../AddApplication/Tabs";
+import TabPanel from "@mui/joy/TabPanel";
+import FadeIn from "../FadeIn";
+import Tabs from "@mui/joy/Tabs";
+import TabList from "@mui/joy/TabList";
+import Tab, {tabClasses} from "@mui/joy/Tab";
+import Qrcode from "./Qrcode";
+import AboutUs from "./AboutUs";
 
-export default function SettingsDialog({ open, onClose, children }) {
+export default function SettingsDialog({open, onClose, children}) {
     return (
-        <Transition in={open} timeout={400}>
-            {(state) => (
-                <Modal
-                    keepMounted
-                    open={!['exited', 'exiting'].includes(state)}
-                    onClose={onClose}
-                    slotProps={{
-                        backdrop: {
-                            sx: {
-                                opacity: 0,
-                                backdropFilter: 'none',
-                                transition: `opacity 400ms, backdrop-filter 400ms`,
-                                ...{
-                                    entering: { opacity: 1, backdropFilter: 'blur(8px)' },
-                                    entered: { opacity: 1, backdropFilter: 'blur(8px)' },
-                                }[state],
-                            },
-                        },
-                    }}
+        <FadeIn show={true}>
+            <Modal open={open} onClose={onClose}>
+                <Tabs
+                    variant="outlined"
+                    aria-label="Pricing plan"
+                    className="tabs-add"
+                    defaultValue={0}
                     sx={{
-                        visibility: state === 'exited' ? 'hidden' : 'visible',
+                        width: "80%",
+                        height:"80%",
+                        borderRadius: 'lg',
+                        boxShadow: 'sm',
+                        overflow: 'auto',
                     }}
                 >
-                    <ModalDialog
+                    <TabList
+                        disableUnderline
+                        tabFlex={1}
                         sx={{
-                            opacity: 0,
-                            transition: `opacity 300ms`,
-                            ...{
-                                entering: { opacity: 1 },
-                                entered: { opacity: 1 },
-                            }[state],
+                            [`& .${tabClasses.root}`]: {
+                                fontSize: 'sm',
+                                fontWeight: 'lg',
+                                [`&[aria-selected="true"]`]: {
+                                    color: 'primary.500',
+                                    bgcolor: 'background.surface',
+                                },
+                                [`&.${tabClasses.focusVisible}`]: {
+                                    outlineOffset: '-4px',
+                                },
+                            },
+
                         }}
                     >
-                        <DialogContent>
-                            <TabsSettings> {children}</TabsSettings>
-                        </DialogContent>
-                    </ModalDialog>
-                </Modal>
-            )}
-        </Transition>
+                        <Tab disableIndicator variant="soft" sx={{flexGrow: 1}}>
+                            访问项目
+                        </Tab>
+                        <Tab disableIndicator variant="soft" sx={{flexGrow: 1}}>
+                            壁纸中心
+                        </Tab>
+
+                        <Tab disableIndicator variant="soft" sx={{flexGrow: 1}}>
+                            关于我们
+                        </Tab>
+
+                    </TabList>
+                    <React.Fragment>
+                        <TabPanel value={0}>
+                            <Qrcode />
+                        </TabPanel>
+                        <TabPanel value={1}>
+                            {children}
+                        </TabPanel>
+                        <TabPanel value={2}>
+                            <AboutUs />
+                        </TabPanel>
+                    </React.Fragment>
+                </Tabs>
+
+
+            </Modal>
+        </FadeIn>
     );
 }
