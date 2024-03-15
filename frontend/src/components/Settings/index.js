@@ -8,11 +8,16 @@ import TabList from "@mui/joy/TabList";
 import Tab, {tabClasses} from "@mui/joy/Tab";
 import Qrcode from "./Qrcode";
 import AboutUs from "./AboutUs";
+import ShareRoundedIcon from '@mui/icons-material/ShareRounded';
+import QrCodeRoundedIcon from '@mui/icons-material/QrCodeRounded';
+import FilterVintageRoundedIcon from '@mui/icons-material/FilterVintageRounded';
+import GridViewRoundedIcon from '@mui/icons-material/GridViewRounded';
+import Plugin from "./Plugin";
 
 export default function SettingsDialog({open, onClose, children}) {
     return (
         <FadeIn show={true}>
-            <Modal open={open} onClose={onClose}>
+            <Modal open={open} keepMounted onClose={onClose}>
                 <Tabs
                     variant="outlined"
                     aria-label="Pricing plan"
@@ -45,14 +50,17 @@ export default function SettingsDialog({open, onClose, children}) {
                         }}
                     >
                         <Tab disableIndicator variant="soft" sx={{flexGrow: 1}}>
-                            访问项目
+                            <QrCodeRoundedIcon />访问
                         </Tab>
                         <Tab disableIndicator variant="soft" sx={{flexGrow: 1}}>
-                            壁纸中心
+                            <GridViewRoundedIcon />组件
+                        </Tab>
+                        <Tab disableIndicator variant="soft" sx={{flexGrow: 1}}>
+                            <FilterVintageRoundedIcon />壁纸
                         </Tab>
 
                         <Tab disableIndicator variant="soft" sx={{flexGrow: 1}}>
-                            关于我们
+                            <ShareRoundedIcon />关于
                         </Tab>
 
                     </TabList>
@@ -61,9 +69,12 @@ export default function SettingsDialog({open, onClose, children}) {
                             <Qrcode />
                         </TabPanel>
                         <TabPanel value={1}>
-                            {children}
+                            <Plugin />
                         </TabPanel>
                         <TabPanel value={2}>
+                            {children}
+                        </TabPanel>
+                        <TabPanel value={3}>
                             <AboutUs />
                         </TabPanel>
                     </React.Fragment>

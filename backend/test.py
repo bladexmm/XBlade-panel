@@ -1,20 +1,14 @@
 import os
-import webbrowser
-from glob import glob
 
-from flask import Flask, request, send_from_directory
+from flask import Flask, send_from_directory
 from flask_restful import Api
 
-from libs.controllers import LayoutsResource, AppsResource
-from libs.models import db, Apps
-from sqlalchemy.ext.declarative import DeclarativeMeta
+from libs.controllers.AppsResource import AppsResource
+from libs.controllers.LayoutsResource import LayoutsResource
+from libs.model.models import db
 from flask_cors import CORS
-import json
-
 from libs.service import getWallpapers, parseApps, openApp, update_layouts
-from libs.utils.tools import result, read_json, generate_random_md5_with_timestamp, extract_icon_from_exe, \
-    open_with_default_program, exec_command
-from libs.utils.website import get_domain, get_page_info
+from libs.utils.tools import result, read_json
 
 app = Flask(__name__, static_folder = 'react_app/')
 api = Api(app)

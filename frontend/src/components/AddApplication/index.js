@@ -31,10 +31,9 @@ export default function AddApplication({
 
 
     return (
-        <FadeIn show={checked}>
-            <Modal open={open} onClose={onClose}>
+        <FadeIn show={open}>
+            <Modal keepMounted open={open} onClose={onClose}>
                 <React.Fragment>
-
                     <TabsAdd value={defaultTab} disableTabs={disableTabs}>
                         <React.Fragment>
                             <TabPanel value={0}>

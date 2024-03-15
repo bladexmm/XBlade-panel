@@ -3,7 +3,9 @@ import os
 import webbrowser
 from glob import glob
 
-from libs.models import Apps, Layouts, db
+from libs.model.Apps import Apps
+from libs.model.Layouts import Layouts
+from libs.model.models import db
 from libs.utils.tools import result, extract_icon_from_exe, generate_random_md5_with_timestamp, open_with_default_program, exec_command
 from libs.utils.website import get_page_info, get_domain, md5
 from flask import request
