@@ -1,6 +1,7 @@
 venv
 react_app/assets/web/*
 data/apps/*
+data/database.db
 .idea
 __pycache__
 react_app/index.html
