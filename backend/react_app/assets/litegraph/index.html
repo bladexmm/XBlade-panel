@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="UTF-8">
+    <link rel="stylesheet" href="./index.css">
+    <link rel="stylesheet" type="text/css" href="litegraph.css">
+    <script type="text/javascript" src="litegraph.core.js"></script>
+</head>
+<body>
+<div class="header">
+    <button class="btn" id="save">保存</button>
+    <button class="btn" id="close">关闭</button>
+</div>
+<canvas id='mycanvas'></canvas>
+<script src="libs/basic.js"></script>
+<script src="libs/keyboard.js"></script>
+<script>
+    var graph = new LGraph();
+
+    var canvas = new LGraphCanvas("#mycanvas", graph);
+    LiteGraph.registerNodeType("基础/开始", CMDStart);
+    LiteGraph.registerNodeType("基础/结束", CMDEnd);
+    LiteGraph.registerNodeType("基础/等待", TimeWait);
+
+    LiteGraph.registerNodeType("输入/快捷键", Hotkeys);
+    LiteGraph.registerNodeType("输入/文本输入", Type_Text);
+    LiteGraph.registerNodeType("输入/鼠标左键", MouseLeft);
+    LiteGraph.registerNodeType("输入/鼠标中键", MouseMiddle);
+    LiteGraph.registerNodeType("输入/鼠标右键", MouseRight);
+
+    const node_const = LiteGraph.createNode("基础/开始");
+    node_const.pos = [200, 200];
+    graph.add(node_const);
+    const node_watch = LiteGraph.createNode("基础/结束");
+    node_watch.pos = [700, 200];
+    graph.add(node_watch);
+    node_const.connect(0, node_watch, 0);
+    graph.start()
+
+    function resizeCanvas() {
+        var canvasElement = document.getElementById('mycanvas');
+        canvasElement.width = window.innerWidth;
+        canvasElement.height = window.innerHeight;
+    }
+
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+    document.getElementById('close').addEventListener('click', function () {
+        parent.postMessage({method: 'close'}, "*");
+    });
+    document.getElementById('save').addEventListener('click', function () {
+        const serializedData = canvas.graph.serialize();
+        parent.postMessage({method: "save", data: serializedData}, "*");
+    });
+
+
+    //回调函数
+    function receiveMessageFromIndex(event) {
+        if (event.data !== null) {
+            canvas.graph.configure(JSON.parse(event.data));
+        } else {
+
+        }
+    }
+
+    //监听message事件
+    window.addEventListener("message", receiveMessageFromIndex, false);
+
+
+</script>
+</body>
+</html>

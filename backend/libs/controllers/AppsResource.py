@@ -1,5 +1,6 @@
 from flask_restful import Resource, reqparse
 from pypinyin import lazy_pinyin
+import time
 
 from libs.model.Apps import Apps
 from libs.model.Layouts import Layouts
@@ -23,12 +24,14 @@ class AppsResource(Resource):
         args = parser.parse_args()
 
         pinyin = ''.join(lazy_pinyin(args['name']))
+        current_timestamp = time.time()
+
         if args['type'] != 'command':
             if args['type'] == 'default':
                 args['type'] = "link" if 'http' in args['path'] else 'file'
-            args['id'] = args['id'] if args['id'] is not None else md5(f"{args['type']}|{args['path']}")
+            args['id'] = args['id'] if args['id'] is not None else md5(f"{args['type']}|{args['path']}|{current_timestamp}")
         else:
-            args['id'] = args['id'] if args['id'] is not None else md5(f"{args['name']}|{args['path']}")
+            args['id'] = args['id'] if args['id'] is not None else md5(f"{args['name']}|{args['path']}|{current_timestamp}")
         args['path'] = args['path'] if args['type'] == 'command' else args['path']
         new_app = Apps(
             id = args['id'],

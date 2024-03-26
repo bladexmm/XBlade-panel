@@ -64,9 +64,15 @@ export default function WallpaperBasicGrid({
                                 {wallpaper['videos'].map((video, index) => (
                                     <Grid item xs={4} className="wallpaper-items" onClick={() => handleItemClick(video)}
                                           key={index}>
-                                        <video className="wallpaper-video" loop muted>
-                                            <source src={host + video} type="video/mp4"/>
-                                        </video>
+                                        {video.endsWith(".mp4") ? (
+                                            <video className="wallpaper-video" loop muted>
+                                                <source src={host + video} type="video/mp4"/>
+                                            </video>
+                                            ) : (
+                                                <img className="wallpaper-video" src={host + video} alt="wallpaper"/>
+                                        )}
+
+
                                     </Grid>
                                 ))}
                             </Grid>

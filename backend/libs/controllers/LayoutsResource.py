@@ -10,7 +10,7 @@ from libs.utils.tools import result
 class LayoutsResource(Resource):
     def post(self):
         parser = reqparse.RequestParser()
-        parser.add_argument('name', type = str, required = True, help = 'Layout name')
+        parser.add_argument('name', type = str, required = True, help = 'Need Layout name')
         parser.add_argument('i', type = str, required = True, help = 'App ID associated with the layout')
         parser.add_argument('x', type = int, required = False, help = 'X coordinate')
         parser.add_argument('y', type = int, required = False, help = 'Y coordinate')

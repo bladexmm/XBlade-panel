@@ -22,6 +22,8 @@ import AppShortcutRoundedIcon from '@mui/icons-material/AppShortcutRounded';
 import DiamondRoundedIcon from '@mui/icons-material/DiamondRounded';
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
+import MenuOpenIcon from '@mui/icons-material/MenuOpen';
+import SVGIcon from "../../XBladeIcon/SVGIcon";
 
 const VisuallyHiddenInput = styled('input')`
     clip: rect(0 0 0 0);
@@ -35,7 +37,18 @@ const VisuallyHiddenInput = styled('input')`
     width: 1px;
 `;
 
-export default function AddApps({open, onClose,app_id=null, apps=[], appName = '', appPath = '', appIcons = []}) {
+export default function AddApps({
+                                    open,
+                                    onClose,
+                                    app_id = null,
+                                    iconDefault = null,
+                                    setIconDefault = ()=>{},
+                                    apps = [],
+                                    setIconSelectorOpen,
+                                    appName = '',
+                                    appPath = '',
+                                    appIcons = []
+                                }) {
     const [name, setName] = React.useState(appName);
     const [path, setPath] = React.useState(appPath);
     const [submitBtn, setSubmitBtn] = React.useState(false);
@@ -47,8 +60,13 @@ export default function AddApps({open, onClose,app_id=null, apps=[], appName = '
     useState(() => {
         setName(appName)
         setPath(appPath)
-        setIcons(appIcons)
-    }, [open, appName, appPath, appIcons])
+        if(iconDefault !== null){
+            setIcons(iconDefault);
+        }else {
+            setIcons(appIcons)
+        }
+        console.log(iconDefault)
+    }, [open,iconDefault, appName, appPath, appIcons])
     const onAppBindChange = (event, values) => {
         setAppBind(values);
     }
@@ -60,9 +78,10 @@ export default function AddApps({open, onClose,app_id=null, apps=[], appName = '
             headers: {"Content-Type": "application/json"},
             body: {"path": path !== '' ? path : appPath},
         }).then((data) => {
-            setSubmitBtn(false)
-            setName(data.data.title)
-            setIcons(data.data.images)
+            setSubmitBtn(false);
+            setName(data.data.title);
+            setIcons(data.data.images);
+            setIconDefault(null);
         });
     }
 
@@ -72,12 +91,12 @@ export default function AddApps({open, onClose,app_id=null, apps=[], appName = '
         let icon = icons.length > 0 ? icons[iconSelect] : appIcons[0]
         const bodySend = {
             "name": name,
-            "icon": icon,
+            "icon": iconDefault !== null ? JSON.stringify(iconDefault) : icon,
             "path": path,
-            "pid" : appBind !== null ? appBind['id'] : null,
+            "pid": appBind !== null ? appBind['id'] : null,
             "type": 'default',
         }
-        if(app_id != null){
+        if (app_id != null) {
             bodySend.id = app_id
         }
         request({
@@ -111,17 +130,18 @@ export default function AddApps({open, onClose,app_id=null, apps=[], appName = '
             if (!icons.includes(result.data)) {
                 setIcons([result.data, ...icons]);
             }
+            setIconDefault(null);
         })
     };
 
     return (
         <React.Fragment>
-            <DialogTitle>新增应用</DialogTitle>
-            <DialogContent>* 目前仅支持网址，及应用程序</DialogContent>
+
+            <DialogTitle>新增应用/网址/文件</DialogTitle>
             <form>
                 <Stack spacing={2}>
                     <FormControl>
-                        <FormLabel><ViewQuiltRoundedIcon />&ensp;应用名</FormLabel>
+                        <FormLabel><ViewQuiltRoundedIcon/>&ensp;应用名</FormLabel>
                         <Input required placeholder="应用程序描述" sx={{
                             '--Input-focusedInset': 'var(--any, )',
                             '--Input-focusedThickness': '0.25rem',
@@ -136,7 +156,7 @@ export default function AddApps({open, onClose,app_id=null, apps=[], appName = '
                                onChange={(event) => setName(event.target.value)}/>
                     </FormControl>
                     <FormControl>
-                        <FormLabel> <DatasetLinkedRoundedIcon />  &ensp;路径/网址</FormLabel>
+                        <FormLabel> <DatasetLinkedRoundedIcon/>  &ensp;路径/网址</FormLabel>
                         <Input autoFocus required
                                value={path}
                                sx={{
@@ -154,7 +174,7 @@ export default function AddApps({open, onClose,app_id=null, apps=[], appName = '
 
                     </FormControl>
                     <FormControl>
-                        <FormLabel><AppShortcutRoundedIcon />&ensp;绑定应用</FormLabel>
+                        <FormLabel><AppShortcutRoundedIcon/>&ensp;绑定应用</FormLabel>
                         <Autocomplete
                             id="tags-apps"
                             placeholder="选择要绑定的应用"
@@ -168,7 +188,12 @@ export default function AddApps({open, onClose,app_id=null, apps=[], appName = '
                                     </ListItemDecorator>
                                     <ListItemContent sx={{fontSize: 'sm'}}>
                                         {option.name}
-                                        <Typography level="body-xs">
+                                        <Typography level="body-xs"  sx={{
+                                            overflow: 'hidden',
+                                            textOverflow: 'ellipsis',
+                                            whiteSpace: 'nowrap',
+                                            maxWidth: '200px' // 设置最大宽度，可以根据您的需求调整
+                                        }}>
                                             {option.path}
                                         </Typography>
                                     </ListItemContent>
@@ -177,7 +202,10 @@ export default function AddApps({open, onClose,app_id=null, apps=[], appName = '
                         />
                     </FormControl>
                     <FormControl>
-                        <FormLabel><DiamondRoundedIcon />&ensp;图标(选择下列图标)</FormLabel>
+                        <FormLabel><DiamondRoundedIcon/>&ensp;图标</FormLabel>
+                        <Button loadingPosition="end" color="neutral" variant="outlined" sx={{marginBottom: "0.5rem"}}
+                                onClick={() => setIconSelectorOpen(true)}><MenuOpenIcon/>&ensp;选择图标</Button>
+
                         <Button
                             component="label"
                             role={undefined}
@@ -207,20 +235,36 @@ export default function AddApps({open, onClose,app_id=null, apps=[], appName = '
                         </Button>
                         <Grid container spacing={1}
                               sx={{overflowY: "scroll", height: "8rem", marginTop: "1rem"}}>
-                            {(appIcons.lenght > 0 ? appIcons : icons).map((iconSource, index) => (
-                                <Grid xs={2}>
-                                    <Avatar onClick={() => setIconSelect(index)}
-                                            className={iconSelect === index ? "avatars select" : "avatars"}
-                                            src={host + iconSource}/>
+                            {iconDefault !== null ? (
+                                <Grid xs={1}>
+                                    <div className='icon-selected' style={{background: iconDefault.background.style}}
+                                         onClick={() => {
+                                         }}>
+                                        <SVGIcon svgJson={iconDefault.icon.path}
+                                                 defaultColor={iconDefault.color.style}/>
+                                    </div>
                                 </Grid>
-                            ))}
+                            ) : (<React.Fragment>
+                                    {(appIcons.lenght > 0 ? appIcons : icons).map((iconSource, index) => (
+                                        <Grid xs={2}>
+                                            <Avatar onClick={() => setIconSelect(index)}
+                                                    className={iconSelect === index ? "avatars select" : "avatars"}
+                                                    src={host + iconSource}/>
+                                        </Grid>
+                                    ))}
+                                </React.Fragment>)}
+
+
 
                         </Grid>
 
                     </FormControl>
-                    <Button loadingPosition="end" onClick={submitBtnClick} loading={submitBtn}>提交&ensp;<SendRoundedIcon /></Button>
-                    <Button loadingPosition="end"   color="neutral"
-                            onClick={() => onClose()} >关闭&ensp;<CloseRoundedIcon /></Button>
+                    <Button loadingPosition="end" onClick={submitBtnClick} loading={submitBtn}>提交&ensp;
+                        <SendRoundedIcon/></Button>
+                    <Button loadingPosition="end" variant="outlined" color="neutral"
+                            onClick={() => {
+                                onClose();
+                            }}>关闭&ensp;<CloseRoundedIcon/></Button>
 
                 </Stack>
             </form>

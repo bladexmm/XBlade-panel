@@ -1,6 +1,5 @@
 import './index.css';
-import {useSpring,useTransition , animated} from "@react-spring/web";
-import {useEffect} from "react"; // 引入自定义的 CSS 文件
+import {useTransition } from "@react-spring/web";
 
 const FadeIn = ({show, children}) => {
     const transitions = useTransition(children,{
@@ -8,10 +7,14 @@ const FadeIn = ({show, children}) => {
         enter: { opacity: 1,scale:1 },
         leave: { opacity: 0,scale:0 },
     })
+    if(show === true){
+        return transitions((style, children) => (
+            <div style={style}>{children}</div>
+        ));
+    }else {
+        return '';
+    }
 
-    return transitions((style, children) => (
-        <div style={style}>{children}</div>
-    ));
 };
 
 export default FadeIn;

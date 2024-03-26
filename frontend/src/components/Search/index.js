@@ -53,31 +53,23 @@ export default function Search({open, onClose = () => {}, onSearchInput = () => 
                         <DialogTitle>
                             <Input
                                 placeholder="搜索"
-                                variant="plain"
+                                color="neutral" variant="soft"
                                 onChange={(event) => {
                                     onSearchInput(event.target.value)
                                 }}
                                 sx={{
                                     '--Input-radius': '0px',
-                                    borderBottom: '2px solid',
-                                    borderColor: 'neutral.outlinedBorder',
-                                    backgroundColor:"rgba(255, 255, 255, 0.2)",
+                                    borderRadius:"1rem",
                                     width: "100%",
-                                    '&:hover': {
-                                        borderColor: 'neutral.outlinedHoverBorder',
-                                    },
+                                    margin:"auto",
+                                    '--Input-focusedInset': 'var(--any, )',
+                                    '--Input-focusedThickness': '0.25rem',
+                                    '--Input-focusedHighlight': 'rgba(13,110,253,.25)',
                                     '&::before': {
-                                        border: '1px solid var(--Input-focusedHighlight)',
-                                        transform: 'scaleX(0)',
-                                        left: 0,
-                                        right: 0,
-                                        bottom: '-2px',
-                                        top: 'unset',
-                                        transition: 'transform .15s cubic-bezier(0.1,0.9,0.2,1)',
-                                        borderRadius: 0,
+                                        transition: 'box-shadow .15s ease-in-out',
                                     },
-                                    '&:focus-within::before': {
-                                        transform: 'scaleX(1)',
+                                    '&:focus-within': {
+                                        borderColor: '#86b7fe',
                                     },
                                 }}
                             /></DialogTitle>

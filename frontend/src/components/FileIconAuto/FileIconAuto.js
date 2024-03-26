@@ -1,6 +1,5 @@
 import * as React from 'react';
 
-import {styled} from "@mui/joy";
 import {getUserSettings} from "../../utils/settings";
 import {useEffect, useState} from "react";
 import {defaultStyles, FileIcon} from "react-file-icon";

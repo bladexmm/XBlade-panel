@@ -2,7 +2,6 @@ import * as React from 'react';
 import Box from '@mui/joy/Box';
 import Typography from '@mui/joy/Typography';
 import QRCode from "qrcode.react";
-import Link from "@mui/joy/Link";
 
 export default function Qrcode() {
     const currentURL = window.location.href;

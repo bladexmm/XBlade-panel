@@ -97,8 +97,9 @@ export default function Layouts({
                     <div key={app['i']}
                          className={paneDraggable === true ? 'xBlade-icons GridItem' : 'xBlade-icons'}
                          unselectable="on"
-                         onContextMenu={(e) => handleContextMenu(e, 'pane', app['i'], true)}
-                    >
+                         onContextMenu={(e) => {
+                             handleContextMenu(e, 'pane', app['i'], true)
+                         }}>
                         <XBladeIcon
                             id={app['i']}
                             size={app['w']}
@@ -106,8 +107,11 @@ export default function Layouts({
                             appType={app['i'] in appsAll ? appsAll[app['i']]['type'] : ''}
                             iconPath={app['i'] in appsAll ? (appsAll[app['i']]['icon'] !== '' ? host + appsAll[app['i']]['icon'] : '') : ''}
                             appPath={(app['i'] in appsAll && appsAll[app['i']]['path'] && appsAll[app['i']]['path'].length > 0) ?
-                                host + appsAll[app['i']]['path'] : ''}                            onClickedBtn={onClicked}
-                            onLongPress={() => {
+                                host + appsAll[app['i']]['path'] : ''}
+                            onClickedBtn={onClicked}
+                            setMenuPosition={(e)=>setMenuPosition(({x: e.clientX, y: e.clientY}))}
+
+                        onLongPress={() => {
                                 setMenuVisible(false);
                                 setPaneDraggable(true);
                             }}

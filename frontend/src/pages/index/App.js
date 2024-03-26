@@ -21,7 +21,6 @@ import {CssVarsProvider} from '@mui/joy/styles';
 import {ThemeProvider} from "@mui/joy";
 import Layouts from "../../components/Layouts";
 import Commands from "../../components/Commands";
-import {useSpring,animated } from "@react-spring/web";
 
 function App() {
     const widthBox = 3600;
@@ -29,13 +28,13 @@ function App() {
     const [paneLayouts, setPaneLayouts] = React.useState([]);
     const [appsAll, setAppsAll] = React.useState([]);
 
-    const [commandOpen,setCommandOpen] = React.useState(false);
+    const [commandOpen, setCommandOpen] = React.useState(false);
 
     const [searchOpen, setSearchOpen] = React.useState(false);
     const [filteredLayouts, setFilteredLayouts] = useState(paneLayouts);
 
     const [openSettingsDialog, setOpenSettingsDialog] = React.useState(false);
-    const [wallPaper, setWallPaper] = React.useState("/assets/video/动态/wave.mp4");
+    const [wallPaper, setWallPaper] = React.useState("/assets/wallpapers/动态/wave.mp4");
     const [themeMode, setThemeMode] = React.useState('system');
 
     const [addAppOpen, setAddAppOpen] = React.useState(false);
@@ -53,7 +52,7 @@ function App() {
 
 
     // const host = '';
-    const host = 'http://192.168.0.173:5000';
+    const host = 'http://192.168.0.173:54321';
     document.title = 'XBlade Panel';
 
     const [dockLayouts, setDockLayouts] = React.useState([]);
@@ -77,7 +76,7 @@ function App() {
             for (let i = 0; i < data.data.apps.length; i++) {
                 apps[data.data.apps[i]['id']] = data.data.apps[i]
             }
-            setAppsAll(apps)
+            setAppsAll(apps);
             setPaneLayouts(data.data.layouts);
             setFilteredLayouts(data.data.apps);
             updateDockLayouts()
@@ -122,8 +121,9 @@ function App() {
                 headers: {"Content-Type": "application/json"},
                 body: {"id": id, "type": "apps"},
             }).then((data) => {
-                if(data.msg === 'empty'){
+                if (data.msg === 'empty') {
                     setCommandOpen(true);
+                    setRightClickMenuId(id);
                 }
             });
         }
@@ -286,13 +286,13 @@ function App() {
         });
         setFilteredLayouts(filtered);
     };
+
     return (
         <ThemeProvider>
             <CssVarsProvider
                 defaultMode={themeMode}
                 modeStorageKey={themeMode === "dark" ? "joy-mode-scheme-dark" : ""}
             >
-
                 {menuVisible && (
                     <RightClickMenu
                         xPos={menuPosition.x}
@@ -313,12 +313,10 @@ function App() {
                             setMenuVisible(false);
                         }}
                         pinBtn={pinApp}
-                        commandBtn={()=>{
+                        commandBtn={() => {
                             setCommandOpen(true);
                         }}
-                        closeBtn={() => {
-                            setMenuVisible(false);
-                        }}
+                        setMenuVisible={setMenuVisible}
                         layoutType={rightClickMenuLayout}
                         id={rightClickMenuId}
                     />
@@ -327,16 +325,16 @@ function App() {
                     {commandOpen && (
                         <Commands app_id={rightClickMenuId}
                                   filteredLayouts={filteredLayouts}
-                                  closeBtn={() => {
-                                      setCommandOpen(false);
-                                  }}
-
+                                  defaultPosition={menuPosition}
+                                  setCommandOpen={setCommandOpen}
                         />
                     )}
+
+
                     <SettingsDialog open={openSettingsDialog} onClose={() => {
                         setOpenSettingsDialog(false); // 关闭弹窗
                     }}>
-                        <WallpaperBasicGrid onClick={(videoSource) => {
+                        <WallpaperBasicGrid sx={{height:"100%"}} onClick={(videoSource) => {
                             setWallPaper(host + videoSource);
                         }}></WallpaperBasicGrid>
 
@@ -366,7 +364,7 @@ function App() {
                         onSearchInput={handleSearchInput}
                     >
                         <Grid container
-                              columns={{ xs: 12, sm: 12, md: 12 }}
+                              columns={{xs: 12, sm: 12, md: 12}}
                               sx={{overflowX: "hidden", width: "100%"}}>
                             {filteredLayouts.map((app, index) => (
                                 <Grid xs={4} sm={2} md={1} sx={{height: "6rem"}}>
@@ -451,77 +449,82 @@ function App() {
                     </div>
 
                     <div className="Dock">
-                            <HorizontalScrollbar>
-                                <GridLayout
-                                    className="layout"
-                                    layout={dockLayouts}
-                                    cols={42}
-                                    rowHeight={90}
-                                    compactType={'horizontal'}
-                                    width={widthBox}
-                                    isDraggable={false}
-                                    isResizable={false}
-                                    onLayoutChange={(layoutIn) => {
-                                        setDockLayouts(layoutIn)
-                                    }}
-                                >
-                                    <div key="btn|settings">
-                                        <XBladeIcon
-                                            id="btn|settings"
-                                            name="设置"
-                                            iconPath={host + "/assets/icons/settings-light.png"}
-                                            onClickedBtn={() => {
-                                                setOpenSettingsDialog(true);
-                                                setMenuVisible(false);
-                                            }}
-                                        />
-                                    </div>
-                                    <div key="btn|search">
-                                        <XBladeIcon
-                                            id="btn|search"
-                                            name="搜索"
-                                            iconPath={host + "/assets/icons/apps.png"}
-                                            onClickedBtn={() => {
-                                                setSearchOpen(true);
-                                                setMenuVisible(false);
-                                            }}/>
-                                    </div>
+                        <HorizontalScrollbar>
+                            <GridLayout
+                                className="layout"
+                                layout={dockLayouts}
+                                cols={42}
+                                rowHeight={90}
+                                compactType={'horizontal'}
+                                width={widthBox}
+                                isDraggable={false}
+                                isResizable={false}
+                                onLayoutChange={(layoutIn) => {
+                                    setDockLayouts(layoutIn)
+                                }}
+                            >
+                                <div key="btn|settings">
+                                    <XBladeIcon
+                                        id="btn|settings"
+                                        name="设置"
+                                        iconPath={host + "/assets/icons/settings-light.png"}
+                                        onClickedBtn={() => {
+                                            setOpenSettingsDialog(true);
+                                            setMenuVisible(false);
+                                        }}
+                                    />
+                                </div>
+                                <div key="btn|search">
+                                    <XBladeIcon
+                                        id="btn|search"
+                                        name="搜索"
+                                        iconPath={host + "/assets/icons/apps.png"}
+                                        onClickedBtn={() => {
+                                            setSearchOpen(true);
+                                            setMenuVisible(false);
+                                        }}/>
+                                </div>
 
 
-                                    {dockLayouts.map((app, index) => {
-                                        if (!app['i'].startsWith('btn|')) {
-                                            return (
-                                                <div key={app['i']}
-                                                     className="xBlade-icons"
-                                                     onContextMenu={(e) => handleContextMenu(e, 'dock', app['i'], true, false)}
-                                                >
-                                                    <XBladeIcon
-                                                        id={app['i']}
-                                                        size={app['w']}
-                                                        appType={app['i'] in appsAll ? appsAll[app['i']]['type'] : ''}
-                                                        name={app['i'] in appsAll ? appsAll[app['i']]['name'] : ''}
-                                                        iconPath={(app['i'] in appsAll && appsAll[app['i']]['icon'] && appsAll[app['i']]['icon'].length > 0) ?
-                                                            host + appsAll[app['i']]['icon'] : ''}
-                                                        appPath={(app['i'] in appsAll && appsAll[app['i']]['path'] && appsAll[app['i']]['path'].length > 0) ?
-                                                            host + appsAll[app['i']]['path'] : ''}
-                                                        onClickedBtn={onClicked}
-                                                        doubleClickBtn={(e) => handleContextMenu(e, 'dock', app['i'], false, true)}
+                                {dockLayouts.map((app, index) => {
+                                    if (!app['i'].startsWith('btn|')) {
+                                        return (
+                                            <div key={app['i']}
+                                                 className="xBlade-icons"
+                                                 onContextMenu={(e) => handleContextMenu(e, 'dock', app['i'], true, false)}
+                                            >
+                                                <XBladeIcon
+                                                    id={app['i']}
+                                                    size={app['w']}
+                                                    appType={app['i'] in appsAll ? appsAll[app['i']]['type'] : ''}
+                                                    name={app['i'] in appsAll ? appsAll[app['i']]['name'] : ''}
+                                                    iconPath={(app['i'] in appsAll && appsAll[app['i']]['icon'] && appsAll[app['i']]['icon'].length > 0) ?
+                                                        host + appsAll[app['i']]['icon'] : ''}
+                                                    appPath={(app['i'] in appsAll && appsAll[app['i']]['path'] && appsAll[app['i']]['path'].length > 0) ?
+                                                        host + appsAll[app['i']]['path'] : ''}
+                                                    onClickedBtn={onClicked}
+                                                    doubleClickBtn={(e) => handleContextMenu(e, 'dock', app['i'], false, true)}
 
-                                                    />
-                                                </div>
-                                            );
-                                        } else {
-                                            return null;
-                                        }
-                                    })}
-                                </GridLayout>
-                            </HorizontalScrollbar>
-                        </div>
+                                                />
+                                            </div>
+                                        );
+                                    } else {
+                                        return null;
+                                    }
+                                })}
+                            </GridLayout>
+                        </HorizontalScrollbar>
+                    </div>
+                    {wallPaper.endsWith(".mp4") ? (
+                        <video className="wallpapers-video" autoPlay loop muted key={wallPaper}>
+                            <source src={wallPaper} type="video/mp4"/>
+                        </video>
+                    ) : (
+                        <img className="wallpapers-img" key={wallPaper} style={{
+                            backgroundImage: "url("+wallPaper+")"
+                        }}/>
+                    )}
 
-
-                    <video autoPlay loop muted key={wallPaper}>
-                        <source src={wallPaper} type="video/mp4"/>
-                    </video>
 
                 </div>
 

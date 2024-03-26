@@ -8,6 +8,14 @@
     overflow: hidden;
 }
 
+.svg-icon{
+    display: grid;
+    justify-content: center;
+    align-items: center;
+    align-content: center;
+    border-radius: 1rem;
+}
+
 .icon {
     margin-bottom: 0;
     cursor: pointer;

@@ -20,6 +20,8 @@ import AppShortcutRoundedIcon from "@mui/icons-material/AppShortcutRounded";
 import DiamondRoundedIcon from "@mui/icons-material/DiamondRounded";
 import SendRoundedIcon from "@mui/icons-material/SendRounded";
 import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
+import MenuOpenIcon from "@mui/icons-material/MenuOpen";
+import SVGIcon from "../../XBladeIcon/SVGIcon";
 
 const VisuallyHiddenInput = styled('input')`
     clip: rect(0 0 0 0);
@@ -39,10 +41,16 @@ export default function AddCommand({
                                        onClose,
                                        app = null,
                                        app_id = null,
+                                       iconDefault = null,
+                                       setIconDefault = ()=>{},
                                        apps = [],
                                        appName = '',
                                        appPath = null,
-                                       appIcons = []
+                                       appIcons = [],
+                                       setIconSelectorOpen = ()=>{},
+                                       commandDefault=null,
+                                       setCommandDefault=()=>{},
+                                       setCommandEditOpen=()=>{},
                                    }) {
     const [name, setName] = React.useState(appName);
     const [path, setPath] = React.useState(appPath);
@@ -67,8 +75,8 @@ export default function AddCommand({
         let icon = icons.length > 0 ? icons[iconSelect] : appIcons[0]
         const bodySend = {
             "name": name !== '' ? name : appName,
-            "icon": icon ? icon : '',
-            "path": path !== null ? path : appPath,
+            "icon": iconDefault !== null ? JSON.stringify(iconDefault) : icon,
+            "path": commandDefault !== null ? commandDefault : path,
             "pid": appBind !== null ? appBind['id'] : null,
             "type": 'command',
         }
@@ -106,23 +114,24 @@ export default function AddCommand({
             if (!icons.includes(result.data)) {
                 setIcons([result.data, ...icons]);
             }
+            setIconDefault(null);
         })
     };
 
-    const onTagsChange = (event, values) => {
-        setPath(values);
-    }
 
     const onAppBindChange = (event, values) => {
         setAppBind(values);
-        console.log(appBind);
     }
 
     useState(() => {
         setName(appName)
         setIcons(appIcons)
+        console.log(appPath);
         if (appPath !== null && appPath !== '') {
-            setPath(JSON.parse(appPath))
+            setPath(JSON.parse(appPath));
+            if(commandDefault === null){
+                setCommandDefault(JSON.parse(appPath));
+            }
             if(app['pid'] != null){
                 for (let i = 0; i < apps.length; i++) {
                     if (apps[i].id === app.pid) {
@@ -135,12 +144,11 @@ export default function AddCommand({
             setPath([]);
         }
         fetchCommands()
-    }, [])
+    }, [iconDefault])
 
     return (
         <React.Fragment>
             <DialogTitle>新增快捷指令</DialogTitle>
-            <DialogContent>* 仅支持快捷键（后续将支持脚本）</DialogContent>
             <form>
                 <Stack spacing={2}>
                     <FormControl>
@@ -160,15 +168,9 @@ export default function AddCommand({
                     </FormControl>
                     <FormControl>
                         <FormLabel><DataObjectRoundedIcon/>  &ensp;指令</FormLabel>
-                        <Autocomplete
-                            multiple
-                            id="tags-commands"
-                            placeholder="选择快捷键"
-                            defaultValue={path}
-                            options={commands}
-                            onChange={onTagsChange}
-                            getOptionLabel={(option) => option.key}
-                        />
+                        <Button loadingPosition="end" color="neutral" variant="outlined" sx={{marginBottom:"0.5rem"}}
+                                onClick={() => setCommandEditOpen(true)} ><MenuOpenIcon />&ensp;打开编辑指令面板</Button>
+
                     </FormControl>
                     <FormControl>
                         <FormLabel><AppShortcutRoundedIcon/>&ensp;绑定应用</FormLabel>
@@ -186,7 +188,12 @@ export default function AddCommand({
                                     </ListItemDecorator>
                                     <ListItemContent sx={{fontSize: 'sm'}}>
                                         {option.name}
-                                        <Typography level="body-xs">
+                                        <Typography level="body-xs"  sx={{
+                                            overflow: 'hidden',
+                                            textOverflow: 'ellipsis',
+                                            whiteSpace: 'nowrap',
+                                            maxWidth: '200px' // 设置最大宽度，可以根据您的需求调整
+                                        }}>
                                             {option.path}
                                         </Typography>
                                     </ListItemContent>
@@ -195,7 +202,9 @@ export default function AddCommand({
                         />
                     </FormControl>
                     <FormControl>
-                        <FormLabel><DiamondRoundedIcon/>&ensp;图标(选择下列图标)</FormLabel>
+                        <FormLabel><DiamondRoundedIcon/>&ensp;图标</FormLabel>
+                        <Button loadingPosition="end" color="neutral" variant="outlined" sx={{marginBottom:"0.5rem"}}
+                                onClick={() => setIconSelectorOpen(true)} ><MenuOpenIcon />&ensp;选择图标</Button>
                         <Button
                             component="label"
                             role={undefined}
@@ -225,13 +234,26 @@ export default function AddCommand({
                         </Button>
                         <Grid container spacing={1}
                               sx={{overflowY: "scroll", height: "8rem", marginTop: "1rem"}}>
-                            {(appIcons.lenght > 0 ? appIcons : icons).map((iconSource, index) => (
-                                <Grid xs={2}>
-                                    <Avatar onClick={() => setIconSelect(index)}
-                                            className={iconSelect === index ? "avatars select" : "avatars"}
-                                            src={host + iconSource}/>
+                            {iconDefault !== null ? (
+                                <Grid xs={1}>
+                                    <div className='icon-selected' style={{background: iconDefault.background.style}}
+                                         onClick={() => {
+                                         }}>
+                                        <SVGIcon svgJson={iconDefault.icon.path}
+                                                 defaultColor={iconDefault.color.style}/>
+                                    </div>
                                 </Grid>
-                            ))}
+                            ) : (<React.Fragment>
+                                {(appIcons.lenght > 0 ? appIcons : icons).map((iconSource, index) => (
+                                    <Grid xs={2}>
+                                        <Avatar onClick={() => setIconSelect(index)}
+                                                className={iconSelect === index ? "avatars select" : "avatars"}
+                                                src={host + iconSource}/>
+                                    </Grid>
+                                ))}
+                            </React.Fragment>)}
+
+
 
                         </Grid>
 
@@ -239,7 +261,7 @@ export default function AddCommand({
                     </FormControl>
                     <Button loadingPosition="end" onClick={submitBtnClick} loading={submitBtn}>提交&ensp;
                         <SendRoundedIcon/></Button>
-                    <Button loadingPosition="end" color="neutral"
+                    <Button loadingPosition="end" color="neutral" variant="outlined"
                             onClick={() => onClose()} >关闭&ensp;<CloseRoundedIcon /></Button>
                 </Stack>
             </form>

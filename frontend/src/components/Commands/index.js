@@ -6,18 +6,25 @@ import request from "../../utils/request";
 import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import ControlCameraRoundedIcon from '@mui/icons-material/ControlCameraRounded';
 import SaveIcon from '@mui/icons-material/Save';
-import FadeIn from "../FadeIn";
 import RightClickMenu from "../RightClickMenu";
 import AddApplication from "../AddApplication";
+import {
+    useSpring,
+    animated,
+    config,
+} from '@react-spring/web'
+
+
 export default function Commands({
                                      app_id = '',
+                                     defaultPosition = null,
                                      filteredLayouts = [],
-                                     closeBtn = () => {}
+                                     setCommandOpen = () => {
+                                     },
                                  }) {
     const [paneDraggable, setPaneDraggable] = React.useState(false);
     const [paneLayouts, setPaneLayouts] = React.useState([]);
     const [appsAll, setAppsAll] = React.useState([]);
-    const [checked, setChecked] = React.useState(false);
     const [fullscreen, setFullscreen] = React.useState(false);
 
     const [menuVisible, setMenuVisible] = useState(false);
@@ -30,10 +37,9 @@ export default function Commands({
     const [appPath, setAppPath] = React.useState('');
     const [appIcons, setAppIcons] = React.useState([]);
 
+    const pageHeight = window.innerHeight;
 
-
-
-    const updateLayouts = ()=> {
+    const updateLayouts = () => {
         request({
             url: "/api/layouts?name=" + app_id,
             method: "GET",
@@ -117,14 +123,31 @@ export default function Commands({
         saveLayouts(layoutsNew)
     }
 
+    const defaultY = defaultPosition !== null ? ((defaultPosition.y / pageHeight) * 100) : 50;
+    const defaultX = defaultPosition !== null ? ((defaultPosition.x / pageHeight) * 100) : 50;
+
+    const [fullscreenStyle, setFullscreenStyle] = useSpring(() => ({
+        config: config.stiff,
+        from: {
+            width: "10%",
+            height: "10%",
+            top: defaultY + '%',
+            left: defaultX + '%',
+        },
+        to: {
+            top: "53%", // 只保留字符串值
+            left: "50%", // 只保留字符串值
+            width: fullscreen ? "100%" : "90%", // 只保留字符串值
+            height: fullscreen ? "100%" : "90%" // 只保留字符串值
+        }
+    }));
     useState(() => {
         if (app_id !== '') {
             updateLayouts()
         }
-        setChecked(true)
     }, [app_id])
     return (
-        <FadeIn show={checked}>
+        <React.Fragment>
             {addAppOpen && (
                 <AddApplication
                     open={addAppOpen}
@@ -167,47 +190,73 @@ export default function Commands({
                     id={rightClickMenuId}
                 />
             )}
-        <div className={fullscreen === true ? "commands-full" : "commands"}>
-            <div className="cmd-header">
+            <animated.div className="commands" style={{...fullscreenStyle,}}>
+                <div className="cmd-header">
 
-                <div className="header-btn" onClick={() => closeBtn()}>
-                    <CloseRoundedIcon fontSize="large" sx={{color: "#fff", margin: "auto"}}/>
-                </div>
-                <div className="header-btn" onClick={() => {
-                    setFullscreen(fullscreen === true ? false : true);
-                }}>
-                    <ControlCameraRoundedIcon fontSize="large" sx={{color: "#fff", margin: "auto"}}/>
-                </div>
-                {paneDraggable && (
-                    <div className="header-btn" onClick={() => saveLayouts(paneLayouts)}>
-                        <SaveIcon fontSize="large" sx={{color: "#fff", margin: "auto"}}/>
+                    <div className="header-btn" onClick={() => {
+                        setFullscreenStyle({
+                            config: config.stiff,
+                            from: {
+                                width: fullscreen ? "100%" : "90%",
+                                height: fullscreen ? "100%" : "90%",
+                            },
+                            to: {
+                                width: "0%",
+                                height: "0%",
+                                top: '110%',
+                                // left: '5%',
+                            },
+
+                            onRest: () => {
+                                setCommandOpen(false); // 在动画完成后执行关闭操作
+                            }
+                        });
+                    }}>
+                        <CloseRoundedIcon fontSize="large" sx={{color: "#fff", margin: "auto"}}/>
                     </div>
-                )}
+                    <div className="header-btn" onClick={() => {
+                        setFullscreen((prevFullscreen) => {
+                            const newFullscreen = !prevFullscreen;
+                            setFullscreenStyle({
+                                width: newFullscreen ? "100%" : "90%",
+                                height: newFullscreen ? "100%" : "90%",
+                                top: newFullscreen ? "50%" : "53%",
+                            });
+                            return newFullscreen;
+                        });
+                    }}>
+                        <ControlCameraRoundedIcon fontSize="large" sx={{color: "#fff", margin: "auto"}}/>
+                    </div>
+                    {paneDraggable && (
+                        <div className="header-btn" onClick={() => saveLayouts(paneLayouts)}>
+                            <SaveIcon fontSize="large" sx={{color: "#fff", margin: "auto"}}/>
+                        </div>
+                    )}
 
-            </div>
-            <div className="pane-commands">
-                <Layouts
-                    layouts={paneLayouts}
-                    appsAll={appsAll}
-                    paneLayouts={paneLayouts}
-                    setPaneLayouts={(value) => {
-                        setPaneLayouts(value);
-                    }}
-                    setMenuPosition={(value) => {
-                        setMenuPosition(value);
-                    }}
-                    setRightClickMenuId={(value) => {
-                        setRightClickMenuId(value);
-                    }}
+                </div>
+                <div className="pane-commands">
+                    <Layouts
+                        layouts={paneLayouts}
+                        appsAll={appsAll}
+                        paneLayouts={paneLayouts}
+                        setPaneLayouts={(value) => {
+                            setPaneLayouts(value);
+                        }}
+                        setMenuPosition={(value) => {
+                            setMenuPosition(value);
+                        }}
+                        setRightClickMenuId={(value) => {
+                            setRightClickMenuId(value);
+                        }}
 
-                    setPaneDraggable={(value) => {
-                        setPaneDraggable(value);
-                    }}
-                    setMenuVisible={setMenuVisible}
-                    paneDraggable={paneDraggable}
-                />
-            </div>
-        </div>
-        </FadeIn>
+                        setPaneDraggable={(value) => {
+                            setPaneDraggable(value);
+                        }}
+                        setMenuVisible={setMenuVisible}
+                        paneDraggable={paneDraggable}
+                    />
+                </div>
+            </animated.div>
+        </React.Fragment>
     )
 }

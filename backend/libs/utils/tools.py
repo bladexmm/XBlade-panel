@@ -13,6 +13,8 @@ from PIL import Image
 import subprocess
 import platform
 
+from libs.utils.graph import XbladeGraph
+
 
 def read_json(file_path, encoding = 'utf-8'):
     if not os.path.exists(file_path):
@@ -94,14 +96,44 @@ def extract_icon_from_exe(icon_in_path, icon_name, icon_out_path, out_width = 56
     return full_outpath
 
 
-
-
 def exec_command(commands):
-    path = [row['command'] for row in commands]
-    pyautogui.hotkey(*path)
+    nodes = list_to_dict(commands['nodes'], "id")
+    start_node = [row for row in commands['nodes'] if row['type'] == '基础/开始']
+    if len(start_node) == 0:
+        return
+    start_node = start_node[0]
+    links = [{
+        'id'       : link[0],
+        'from'     : link[1],
+        'port_from': link[2],
+        'to'       : link[3],
+        'port_to'  : link[4],
+        'type'     : link[5],
+    } for link in commands['links']]
+    links = list_to_dict(links, 'id')
+    link_output = [output for output in start_node['outputs'] if output['type'] == 'cmd']
+    max_node = 500
+    i = 0
+    while len(link_output) > 0 and i < max_node:
+        # 查找下一个节点
+        next_link_id = link_output[0]['links'][0]
+        next_link = links[next_link_id]
+        next_node = nodes[next_link['to']]
+        if next_node['type'] == '基础/结束':
+            return
+        XbladeGraph.call_func_by_alias(next_node['type'], next_node)
+        if 'outputs' not in next_node:
+            return
+        link_output = [output for output in next_node['outputs'] if output['type'] == 'cmd']
+        i += 1
 
 
-def open_with_default_program(file_path, type = 'shell'):
+
+def hotkeys(keys):
+    pyautogui.hotkey(*keys)
+
+
+def open_with_default_program(file_path):
     # 确定操作系统
     system = platform.system()
 

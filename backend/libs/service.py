@@ -16,13 +16,13 @@ def getWallpapers():
     获取壁纸
     :return:
     """
-    directory_path = 'react_app/assets/video/'
+    directory_path = 'react_app/assets/wallpapers/'
     folders = glob(directory_path + '*/')
     videos  = []
     for folder in folders:
         folders_name = os.path.basename(os.path.normpath(folder))
         files        = os.listdir(f"{directory_path}{folders_name}/")
-        files        = [f"/assets/video/{folders_name}/{file}" for file in files]
+        files        = [f"/assets/wallpapers/{folders_name}/{file}" for file in files]
         videos.append({'name': folders_name, 'videos': files})
     return result(1, videos, 'success')
 
