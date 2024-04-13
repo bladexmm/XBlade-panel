@@ -4,7 +4,6 @@ import FormControl from '@mui/joy/FormControl';
 import FormLabel from '@mui/joy/FormLabel';
 import Input from '@mui/joy/Input';
 import DialogTitle from '@mui/joy/DialogTitle';
-import DialogContent from '@mui/joy/DialogContent';
 import Stack from '@mui/joy/Stack';
 import {Autocomplete, AutocompleteOption, Avatar, ListItemContent, ListItemDecorator} from "@mui/joy";
 import request from "../../../utils/request";
@@ -13,7 +12,7 @@ import "./index.css";
 import Grid from '@mui/joy/Grid';
 import SvgIcon from '@mui/joy/SvgIcon';
 import {styled} from '@mui/joy';
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import FileIconAuto from "../../FileIconAuto/FileIconAuto";
 import Typography from "@mui/joy/Typography";
 import ViewQuiltRoundedIcon from '@mui/icons-material/ViewQuiltRounded';
@@ -21,9 +20,9 @@ import DatasetLinkedRoundedIcon from '@mui/icons-material/DatasetLinkedRounded';
 import AppShortcutRoundedIcon from '@mui/icons-material/AppShortcutRounded';
 import DiamondRoundedIcon from '@mui/icons-material/DiamondRounded';
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
-import CloseRoundedIcon from '@mui/icons-material/CloseRounded';
 import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 import SVGIcon from "../../XBladeIcon/SVGIcon";
+import io from 'socket.io-client';
 
 const VisuallyHiddenInput = styled('input')`
     clip: rect(0 0 0 0);
@@ -40,6 +39,7 @@ const VisuallyHiddenInput = styled('input')`
 export default function AddApps({
                                     open,
                                     onClose,
+                                    app = null,
                                     app_id = null,
                                     iconDefault = null,
                                     setIconDefault = ()=>{},
@@ -60,12 +60,16 @@ export default function AddApps({
     useState(() => {
         setName(appName)
         setPath(appPath)
-        if(iconDefault !== null){
-            setIcons(iconDefault);
-        }else {
-            setIcons(appIcons)
+        setIcons(iconDefault !== null ? iconDefault : appIcons);
+
+        if(app_id != null && app['pid'] != null){
+            for (let i = 0; i < apps.length; i++) {
+                if (apps[i].id === app.pid) {
+                    setAppBind(apps[i]);
+                    break;
+                }
+            }
         }
-        console.log(iconDefault)
     }, [open,iconDefault, appName, appPath, appIcons])
     const onAppBindChange = (event, values) => {
         setAppBind(values);
@@ -87,6 +91,8 @@ export default function AddApps({
 
 
     const submitBtnClick = () => {
+        // socket.emit("chat", { user: "user.username", msg: "chatInput" });
+        // return
         setSubmitBtn(true)
         let icon = icons.length > 0 ? icons[iconSelect] : appIcons[0]
         const bodySend = {
@@ -116,24 +122,47 @@ export default function AddApps({
         const formData = new FormData();
         formData.append('file', event.target.files[0]);
         // 使用fetch发送POST请求到Flask上传接口
-        fetch(host + '/api/apps/upload', {
+        fetch(host + '/api/upload/script', {
             method: 'POST',
             body: formData
         }).then(response => {
             if (response.ok) {
-                // 解析JSON格式的响应数据
                 return response.json();
             } else {
                 throw new Error('File upload failed');
             }
         }).then(result => {
-            if (!icons.includes(result.data)) {
-                setIcons([result.data, ...icons]);
+            const iconsArray = Array.isArray(icons) ? icons : [];
+            if (!iconsArray.includes(result.data)) {
+                setIcons([result.data, ...iconsArray]);
             }
             setIconDefault(null);
         })
     };
+    // const [socket, setSocket] = useState(io('http://localhost:54321'));
+    useEffect(() => {
+        // // 监听组件挂载时设置WebSocket监听器
+        // const setSocketListeners = () => {
+        //     socket.on('connect', () => {
+        //         console.log("Websocket connected: " + socket.connected);
+        //     });
+        //
+        //     socket.on('chat', (data) => {
+        //         console.log("Data received: ",data);
+        //     });
+        //
+        //     // 在组件卸载时清理连接和监听器
+        //     return () => {
+        //         socket.off('connect');
+        //         socket.off('custom-server-msg');
+        //         socket.close();
+        //     };
+        // };
 
+        // setSocketListeners();
+        // 注意：仅在组件挂载时执行一次
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
     return (
         <React.Fragment>
 
@@ -179,6 +208,7 @@ export default function AddApps({
                             id="tags-apps"
                             placeholder="选择要绑定的应用"
                             options={apps}
+                            defaultValue={appBind}
                             onChange={onAppBindChange}
                             getOptionLabel={(option) => option.name}
                             renderOption={(props, option) => (
@@ -261,11 +291,6 @@ export default function AddApps({
                     </FormControl>
                     <Button loadingPosition="end" onClick={submitBtnClick} loading={submitBtn}>提交&ensp;
                         <SendRoundedIcon/></Button>
-                    <Button loadingPosition="end" variant="outlined" color="neutral"
-                            onClick={() => {
-                                onClose();
-                            }}>关闭&ensp;<CloseRoundedIcon/></Button>
-
                 </Stack>
             </form>
         </React.Fragment>

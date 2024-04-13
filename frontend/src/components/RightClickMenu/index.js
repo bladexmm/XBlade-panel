@@ -1,12 +1,15 @@
 import React, {useRef, useEffect, useState} from 'react';
 import './index.css';
 import {
-    useSpring,animated, config,
+    useSpring, animated, config,
 } from '@react-spring/web'
+import request from "../../utils/request";
+import {useSnackbar} from "../SnackbarUtil/SnackbarUtil";
+import {getUserSettings} from "../../utils/settings";
 
 
 const RightClickMenu = ({
-                            xPos, yPos, hideMenu, layoutType, changeSize,
+                            id, xPos, yPos, hideMenu, layoutType,
                             deleteBtn = layoutType => {
                             },
                             editBtn = () => {
@@ -20,6 +23,8 @@ const RightClickMenu = ({
                         }) => {
     const menuRef = useRef(null);
     const [menuDimensions, setMenuDimensions] = useState({width: 0, height: 0});
+    const {showMessage} = useSnackbar();
+    const host = getUserSettings('settings.host');
 
     useEffect(() => {
         // 获取菜单的宽度和高度
@@ -47,6 +52,17 @@ const RightClickMenu = ({
             left: adjustedXPos - 20,
         }
     }));
+    const shareApp = () => {
+        request({
+            url: "/api/apps/share?id=" + id,
+            method: "GET",
+            headers: {"Content-Type": "application/json"},
+            body: {"id": id},
+        }).then((res) => {
+            showMessage(res.msg, res.code);
+            window.open(host + res.data, '_blank');
+        });
+    }
     return (
         <animated.div
             ref={menuRef}
@@ -60,21 +76,19 @@ const RightClickMenu = ({
                 {layoutType === 'pane' && (
                     <React.Fragment>
                         <li onClick={() => commandBtn()}>打开命令面板</li>
-                        <hr className="divider"/>
                         <li onClick={() => pinBtn()}>固定到任务栏</li>
+                        <hr className="divider"/>
+                        <li onClick={shareApp}> 分享</li>
                         <li onClick={() => editBtn()}>编辑</li>
                         <li onClick={() => deleteBtn(layoutType)}>移除</li>
-                        <hr className="divider"/>
-                        <li onClick={() => changeSize(1)}>小</li>
-                        <li onClick={() => changeSize(2)}>中</li>
-                        <li onClick={() => changeSize(3)}>大</li>
                     </React.Fragment>
 
                 )}
 
                 {layoutType === 'search' && (
                     <React.Fragment>
-                        <li onClick={() => pinBtn()}>添加</li>
+                        <li onClick={() => pinBtn()}>添加到主屏幕</li>
+                        <li onClick={shareApp}> 分享</li>
                         <li onClick={() => editBtn()}>编辑</li>
                         <li onClick={() => deleteBtn(layoutType)}>删除</li>
                     </React.Fragment>
@@ -83,12 +97,13 @@ const RightClickMenu = ({
 
                 {layoutType === 'command' && (
                     <React.Fragment>
+                        <li onClick={shareApp}> 分享</li>
                         <li onClick={() => editBtn()}>编辑</li>
                         <li onClick={() => deleteBtn(layoutType)}>删除</li>
-                        <hr className="divider"/>
-                        <li onClick={() => changeSize(1)}>小</li>
-                        <li onClick={() => changeSize(2)}>中</li>
-                        <li onClick={() => changeSize(3)}>大</li>
+                        {/*<hr className="divider"/>*/}
+                        {/*<li onClick={() => changeSize(1)}>小</li>*/}
+                        {/*<li onClick={() => changeSize(2)}>中</li>*/}
+                        {/*<li onClick={() => changeSize(3)}>大</li>*/}
                     </React.Fragment>
 
                 )}

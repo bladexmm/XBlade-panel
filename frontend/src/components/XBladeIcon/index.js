@@ -34,6 +34,7 @@ const XBladeIcon = ({
     const [lastClickEvent, setLastClickEvent] = useState(null);
     const [singleClickTimer, setSingleClickTimer] = useState(null);
     const [iconSVG, setIconSVG] = useState(null);
+    const [clickPosition, setClickPosition] = useState([0, 0]);
 
     const [isOverflow, setIsOverflow] = useState(false);
     const [timer, setTimer] = useState(null);
@@ -46,6 +47,9 @@ const XBladeIcon = ({
      * @param e
      */
     const handleButtonClicked = (e) => {
+        const clickX = e.clientX; // 获取点击事件的横坐标
+        const clickY = e.clientY; // 获取点击事件的纵坐标
+        setClickPosition([clickX, clickY]); // 记录点击的位置
         setLastClickEvent(e);
         setClickCount(prev => prev + 1);
         setMenuPosition(e);
@@ -54,9 +58,29 @@ const XBladeIcon = ({
     /**
      * 处理单击
      */
+
     const handleClick = () => {
-        // 将 id 作为参数传递给回调函数
+        const clickX = clickPosition[0]; // 获取点击事件记录的横坐标
+        const clickY = clickPosition[1]; // 获取点击事件记录的纵坐标
+        if (appType === 'monitor') {
+            // 获取图片容器的位置和尺寸
+            const imgContainer = document.querySelector('#icon-img-' + id);
+            const imgContainerRect = imgContainer.getBoundingClientRect();
+            // 计算点击位置相对于容器的位置
+            const relativeX = clickX - imgContainerRect.left;
+            const relativeY = clickY - imgContainerRect.top;
+
+            // 获取背景图片的尺寸
+            const imgWidth = imgContainer.offsetWidth;
+            const imgHeight = imgContainer.offsetHeight;
+
+            const relativeToImageX = (relativeX / imgWidth) * 100;
+            const relativeToImageY = (relativeY / imgHeight) * 100;
+            onClickedBtn(id, {x: relativeToImageX.toFixed(3), y: relativeToImageY.toFixed(3)});
+
+        }
         onClickedBtn(id);
+
     };
 
     /**
@@ -79,7 +103,6 @@ const XBladeIcon = ({
 
         setTimer(timeout);
     };
-
 
     useEffect(() => {
         if (appType === 'file') {
@@ -122,27 +145,23 @@ const XBladeIcon = ({
             handleDoubleClick(lastClickEvent);
             setClickCount(0);
         }
-    }, [id, clickCount,iconPath, icon, size, appPath, appType, lastClickEvent]);
+    }, [id, clickCount, iconPath, icon, size, appPath, appType, lastClickEvent]);
 
     return (
-        <div className="icon-container"
-             onClick={handleButtonClicked}
-             key={id}
-             onMouseDown={handleMouseDown}
-             onMouseUp={() => {
-                 clearTimeout(timer);
-             }}
-             onTouchStart={handleMouseDown}
-             onTouchEnd={() => {
-                 clearTimeout(timer);
-             }}
-             style={{width: 4 + sizeIcon + "rem", height: 4 + sizeIcon + 2 + "rem"}}>
+        <div className="icon-container" key={id}>
             {iconPath === '' ? (
-                <div className='file-icon' style={{
-                    marginBottom: (size - 1) + "rem",
-                    width: 3 + sizeIcon + "rem",
-                    height: 4 + sizeIcon + "rem"
-                }}>
+                <div className='file-icon'
+                     id={"icon-img-" + id}
+                     onClick={handleButtonClicked}
+                     onMouseDown={handleMouseDown}
+                     onMouseUp={() => {clearTimeout(timer);}}
+                     onTouchStart={handleMouseDown}
+                     onTouchEnd={() => {clearTimeout(timer);}}
+                     style={{
+                         marginBottom: (size - 1) + "rem",
+                         width: 3 + sizeIcon + "rem",
+                         height: 4 + sizeIcon + "rem"
+                     }}>
 
                     <FileIcon
                         className="icon"
@@ -151,29 +170,46 @@ const XBladeIcon = ({
 
                 </div>
             ) : (iconPath.replace(host, '').startsWith('{') && iconSVG !== null) ? (
-                <div className='svg-icon' style={{
-                    background: iconSVG !== null ? iconSVG.background.style : '',
-                    marginBottom: size*0.6 + "rem",
-                    width: 3.5 + sizeIcon + "rem",
-                    height: 3.5 + sizeIcon + "rem"
-                }}>
+                <div className='svg-icon'
+                     id={"icon-img-" + id}
+                     onClick={handleButtonClicked}
+                     onMouseDown={handleMouseDown}
+                     onMouseUp={() => {
+                         clearTimeout(timer);
+                     }}
+                     onTouchStart={handleMouseDown}
+                     onTouchEnd={() => {
+                         clearTimeout(timer);
+                     }}
+                     style={{
+
+                         background: iconSVG !== null ? iconSVG.background.style : '',
+                     }}>
                     <SVGIcon svgJson={iconSVG !== null ? iconSVG.icon.path : ''}
                              defaultColor={iconSVG !== null ? iconSVG.color.style : ''}
-                             defaultWidth={size * 38}
-                             defaultHeight={size * 38}/>
+                             defaultWidth={size * 33}
+                             defaultHeight={size * 33}/>
                 </div>
             ) : (
-                <img src={iconPath} alt={name} className="icon"
-                     style={{
-                         width: 4 + sizeIcon + "rem",
-                         height: 4 + sizeIcon + "rem",
-                         marginBottom: ((size - 1.5) < 0 ? 0 : size - 1.5) + "rem"
-                     }}/>
+                <div
+                    onClick={handleButtonClicked}
+                    onMouseDown={handleMouseDown}
+                    onMouseUp={() => {
+                        clearTimeout(timer);
+                    }}
+                    onTouchStart={handleMouseDown}
+                    onTouchEnd={() => {
+                        clearTimeout(timer);
+                    }}
+                    id={"icon-div-" + id}
+                    className={appType === 'monitor' ? "icon-monitor" : 'icon'}>
+                    <img id={"icon-img-" + id} src={iconPath} alt={name}/>
+                </div>
+
             )}
 
 
-            <div id={"icon-" + id}
-                 className={`name ${isOverflow ? 'overflow' : ''}`}>{name}</div>
+            <div id={"icon-" + id} className={`icon-name ${isOverflow ? 'overflow' : ''}`}>{name}</div>
         </div>
     )
         ;

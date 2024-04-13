@@ -4,10 +4,11 @@ import TabList from '@mui/joy/TabList';
 import Tab, { tabClasses } from '@mui/joy/Tab';
 import TerminalIcon from '@mui/icons-material/Terminal';
 import ListItemDecorator from '@mui/joy/ListItemDecorator';
+import AirplayRoundedIcon from '@mui/icons-material/AirplayRounded';
 import AppsIcon from '@mui/icons-material/Apps';
 import './index.css';
 
-export default function TabsAdd({value=0,disableTabs=[false,false],children}) {
+export default function TabsAdd({value=0,disableTabs=[false,false,false],children}) {
     return (
         <Tabs
             variant="outlined"
@@ -41,13 +42,20 @@ export default function TabsAdd({value=0,disableTabs=[false,false],children}) {
                     <ListItemDecorator>
                         <AppsIcon />
                     </ListItemDecorator>
-                    新增应用/网址
+                    应用/网址
                 </Tab>
                 <Tab disableIndicator value={1} disabled={disableTabs[1]} variant="soft" sx={{ flexGrow: 1 }}>
                     <ListItemDecorator>
                         <TerminalIcon />
                     </ListItemDecorator>
-                    新增指令
+                    指令
+                </Tab>
+
+                <Tab disableIndicator value={2} disabled={disableTabs[2]} variant="soft" sx={{ flexGrow: 1 }}>
+                    <ListItemDecorator>
+                        <AirplayRoundedIcon />
+                    </ListItemDecorator>
+                    监控
                 </Tab>
 
             </TabList>

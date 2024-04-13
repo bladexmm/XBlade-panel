@@ -7,17 +7,72 @@
     <script type="text/javascript" src="litegraph.core.js"></script>
 </head>
 <body>
+<div class="virtual-keyboard hidden">
+    <div class="virtual-col keyboard-input-preview">
+        <div class="virtual-keys" ><span class="virtual-keys-input"></span></div>
+        <div class="virtual-keys virtual-keys-delete"><span>删除</span></div>
+        <div class="virtual-keys virtual-keys-close"><span>确认</span></div>
+    </div>
+
+    <div class="virtual-col Fn"></div>
+    <div class="virtual-col first"></div>
+    <div class="virtual-col second"></div>
+    <div class="virtual-col third"></div>
+    <div class="virtual-col fourth"></div>
+    <div class="virtual-col fifth"></div>
+    <div class="virtual-col sixth"></div>
+
+</div>
 <div class="header">
     <button class="btn" id="save">保存</button>
     <button class="btn" id="close">关闭</button>
 </div>
+
 <canvas id='mycanvas'></canvas>
 <script src="libs/basic.js"></script>
 <script src="libs/keyboard.js"></script>
+<script src="libs/gui.js"></script>
+<script src="libs/keys.js"></script>
+<script>
+    function addCols(col) {
+        let keys_html = ''
+        for (let i = 0; i < col.label.length; i++) {
+            keys_html += '<span>' + col.label[i] + '</span>'
+        }
+        let keysPress = 'data-keys="' + col.values.join(',') + '"';
+        if (col.label.length === 0) {
+            return '<div class="virtual-keys virtual-keys-empty"></div>';
+        } else {
+            return '<div class="virtual-keys virtual-keys-click" ' + keysPress + '>' + keys_html + '</div>';
+        }
+    }
+
+
+    // 获取具有 virtual-keys-close 类名的元素
+    var closeButton = document.querySelector('.virtual-keys-close');
+
+    // 添加点击事件监听器
+    closeButton.addEventListener('click', function () {
+        var keyboard = document.querySelector('.virtual-keyboard');
+        keyboard.classList.add('hidden'); // 添加 visible 类
+    });
+
+    virtual_keyboards.forEach(function (keys) {
+        const keyboard_col = document.querySelector('.virtual-col.' + keys.name);
+        let html = "";
+        for (let i = 0; i < keys.cols.length; i++) {
+            html += addCols(keys.cols[i]);
+        }
+        keyboard_col.innerHTML += html;
+    });
+
+
+</script>
+
 <script>
     var graph = new LGraph();
-
     var canvas = new LGraphCanvas("#mycanvas", graph);
+
     LiteGraph.registerNodeType("基础/开始", CMDStart);
     LiteGraph.registerNodeType("基础/结束", CMDEnd);
     LiteGraph.registerNodeType("基础/等待", TimeWait);
@@ -27,6 +82,11 @@
     LiteGraph.registerNodeType("输入/鼠标左键", MouseLeft);
     LiteGraph.registerNodeType("输入/鼠标中键", MouseMiddle);
     LiteGraph.registerNodeType("输入/鼠标右键", MouseRight);
+    LiteGraph.registerNodeType("输入/鼠标移动", MouseMove);
+
+    LiteGraph.registerNodeType("自动化/图片定位", LocateOnScreenNode)
+    LiteGraph.registerNodeType("自动化/运行软件", startApp)
+
 
     const node_const = LiteGraph.createNode("基础/开始");
     node_const.pos = [200, 200];
@@ -56,10 +116,8 @@
 
     //回调函数
     function receiveMessageFromIndex(event) {
-        if (event.data !== null) {
+        if (event.data !== null && typeof event.data === 'string') {
             canvas.graph.configure(JSON.parse(event.data));
-        } else {
-
         }
     }
 

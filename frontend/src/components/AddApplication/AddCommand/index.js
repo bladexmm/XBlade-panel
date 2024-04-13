@@ -1,6 +1,5 @@
 import * as React from 'react';
 import DialogTitle from "@mui/joy/DialogTitle";
-import DialogContent from "@mui/joy/DialogContent";
 import Stack from "@mui/joy/Stack";
 import FormControl from "@mui/joy/FormControl";
 import FormLabel from "@mui/joy/FormLabel";
@@ -57,17 +56,17 @@ export default function AddCommand({
     const [submitBtn, setSubmitBtn] = React.useState(false);
     const [icons, setIcons] = React.useState(appIcons);
     const [iconSelect, setIconSelect] = React.useState(0);
-    const [commands, setCommands] = React.useState([]);
+    // const [commands, setCommands] = React.useState([]);
     const host = getUserSettings('settings.host');
     const [appBind, setAppBind] = React.useState(null);
     const fetchCommands = () => {
         request({
-            url: "/api/commands/default",
+            url: "/api/tools/commands",
             method: "GET",
             headers: {"Content-Type": "application/json"},
             body: {},
         }).then((data) => {
-            setCommands(data.data.commands)
+            // setCommands(data.data.commands)
         });
     }
 
@@ -100,7 +99,7 @@ export default function AddCommand({
         const formData = new FormData();
         formData.append('file', event.target.files[0]);
         // 使用fetch发送POST请求到Flask上传接口
-        fetch(host + '/api/apps/upload', {
+        fetch(host + '/api/upload/script', {
             method: 'POST',
             body: formData
         }).then(response => {
@@ -111,8 +110,10 @@ export default function AddCommand({
                 throw new Error('File upload failed');
             }
         }).then(result => {
-            if (!icons.includes(result.data)) {
-                setIcons([result.data, ...icons]);
+            // Ensure icons is initialized as an array
+            const iconsArray = Array.isArray(icons) ? icons : [];
+            if (!iconsArray.includes(result.data)) {
+                setIcons([result.data, ...iconsArray]);
             }
             setIconDefault(null);
         })
@@ -126,7 +127,6 @@ export default function AddCommand({
     useState(() => {
         setName(appName)
         setIcons(appIcons)
-        console.log(appPath);
         if (appPath !== null && appPath !== '') {
             setPath(JSON.parse(appPath));
             if(commandDefault === null){
@@ -252,17 +252,11 @@ export default function AddCommand({
                                     </Grid>
                                 ))}
                             </React.Fragment>)}
-
-
-
                         </Grid>
-
 
                     </FormControl>
                     <Button loadingPosition="end" onClick={submitBtnClick} loading={submitBtn}>提交&ensp;
                         <SendRoundedIcon/></Button>
-                    <Button loadingPosition="end" color="neutral" variant="outlined"
-                            onClick={() => onClose()} >关闭&ensp;<CloseRoundedIcon /></Button>
                 </Stack>
             </form>
 

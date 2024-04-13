@@ -25,7 +25,7 @@ export default function WallpaperBasicGrid({
 
     useState(() => {
         request({
-            url: "/api/wallpaper",
+            url: "/api/tools/wallpaper",
             method: "GET",
             headers: {"Content-Type": "application/json"},
             body: {},
@@ -47,7 +47,7 @@ export default function WallpaperBasicGrid({
                             boxShadow: 'sm',
                             bgcolor: 'background.surface',
                         },
-                        margin:"auto !important"
+                        margin: "auto !important"
                     }}
                 >
 
@@ -59,20 +59,19 @@ export default function WallpaperBasicGrid({
 
                     {wallpapers.map((wallpaper, index) => (
                         <TabPanel value={index}>
-                            <Grid container className="container" spacing={2}>
+                            <Grid container columns={{xs: 6, sm: 9, md: 12}} className="container" spacing={2}>
 
                                 {wallpaper['videos'].map((video, index) => (
-                                    <Grid item xs={4} className="wallpaper-items" onClick={() => handleItemClick(video)}
+                                    <Grid item xs={3} sm={3} md={3} className="wallpaper-items"
+                                          onClick={() => handleItemClick(video)}
                                           key={index}>
                                         {video.endsWith(".mp4") ? (
                                             <video className="wallpaper-video" loop muted>
                                                 <source src={host + video} type="video/mp4"/>
                                             </video>
-                                            ) : (
-                                                <img className="wallpaper-video" src={host + video} alt="wallpaper"/>
+                                        ) : (
+                                            <img className="wallpaper-video" src={host + video} alt="wallpaper"/>
                                         )}
-
-
                                     </Grid>
                                 ))}
                             </Grid>

@@ -19,8 +19,8 @@ CMDEnd.title = "结束";
 CMDEnd.desc = "程序结束";
 
 function TimeWait() {
-    this.addInput("in", "cmd");
-    this.addOutput("out", "cmd");
+    this.addInput("cmd", "cmd");
+    this.addOutput("cmd", "cmd");
     this._value = [];
     this.addProperty("value", "50");
     this.widget = this.addWidget("text", "w", this.properties.value, "value");

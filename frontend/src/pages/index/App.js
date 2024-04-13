@@ -21,6 +21,7 @@ import {CssVarsProvider} from '@mui/joy/styles';
 import {ThemeProvider} from "@mui/joy";
 import Layouts from "../../components/Layouts";
 import Commands from "../../components/Commands";
+import {SnackbarProvider} from "../../components/SnackbarUtil/SnackbarUtil";
 
 function App() {
     const widthBox = 3600;
@@ -111,15 +112,18 @@ function App() {
     /**
      * 打开应用
      * @param id
+     * @param positionClick
      */
-    function onClicked(id) {
+    function onClicked(id, positionClick = null) {
         setMenuVisible(false);
         if (paneDraggable === false) {
+            let bodySend = {"id": id, "type": "apps"}
+            bodySend['position'] = positionClick != null ? positionClick : null;
             request({
                 url: "/api/apps/open",
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
-                body: {"id": id, "type": "apps"},
+                body: bodySend,
             }).then((data) => {
                 if (data.msg === 'empty') {
                     setCommandOpen(true);
@@ -196,21 +200,6 @@ function App() {
     };
 
 
-    /**
-     * 修改图标大小
-     * @param size
-     */
-    const changeSize = (size) => {
-        const layoutsNew = paneLayouts
-        for (let i = 0; i < layoutsNew.length; i++) {
-            if (layoutsNew[i]['i'] === rightClickMenuId) {
-                layoutsNew[i]['w'] = size;
-                layoutsNew[i]['h'] = size;
-            }
-        }
-        saveLayouts(layoutsNew, 'pane');
-    };
-
 
     /**
      * 删除应用
@@ -279,9 +268,7 @@ function App() {
             appsSearch[i]['i'] = appsSearch[i]['id']
         }
         const filtered = appsSearch.filter(app => {
-            // 获取应用名称的拼音
             const appFind = appsAll[app['id']];
-            // 匹配应用名称或路径是否包含搜索输入
             return appFind['name'].includes(searchInput) || appFind['path'].includes(searchInput);
         });
         setFilteredLayouts(filtered);
@@ -293,241 +280,133 @@ function App() {
                 defaultMode={themeMode}
                 modeStorageKey={themeMode === "dark" ? "joy-mode-scheme-dark" : ""}
             >
-                {menuVisible && (
-                    <RightClickMenu
-                        xPos={menuPosition.x}
-                        yPos={menuPosition.y}
-                        hideMenu={() => {
-                            setMenuVisible(false);
-                        }}
-                        changeSize={changeSize}
-                        deleteBtn={(layoutType) => {
-                            deleteApp(layoutType);
-                        }}
-                        editBtn={() => {
-                            setAppName(appsAll[rightClickMenuId]['name']);
-                            setAppPath(appsAll[rightClickMenuId]['path']);
-                            setAppIcons([appsAll[rightClickMenuId]['icon']]);
-                            setRightClickMenuApp(appsAll[rightClickMenuId]);
-                            setAddAppOpen(true);
-                            setMenuVisible(false);
-                        }}
-                        pinBtn={pinApp}
-                        commandBtn={() => {
-                            setCommandOpen(true);
-                        }}
-                        setMenuVisible={setMenuVisible}
-                        layoutType={rightClickMenuLayout}
-                        id={rightClickMenuId}
-                    />
-                )}
-                <div className="video-background">
-                    {commandOpen && (
-                        <Commands app_id={rightClickMenuId}
-                                  filteredLayouts={filteredLayouts}
-                                  defaultPosition={menuPosition}
-                                  setCommandOpen={setCommandOpen}
-                        />
-                    )}
-
-
-                    <SettingsDialog open={openSettingsDialog} onClose={() => {
-                        setOpenSettingsDialog(false); // 关闭弹窗
-                    }}>
-                        <WallpaperBasicGrid sx={{height:"100%"}} onClick={(videoSource) => {
-                            setWallPaper(host + videoSource);
-                        }}></WallpaperBasicGrid>
-
-                    </SettingsDialog>
-                    {addAppOpen && (
-                        <AddApplication
-                            open={addAppOpen}
-                            app_id={rightClickMenuId}
-                            app={rightClickMenuApp}
-                            apps={filteredLayouts}
-                            appName={appName}
-                            appPath={appPath}
-                            appIcons={appIcons}
-                            onClose={() => {
-                                setAddAppOpen(false);
-                                updateLayouts();
-                            }}
-                        />
-                    )}
-
-                    <Search
-                        open={searchOpen}
-                        onClose={() => {
-                            setMenuVisible(false);
-                            setSearchOpen(false);
-                        }}
-                        onSearchInput={handleSearchInput}
-                    >
-                        <Grid container
-                              columns={{xs: 12, sm: 12, md: 12}}
-                              sx={{overflowX: "hidden", width: "100%"}}>
-                            {filteredLayouts.map((app, index) => (
-                                <Grid xs={4} sm={2} md={1} sx={{height: "6rem"}}>
-
-                                    <div key={app['id']}
-                                         unselectable="on"
-                                         className="xBlade-icons"
-                                         onContextMenu={(e) => handleContextMenu(e, 'search', app['id'], true)}
-                                    >
-                                        <XBladeIcon
-                                            id={app['id']}
-                                            size={1}
-                                            name={app['name']}
-                                            appType={app['type']}
-                                            iconPath={app['icon'] !== '' ? host + app['icon'] : ''}
-                                            appPath={app['path']}
-                                            onClickedBtn={onClicked}
-                                            doubleClickBtn={(e) => handleContextMenu(e, 'search', app['i'], false, true)}
-                                        />
-                                    </div>
-                                </Grid>
-
-                            ))}
-
-                        </Grid>
-
-                    </Search>
-
-                    <Header
-                        editing={paneDraggable}
-                        StopPaneEditing={() => {
-                            setPaneDraggable(false);
-                            saveLayouts(paneLayouts, 'pane');
-                        }}
-                        themeMode={themeMode}
-                        themeModeChange={(theme) => {
-                            setThemeMode(theme);
-                            saveUserSettings('settings.theme', theme)
-                            window.location.reload();
-                        }}
-                        openAddDiag={() => {
-                            setAppName('');
-                            setAppIcons([]);
-                            setAppPath('');
-                            setRightClickMenuId(null);
-                            setRightClickMenuApp(null);
-                            setMenuVisible(false);
-                            setAddAppOpen(true);
-                        }}/>
-                    <div className="Pane">
-
-                        <Layouts
-                            layouts={paneLayouts}
-                            appsAll={appsAll}
-                            paneLayouts={paneLayouts}
-                            setPaneLayouts={(value) => {
-                                setPaneLayouts(value);
-                            }}
-                            setMenuVisible={(value) => {
-                                setMenuVisible(value);
-                            }}
-                            setMenuPosition={(value) => {
-                                setMenuPosition(value);
-                            }}
-                            setRightClickMenuDel={(value) => {
-                                setRightClickMenuDel(value);
-                            }}
-                            setRightClickMenuId={(value) => {
-                                setRightClickMenuId(value);
-                            }}
-                            setRightClickMenuLayout={(value) => {
-                                setRightClickMenuLayout(value);
-                            }}
-                            setPaneDraggable={(value) => {
-                                setPaneDraggable(value);
-                            }}
-                            setCommandOpen={(value) => {
-                                setCommandOpen(value);
-                            }}
-                            paneDraggable={paneDraggable}
-                        />
-                    </div>
-
-                    <div className="Dock">
-                        <HorizontalScrollbar>
-                            <GridLayout
-                                className="layout"
-                                layout={dockLayouts}
-                                cols={42}
-                                rowHeight={90}
-                                compactType={'horizontal'}
-                                width={widthBox}
-                                isDraggable={false}
-                                isResizable={false}
-                                onLayoutChange={(layoutIn) => {
-                                    setDockLayouts(layoutIn)
-                                }}
-                            >
-                                <div key="btn|settings">
-                                    <XBladeIcon
-                                        id="btn|settings"
-                                        name="设置"
-                                        iconPath={host + "/assets/icons/settings-light.png"}
-                                        onClickedBtn={() => {
-                                            setOpenSettingsDialog(true);
+                <SnackbarProvider>
+                    {menuVisible && (
+                        <RightClickMenu xPos={menuPosition.x} yPos={menuPosition.y} id={rightClickMenuId}
+                                        hideMenu={() => {setMenuVisible(false);}}
+                                        deleteBtn={(layoutType) => {deleteApp(layoutType);}}
+                                        editBtn={() => {
+                                            setAppName(appsAll[rightClickMenuId]['name']);
+                                            setAppPath(appsAll[rightClickMenuId]['path']);
+                                            setAppIcons([appsAll[rightClickMenuId]['icon']]);
+                                            setRightClickMenuApp(appsAll[rightClickMenuId]);
+                                            setAddAppOpen(true);
                                             setMenuVisible(false);
                                         }}
-                                    />
-                                </div>
-                                <div key="btn|search">
-                                    <XBladeIcon
-                                        id="btn|search"
-                                        name="搜索"
-                                        iconPath={host + "/assets/icons/apps.png"}
-                                        onClickedBtn={() => {
-                                            setSearchOpen(true);
-                                            setMenuVisible(false);
-                                        }}/>
-                                </div>
+                                        pinBtn={pinApp} commandBtn={() => {setCommandOpen(true);}}
+                                        setMenuVisible={setMenuVisible} layoutType={rightClickMenuLayout}
 
-
-                                {dockLayouts.map((app, index) => {
-                                    if (!app['i'].startsWith('btn|')) {
-                                        return (
-                                            <div key={app['i']}
-                                                 className="xBlade-icons"
-                                                 onContextMenu={(e) => handleContextMenu(e, 'dock', app['i'], true, false)}
-                                            >
-                                                <XBladeIcon
-                                                    id={app['i']}
-                                                    size={app['w']}
-                                                    appType={app['i'] in appsAll ? appsAll[app['i']]['type'] : ''}
-                                                    name={app['i'] in appsAll ? appsAll[app['i']]['name'] : ''}
-                                                    iconPath={(app['i'] in appsAll && appsAll[app['i']]['icon'] && appsAll[app['i']]['icon'].length > 0) ?
-                                                        host + appsAll[app['i']]['icon'] : ''}
-                                                    appPath={(app['i'] in appsAll && appsAll[app['i']]['path'] && appsAll[app['i']]['path'].length > 0) ?
-                                                        host + appsAll[app['i']]['path'] : ''}
-                                                    onClickedBtn={onClicked}
-                                                    doubleClickBtn={(e) => handleContextMenu(e, 'dock', app['i'], false, true)}
-
-                                                />
-                                            </div>
-                                        );
-                                    } else {
-                                        return null;
-                                    }
-                                })}
-                            </GridLayout>
-                        </HorizontalScrollbar>
-                    </div>
-                    {wallPaper.endsWith(".mp4") ? (
-                        <video className="wallpapers-video" autoPlay loop muted key={wallPaper}>
-                            <source src={wallPaper} type="video/mp4"/>
-                        </video>
-                    ) : (
-                        <img className="wallpapers-img" key={wallPaper} style={{
-                            backgroundImage: "url("+wallPaper+")"
-                        }}/>
+                        />
                     )}
+                    <div className="video-background">
+
+                        {commandOpen && (
+                            <Commands app_id={rightClickMenuId} filteredLayouts={filteredLayouts}
+                                      defaultPosition={menuPosition} setCommandOpen={setCommandOpen}/>
+                        )}
+
+                        <SettingsDialog open={openSettingsDialog} onClose={() => {setOpenSettingsDialog(false);}}>
+                            <WallpaperBasicGrid sx={{height: "100%"}} onClick={(videoSource) => {setWallPaper(host + videoSource);}}></WallpaperBasicGrid>
+                        </SettingsDialog>
+                        {addAppOpen && (
+                            <AddApplication open={addAppOpen} app_id={rightClickMenuId} app={rightClickMenuApp}
+                                            apps={filteredLayouts} appName={appName} appPath={appPath}
+                                            appIcons={appIcons} onClose={() => {
+                                                setAddAppOpen(false);updateLayouts();
+                                            }}/>
+                        )}
+
+                        <Search open={searchOpen} onSearchInput={handleSearchInput} onClose={() => {
+                                setMenuVisible(false);setSearchOpen(false);
+                            }}>
+                            <Grid container columns={{xs: 3, sm: 6, md: 12,lg:15}} sx={{overflowX: "hidden", width: "100%"}}>
+                                {filteredLayouts.map((app, index) => (
+                                    <Grid xs={1} sm={1} md={1} sx={{height: "6rem"}}>
+                                        <div key={app['id']} unselectable="on" className="xBlade-icons"
+                                             style={{width: "3.5rem",height: "100%",padding: "0.5rem 0",boxSizing: "border-box"}}
+                                             onContextMenu={(e) => handleContextMenu(e, 'search', app['id'], true)}>
+                                            <XBladeIcon id={app['id']} size={1} name={app['name']} appType={app['type']} iconPath={app['icon'] !== '' ? host + app['icon'] : ''} appPath={app['path']} onClickedBtn={onClicked} doubleClickBtn={(e) => handleContextMenu(e, 'search', app['i'], false, true)}/>
+                                        </div>
+                                    </Grid>
+                                ))}
+                            </Grid>
+                        </Search>
+
+                        <Header editing={paneDraggable} StopPaneEditing={() => {
+                                setPaneDraggable(false);saveLayouts(paneLayouts, 'pane');
+                            }} openAddDiag={() => {
+                                setAppName('');
+                                setAppIcons([]);
+                                setAppPath('');
+                                setRightClickMenuId(null);
+                                setRightClickMenuApp(null);
+                                setMenuVisible(false);
+                                setAddAppOpen(true);
+                            }}/>
+                        <div className="Pane">
+
+                            <Layouts
+                                layouts={paneLayouts} paneDraggable={paneDraggable} appsAll={appsAll} paneLayouts={paneLayouts}
+                                setPaneLayouts={(value) => {setPaneLayouts(value);}}
+                                setMenuVisible={(value) => {setMenuVisible(value);}}
+                                setMenuPosition={(value) => {setMenuPosition(value);}}
+                                setRightClickMenuDel={(value) => {setRightClickMenuDel(value);}}
+                                setRightClickMenuId={(value) => {setRightClickMenuId(value);}}
+                                setRightClickMenuLayout={(value) => {setRightClickMenuLayout(value);}}
+                                setPaneDraggable={(value) => {setPaneDraggable(value);}}
+                                setCommandOpen={(value) => {setCommandOpen(value);}}/>
+                        </div>
+
+                        <div className="Dock">
+                            <HorizontalScrollbar>
+                                <GridLayout className="layout" layout={dockLayouts}
+                                    cols={42} rowHeight={90} compactType={'horizontal'}
+                                    width={widthBox} isDraggable={false} isResizable={false}
+                                    onLayoutChange={(layoutIn) => {setDockLayouts(layoutIn);}}>
+                                    <div key="btn|settings">
+                                        <XBladeIcon id="btn|settings" name="设置" iconPath={host + "/assets/icons/settings-light.png"}
+                                            onClickedBtn={() => {
+                                                setOpenSettingsDialog(true);setMenuVisible(false);
+                                            }}/>
+                                    </div>
+                                    <div key="btn|search">
+                                        <XBladeIcon id="btn|search" name="搜索" iconPath={host + "/assets/icons/apps.png"}
+                                            onClickedBtn={() => {
+                                                setSearchOpen(true);setMenuVisible(false);
+                                            }}/>
+                                    </div>
 
 
-                </div>
-
+                                    {dockLayouts.map((app, index) => {
+                                        if (!app['i'].startsWith('btn|')) {
+                                            return (
+                                                <div key={app['i']} className="xBlade-icons"
+                                                     onContextMenu={(e) => handleContextMenu(e, 'dock', app['i'], true, false)}>
+                                                    <XBladeIcon id={app['i']} size={app['w']} onClickedBtn={onClicked}
+                                                        appType={app['i'] in appsAll ? appsAll[app['i']]['type'] : ''}
+                                                        name={app['i'] in appsAll ? appsAll[app['i']]['name'] : ''}
+                                                        iconPath={(app['i'] in appsAll && appsAll[app['i']]['icon'] && appsAll[app['i']]['icon'].length > 0) ?
+                                                            host + appsAll[app['i']]['icon'] : ''}
+                                                        appPath={(app['i'] in appsAll && appsAll[app['i']]['path'] && appsAll[app['i']]['path'].length > 0) ?
+                                                            host + appsAll[app['i']]['path'] : ''}
+                                                        doubleClickBtn={(e) => handleContextMenu(e, 'dock', app['i'], false, true)}/>
+                                                </div>
+                                            );
+                                        }
+                                        return null;
+                                    })}
+                                </GridLayout>
+                            </HorizontalScrollbar>
+                        </div>
+                        {wallPaper.endsWith(".mp4") ? (
+                            <video className="wallpapers-video" autoPlay loop muted key={wallPaper}>
+                                <source src={wallPaper} type="video/mp4"/>
+                            </video>
+                        ) : (
+                            <img className="wallpapers-img" key={wallPaper} src={wallPaper} alt="图标"/>
+                        )}
+                    </div>
+                </SnackbarProvider>
             </CssVarsProvider>
         </ThemeProvider>
 

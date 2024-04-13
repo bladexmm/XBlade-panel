@@ -13,7 +13,6 @@ export default function Search({open, onClose = () => {}, onSearchInput = () => 
         <Transition in={open} timeout={400}>
             {(state) => (
                 <Modal
-                    keepMounted
                     open={!['exited', 'exiting'].includes(state)}
                     onClose={onClose}
                     slotProps={{

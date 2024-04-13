@@ -16,11 +16,14 @@
     "qrcode.react": "^3.1.0",
     "react": "^18.2.0",
     "react-color-gradient-picker": "^0.1.2",
+    "react-copy-to-clipboard": "^5.1.0",
     "react-dom": "^18.2.0",
     "react-file-icon": "^1.4.0",
     "react-grid-layout": "^1.4.4",
+    "react-imask": "^7.5.0",
     "react-scripts": "5.0.1",
     "reactflow": "^11.10.4",
+    "socket.io-client": "^4.7.5",
     "web-vitals": "^2.1.4"
   },
   "scripts": {

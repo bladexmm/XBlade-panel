@@ -1,21 +1,11 @@
 import {config,animated, useSpring} from "@react-spring/web";
 import * as React from "react";
-import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
-import ControlCameraRoundedIcon from "@mui/icons-material/ControlCameraRounded";
 import './index.css';
 
 
 import 'reactflow/dist/style.css';
 import {useEffect} from "react";
 import {getUserSettings} from "../../utils/settings";
-
-const initialNodes = [
-    { id: '1', position: { x: 0, y: 0 }, data: { label: '1' } },
-    { id: '2', position: { x: 0, y: 100 }, data: { label: '2' } },
-];
-
-const initialEdges = [{ id: 'e1-2', source: '1', target: '2' }];
-
 
 export default function CommandEdit({
                                         commandDefault,
@@ -52,9 +42,7 @@ export default function CommandEdit({
                 height: "0%",
                 top: '110%',
             },
-            onRest: () => {
-                setCommandEditOpen(false); // 在动画完成后执行关闭操作
-            }
+            onRest: () => {setCommandEditOpen(false);}
         });
     }
     const iframe_call_func = (res) => {
@@ -77,32 +65,11 @@ export default function CommandEdit({
                     }
                 }
             }
-            //监听message事件
             window.addEventListener("message", window.receiveMessageFromIndex, false);
         };
     }, []);
     return (
-        <div className="commands" style={{...fullscreenStyle,}}>
-            {/*<div className="cmd-header">*/}
-
-            {/*    <div className="header-btn" onClick={close_pane}>*/}
-            {/*        <CloseRoundedIcon fontSize="large" sx={{color: "#fff", margin: "auto"}}/>*/}
-            {/*    </div>*/}
-            {/*    <div className="header-btn" onClick={() => {*/}
-            {/*        setFullscreen((prevFullscreen) => {*/}
-            {/*            const newFullscreen = !prevFullscreen;*/}
-            {/*            setFullscreenStyle({*/}
-            {/*                width: newFullscreen ? "100%" : "90%",*/}
-            {/*                height: newFullscreen ? "100%" : "90%",*/}
-            {/*                top: newFullscreen ? "50%" : "53%",*/}
-            {/*            });*/}
-            {/*            return newFullscreen;*/}
-            {/*        });*/}
-            {/*    }}>*/}
-            {/*        <ControlCameraRoundedIcon fontSize="large" sx={{color: "#fff", margin: "auto"}}/>*/}
-            {/*    </div>*/}
-
-            {/*</div>*/}
+        <div className="commands" style={{...fullscreenStyle}}>
 
             <div className="pane-content" style={{overflowY:'hidden'}}>
                 <iframe id="embeddedIframe"

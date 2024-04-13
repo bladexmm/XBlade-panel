@@ -1,10 +1,16 @@
 import json
 import base64
 import hashlib
+import shlex
+import shutil
 import time
 import os
+import socket
+import zipfile
 
 import win32gui
+import random
+import string
 import win32ui
 import win32con
 import pyautogui
@@ -12,6 +18,8 @@ import win32api
 from PIL import Image
 import subprocess
 import platform
+from datetime import datetime
+from flask import jsonify
 
 from libs.utils.graph import XbladeGraph
 
@@ -55,6 +63,22 @@ def generate_random_md5_with_timestamp():
     return md5_hash.hexdigest()
 
 
+def generate_random_filename(length = 2):
+    # 定义允许的字符集合
+    characters = string.ascii_lowercase + string.digits
+    # 生成随机字符串
+    random_string = ''.join(random.choice(characters) for _ in range(length))
+    return random_string
+
+
+def generate_date_path():
+    # 获取当前日期
+    current_date = datetime.now()
+    # 格式化日期为年/月/日
+    formatted_date = current_date.strftime("%Y/%m/")
+    return formatted_date
+
+
 def extract_icon_from_exe(icon_in_path, icon_name, icon_out_path, out_width = 56, out_height = 56):
     """Given an icon path (exe file) extract it and output at the desired width/height as a png image.
 
@@ -96,7 +120,7 @@ def extract_icon_from_exe(icon_in_path, icon_name, icon_out_path, out_width = 56
     return full_outpath
 
 
-def exec_command(commands):
+def exec_command(commands, parent = None):
     nodes = list_to_dict(commands['nodes'], "id")
     start_node = [row for row in commands['nodes'] if row['type'] == '基础/开始']
     if len(start_node) == 0:
@@ -114,45 +138,64 @@ def exec_command(commands):
     link_output = [output for output in start_node['outputs'] if output['type'] == 'cmd']
     max_node = 500
     i = 0
+    node_output = {}
     while len(link_output) > 0 and i < max_node:
         # 查找下一个节点
         next_link_id = link_output[0]['links'][0]
         next_link = links[next_link_id]
         next_node = nodes[next_link['to']]
+        # 开始设置input
+        for link in next_node['inputs']:
+            if link['link'] is None:
+                continue
+            if link['type'] == 'cmd':
+                continue
+            link_input = links[link['link']]  # 获取链接的配置
+            link_node_outputs = node_output[link_input['from']]  # 获取连接的节点
+            link['value'] = link_node_outputs[link_input['port_from']]  # 开始获取指定值
+        next_node['parent'] = parent
         if next_node['type'] == '基础/结束':
             return
-        XbladeGraph.call_func_by_alias(next_node['type'], next_node)
-        if 'outputs' not in next_node:
-            return
+        node_outputs = XbladeGraph.call_func_by_alias(next_node['type'], next_node)
+        node_output[next_node['id']] = node_outputs
+        # noinspection PySimplifyBooleanCheck
+        if node_outputs == False:
+            print(f"节点：{next_node['type']},出错")
+            return node_outputs
         link_output = [output for output in next_node['outputs'] if output['type'] == 'cmd']
         i += 1
-
 
 
 def hotkeys(keys):
     pyautogui.hotkey(*keys)
 
-
+def check_file_or_directory(path):
+    if os.path.exists(path):  # 先确认路径存在
+        if os.path.isfile(path):
+            return 'file'
+        elif os.path.isdir(path):
+            return "dir"
+    else:
+        return "no"
 def open_with_default_program(file_path):
-    # 确定操作系统
     system = platform.system()
-
+    file_type = check_file_or_directory(file_path)
     try:
-        # 根据操作系统选择打开程序的命令
         if system == "Windows":
-            subprocess.Popen(['start', '', file_path], shell = True)
-
+            if file_type == "file":
+                subprocess.Popen([file_path], shell = True)
+            elif file_type == "dir":
+                os.system(f"start {file_path}")
+            else:
+                subprocess.Popen([file_path], shell = True)
         elif system == "Darwin":  # macOS
-            subprocess.Popen(['open', file_path])
+            os.system(f'open {file_path}')
         elif system == "Linux":
-            subprocess.Popen(['xdg-open', file_path])
+            os.system(f'xdg-open {file_path}')
         else:
             print("不支持的操作系统")
     except Exception as e:
         print("打开文件时出错:", e)
-
-
-import socket
 
 
 def get_local_ip():
@@ -167,8 +210,78 @@ def get_local_ip():
         return None
 
 
-from flask import jsonify
-
-
 def result(code = 1, data = None, msg = "success"):
     return jsonify({"code": code, "data": data, "msg": msg})
+
+
+def copy(source, dest, cover = False):
+    if not os.path.exists(source):
+        return
+    dir_name = os.path.dirname(dest)  # 获取目录名
+    if not os.path.isdir(dir_name):
+        os.makedirs(dir_name)
+    if cover:
+        shutil.copy2(source, dest)
+    else:
+        shutil.copy(source, dest)
+
+
+def copy_dir(source, dest):
+    files = [file_name for file_name in get_files_in_directory(source)]
+    for file in files:
+        dist = file.replace(source, dest)
+        copy(file, dist, cover = True)
+    return files
+
+
+def zipFolder(folder_path, zip_name):
+    dir_name = os.path.dirname(zip_name)
+    if not os.path.isdir(dir_name):
+        os.makedirs(dir_name)
+    with zipfile.ZipFile(zip_name, 'w') as zipf:
+        for root, dirs, files in os.walk(folder_path):
+            for file in files:
+                file_path = os.path.join(root, file)
+                zipf.write(file_path, os.path.relpath(file_path, folder_path))
+
+
+def delete_folder(temp_folder):
+    for filename in os.listdir(temp_folder):
+        file_path = os.path.join(temp_folder, filename)
+        try:
+            if os.path.isfile(file_path):
+                os.unlink(file_path)
+            elif os.path.isdir(file_path):
+                shutil.rmtree(file_path)
+        except Exception as e:
+            print(f"无法删除 {file_path}: {e}")
+
+
+def format_date(format = "%Y-%m-%d_%H-%M-%S"):
+    now = datetime.now()
+    return now.strftime(format)
+
+
+def unzip_file(zip_file_path, extract_to_path):
+    with zipfile.ZipFile(zip_file_path, 'r') as zip_ref:
+        zip_ref.extractall(extract_to_path)
+
+
+def get_files_in_directory(directory):
+    # 遍历指定目录及其子目录
+    for root, dirs, files in os.walk(directory):
+        # 我们只对文件感兴趣，所以忽略dirs
+        for file in files:
+            # os.walk返回的是相对路径，我们可以直接获取文件名
+            yield os.path.join(root, file)
+
+
+def copy_app_images(apps):
+    for app in apps:
+        if app['icon'] is not None and not app['icon'].startswith('{') and '?region=' not in app['icon']:
+            copy("./react_app" + app['icon'], "./temp/images" + app['icon'])
+        if app['type'] == 'command' and app['path'] is not None:
+            nodes = json.loads(app['path'])
+            for node in nodes['nodes']:
+                if 'image' in node['properties']:
+                    copy("./react_app" + node['properties']['image'], "./temp/images" + node['properties']['image'])

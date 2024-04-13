@@ -1,0 +1,96 @@
+.selector-pane {
+    position: absolute;
+    left: 50%;
+    top: 50%;
+    width: 90%;
+    height: 98%;
+    transform: translateX(-50%) translateY(-50%);
+    backdrop-filter: blur(30px);
+    background-color: rgba(255, 255, 255, 0.2);
+    border-radius: 2rem;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    box-shadow: 0 2px 12px 0 #00000026;
+    color: rgb(200, 200, 204);
+    z-index: 9998;
+    overflow: hidden;
+}
+
+.pane-icons {
+    overflow-y: hidden;
+    height: 100%;
+    padding: 1rem;
+    box-sizing: border-box;
+}
+
+.header-screen {
+    height: 3rem;
+    width: 100%;
+    display: flex;
+    flex-direction: row-reverse;
+    align-items: center;
+    align-content: center;
+    text-align: center;
+    padding: 0 .7rem;
+    box-sizing: border-box;
+    justify-content: flex-start;
+    backdrop-filter: blur(30px);
+    background-color: rgb(0 0 0 / 10%);
+}
+
+
+.header-btn {
+    backdrop-filter: blur(30px);
+    background-color: rgb(255 255 255 / 30%);
+    border-radius: 2rem;
+    width: 1.8rem;
+    height: 1.8rem;
+    text-align: center;
+    margin: 0.8rem 0.5rem;
+    cursor: pointer;
+    text-align: center;
+    display: flex;
+    align-content: center;
+    align-items: center;
+}
+
+
+.screen-full-size {
+    width: 100%;
+    height: 100%;
+    display: block;
+    object-fit: contain;
+    user-drag: none; /* 禁止拖动 */
+    user-select: none; /* 禁止选择 */
+    -webkit-user-drag: none;
+}
+
+.screen-full-preview {
+    position: relative;
+    width: 100%;
+    height: 20rem;
+    display: block;
+    user-drag: none; /* 禁止拖动 */
+    user-select: none; /* 禁止选择 */
+    -webkit-user-drag: none;
+    overflow: hidden;
+    box-sizing: border-box;
+    padding-bottom: 0;
+}
+
+.screen-image-container {
+    width: 100%;
+    height: 100%;
+    object-fit: contain;
+    position: relative;
+    overflow: hidden;
+    box-sizing: border-box;
+    /*transform: scale(0.5); !* 根据比例缩放 *!*/
+}
+
+.selection-box {
+    position: absolute;
+    border: 2px solid red;
+    cursor: pointer;
+}
+
+

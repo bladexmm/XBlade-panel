@@ -4,6 +4,7 @@ from flask import request
 from libs.model.Apps import Apps
 from libs.model.Layouts import Layouts
 from libs.model.models import db
+from libs.service import update_layouts
 from libs.utils.tools import result
 
 
@@ -57,3 +58,7 @@ class LayoutsResource(Resource):
             apps = [row['apps'] for row in rows if row['apps'] is not None]
         return result(data = {"layouts": rows, "apps": apps}, msg = 'success')
 
+
+class SaveResource(Resource):
+    def post(self):
+        return update_layouts()

@@ -7,32 +7,41 @@ import {getUserSettings} from "../../utils/settings";
 import {useEffect} from "react";
 
 export default function Layouts({
-        layouts,appsAll,layoutName="pane",
-        paneLayouts = [],
-        setPaneLayouts = () => {},
-        setMenuVisible = () => {},
-        setMenuPosition = () => {},
-        setRightClickMenuDel = () => {},
-        setRightClickMenuId = () => {},
-        setRightClickMenuLayout = () => {},
-        paneDraggable= false,
-        setPaneDraggable = () => {},
-        setCommandOpen = b => {},
-    }) {
+                                    layouts, appsAll, layoutName = "pane",
+                                    paneLayouts = [],
+                                    setPaneLayouts = () => {
+                                    },
+                                    setMenuVisible = () => {
+                                    },
+                                    setMenuPosition = () => {
+                                    },
+                                    setRightClickMenuDel = () => {
+                                    },
+                                    setRightClickMenuId = () => {
+                                    },
+                                    setRightClickMenuLayout = () => {
+                                    },
+                                    paneDraggable = false,
+                                    setPaneDraggable = () => {
+                                    },
+                                    setCommandOpen = b => {
+                                    },
+                                }) {
     const widthBox = 3600;
-    const [overLap, setOverLap] = React.useState(false);
-    const host =  getUserSettings('settings.host');
+    const host = getUserSettings('settings.host');
 
-    function onClicked(id) {
+    function onClicked(id,positionClick) {
         setMenuVisible(false);
         if (paneDraggable === false) {
+            let bodySend = {"id": id, "type": "apps"}
+            bodySend['position'] = positionClick != null ? positionClick : null;
             request({
                 url: "/api/apps/open",
                 method: "POST",
                 headers: {"Content-Type": "application/json"},
-                body: {"id": id, "type": "apps"},
+                body: bodySend,
             }).then((data) => {
-                if(data.msg === 'empty'){
+                if (data.msg === 'empty') {
                     setCommandOpen(true);
                     setRightClickMenuId(id);
                 }
@@ -71,7 +80,7 @@ export default function Layouts({
 
     useEffect(() => {
         setPaneLayouts(layouts)
-    }, [layouts,appsAll]);
+    }, [layouts, appsAll]);
     return (
 
         <HorizontalScrollbar>
@@ -79,13 +88,13 @@ export default function Layouts({
             <GridLayout
                 className="layout"
                 layout={paneLayouts}
-                cols={36}
+                cols={50}
                 rowHeight={90}
                 compactType={'horizontal'}
                 width={widthBox}
                 isDraggable={paneDraggable}
-                isResizable={false}
-                allowOverlap={overLap}
+                isResizable={paneDraggable}
+                allowOverlap={false}
                 onLayoutChange={(layoutIn) => {
                     setPaneLayouts(layoutIn)
                 }}
@@ -109,9 +118,9 @@ export default function Layouts({
                             appPath={(app['i'] in appsAll && appsAll[app['i']]['path'] && appsAll[app['i']]['path'].length > 0) ?
                                 host + appsAll[app['i']]['path'] : ''}
                             onClickedBtn={onClicked}
-                            setMenuPosition={(e)=>setMenuPosition(({x: e.clientX, y: e.clientY}))}
+                            setMenuPosition={(e) => setMenuPosition(({x: e.clientX, y: e.clientY}))}
 
-                        onLongPress={() => {
+                            onLongPress={() => {
                                 setMenuVisible(false);
                                 setPaneDraggable(true);
                             }}

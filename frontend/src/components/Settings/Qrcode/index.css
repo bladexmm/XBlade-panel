@@ -1,0 +1,16 @@
+.system-recover-btn{
+    width: 100%;
+    height: 1.8rem;
+    font-size: .9rem !important;
+    transition: ease-in-out .2s;
+    /*padding: 0rem !important;*/
+    padding-inline:0 !important;
+    padding-block: 0 !important;
+}
+br {
+    display: block;
+    content: "";
+    margin: 0;
+    padding: 0;
+    height: 0;
+}

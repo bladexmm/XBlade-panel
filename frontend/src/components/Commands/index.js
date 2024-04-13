@@ -8,6 +8,7 @@ import ControlCameraRoundedIcon from '@mui/icons-material/ControlCameraRounded';
 import SaveIcon from '@mui/icons-material/Save';
 import RightClickMenu from "../RightClickMenu";
 import AddApplication from "../AddApplication";
+import CachedIcon from '@mui/icons-material/Cached';
 import {
     useSpring,
     animated,
@@ -19,7 +20,7 @@ export default function Commands({
                                      app_id = '',
                                      defaultPosition = null,
                                      filteredLayouts = [],
-                                     setCommandOpen = () => {
+                                     setCommandOpen = b => {
                                      },
                                  }) {
     const [paneDraggable, setPaneDraggable] = React.useState(false);
@@ -36,12 +37,14 @@ export default function Commands({
     const [appName, setAppName] = React.useState('');
     const [appPath, setAppPath] = React.useState('');
     const [appIcons, setAppIcons] = React.useState([]);
-
-    const pageHeight = window.innerHeight;
+    const [appID,setAppID] = React.useState(app_id);
 
     const updateLayouts = () => {
+        if(appID === ''){
+            return
+        }
         request({
-            url: "/api/layouts?name=" + app_id,
+            url: "/api/layouts?name=" + appID,
             method: "GET",
             headers: {"Content-Type": "application/json"},
         }).then((data) => {
@@ -123,16 +126,14 @@ export default function Commands({
         saveLayouts(layoutsNew)
     }
 
-    const defaultY = defaultPosition !== null ? ((defaultPosition.y / pageHeight) * 100) : 50;
-    const defaultX = defaultPosition !== null ? ((defaultPosition.x / pageHeight) * 100) : 50;
 
     const [fullscreenStyle, setFullscreenStyle] = useSpring(() => ({
         config: config.stiff,
         from: {
             width: "10%",
-            height: "10%",
-            top: defaultY + '%',
-            left: defaultX + '%',
+            height: fullscreen ? "100%" : "90%",
+            top: "53%",
+            left: '50%',
         },
         to: {
             top: "53%", // 只保留字符串值
@@ -182,7 +183,6 @@ export default function Commands({
                         setAddAppOpen(true);
                         setMenuVisible(false);
                     }}
-                    // pinBtn={pinApp}
                     closeBtn={() => {
                         setMenuVisible(false);
                     }}
@@ -202,11 +202,9 @@ export default function Commands({
                             },
                             to: {
                                 width: "0%",
-                                height: "0%",
-                                top: '110%',
-                                // left: '5%',
+                                height: fullscreen ? "100%" : "90%",
+                                top: "150%"
                             },
-
                             onRest: () => {
                                 setCommandOpen(false); // 在动画完成后执行关闭操作
                             }
@@ -232,7 +230,9 @@ export default function Commands({
                             <SaveIcon fontSize="large" sx={{color: "#fff", margin: "auto"}}/>
                         </div>
                     )}
-
+                    <div className="header-btn" onClick={() => updateLayouts()}>
+                        <CachedIcon fontSize="large" sx={{color: "#fff", margin: "auto"}}/>
+                    </div>
                 </div>
                 <div className="pane-commands">
                     <Layouts
@@ -248,7 +248,6 @@ export default function Commands({
                         setRightClickMenuId={(value) => {
                             setRightClickMenuId(value);
                         }}
-
                         setPaneDraggable={(value) => {
                             setPaneDraggable(value);
                         }}

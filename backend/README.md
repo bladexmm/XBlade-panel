@@ -18,8 +18,8 @@ x:number
 y:number
 w:number
 h:number
-moved:boolen
-static:boolen
+moved:boolean
+static:boolean
 
 apps 表
 id 字符串 主键
