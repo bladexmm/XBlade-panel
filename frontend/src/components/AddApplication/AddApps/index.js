@@ -22,7 +22,6 @@ import DiamondRoundedIcon from '@mui/icons-material/DiamondRounded';
 import SendRoundedIcon from '@mui/icons-material/SendRounded';
 import MenuOpenIcon from '@mui/icons-material/MenuOpen';
 import SVGIcon from "../../XBladeIcon/SVGIcon";
-import io from 'socket.io-client';
 
 const VisuallyHiddenInput = styled('input')`
     clip: rect(0 0 0 0);

@@ -5,6 +5,9 @@ python: 3.10.4
 ```shell
 nuitka --standalone --include-data-dir=data=data --windows-icon-from-ico=data/blade.ico --include-data-dir=react_app=react_app --plugin-enable=tk-inter --disable-console --include-package=flask main.py
 ```
+```shell
+nuitka --standalone --include-data-dir=data=data --windows-icon-from-ico=data/blade.ico --include-data-dir=react_app=react_app --plugin-enable=tk-inter --include-package=flask main.py
+```
 用python flask 查询和新增用 restful
 数据保存用flask_sqlalchemy sqlite 
 并且在启动的时候会自动初始化表接口

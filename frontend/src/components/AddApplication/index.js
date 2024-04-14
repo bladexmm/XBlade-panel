@@ -1,7 +1,7 @@
 import * as React from 'react';
 import Modal from '@mui/joy/Modal';
 import "./index.css";
-import {useEffect, useState} from "react";
+import {useState} from "react";
 import TabsAdd from "./Tabs";
 import TabPanel from "@mui/joy/TabPanel";
 import AddApps from "./AddApps";
@@ -34,7 +34,6 @@ export default function AddApplication({
     const [commandDefault, setCommandDefault] = useState(null);
     const [monitorSelectOpen,setMonitorSelectorOpen] = useState(false);
     const [regionDefault,setRegionDefault] = useState(null);
-    const host = getUserSettings('settings.host')
     const tabsName = {
         'link': {
             'id': 0,

@@ -18,7 +18,6 @@ import DataObjectRoundedIcon from '@mui/icons-material/DataObjectRounded';
 import AppShortcutRoundedIcon from "@mui/icons-material/AppShortcutRounded";
 import DiamondRoundedIcon from "@mui/icons-material/DiamondRounded";
 import SendRoundedIcon from "@mui/icons-material/SendRounded";
-import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import MenuOpenIcon from "@mui/icons-material/MenuOpen";
 import SVGIcon from "../../XBladeIcon/SVGIcon";
 
