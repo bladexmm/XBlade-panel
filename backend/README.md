@@ -3,10 +3,11 @@
 python: 3.10.4
 ## 项目打包
 ```shell
-nuitka --standalone --include-data-dir=data=data --windows-icon-from-ico=data/blade.ico --include-data-dir=react_app=react_app --plugin-enable=tk-inter --disable-console --include-package=flask main.py
+nuitka --standalone --include-data-dir=data=data --include-data-dir=react_app=react_app --nofollow-imports --windows-icon-from-ico=data/blade.ico --plugin-enable=tk-inter --windows-uac-admin --disable-console --include-package=flask -o XBLADE main.py 
 ```
+优化包大小版
 ```shell
-nuitka --standalone --include-data-dir=data=data --windows-icon-from-ico=data/blade.ico --include-data-dir=react_app=react_app --plugin-enable=tk-inter --include-package=flask main.py
+nuitka --standalone --onefile --include-data-dir=data=data --include-data-dir=react_app=react_app --nofollow-imports --windows-icon-from-ico=data/blade.ico --plugin-enable=tk-inter --windows-uac-admin --disable-console --include-package=flask -o XBLADE main.py 
 ```
 用python flask 查询和新增用 restful
 数据保存用flask_sqlalchemy sqlite 
@@ -26,7 +27,7 @@ static:boolean
 
 apps 表
 id 字符串 主键
-name:string
+name:string 
 icon:string
 pinyin:string
 path:json

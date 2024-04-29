@@ -12,6 +12,12 @@ from libs.utils.website import md5
 
 
 class AppsResource(Resource):
+
+    def get(self):
+        id = request.args.get('id')
+        app = Apps.query.filter_by(id = id).first()
+        return result(1, app.to_dict(), '获取成功')
+
     def post(self):
         parser = reqparse.RequestParser()
         parser.add_argument('id', type = str, required = False, help = 'App Id')
@@ -20,7 +26,7 @@ class AppsResource(Resource):
         parser.add_argument('icon', type = str, required = False, help = 'App icon')
         parser.add_argument('path', type = str, required = True, help = 'App path')
         parser.add_argument('type', type = str,
-                            choices = ['default', 'file', 'link', 'command', 'monitor', 'components'],
+                            choices = ['default', 'file', 'link', 'command', 'monitor', 'desktop', 'components'],
                             required = True,
                             help = 'App type')
         parser.add_argument('open', type = int, required = False, help = 'App open')
@@ -32,7 +38,7 @@ class AppsResource(Resource):
             app_old = Apps.query.filter_by(id = args['id']).first()
             app_old = app_old.to_dict()
             if app_old['pid'] != args['pid']:
-                Layouts.query.filter_by(i=args['id']).delete()
+                Layouts.query.filter_by(i = args['id']).delete()
         if args['type'] != 'command':
             if args['type'] == 'default':
                 args['type'] = "link" if 'http' in args['path'] else 'file'
@@ -42,7 +48,6 @@ class AppsResource(Resource):
             args['id'] = args['id'] if args['id'] is not None else md5(
                 f"{args['name']}|{args['path']}|{current_timestamp}")
         args['path'] = args['path'] if args['type'] == 'command' else args['path']
-
 
         new_app = Apps(
             id = args['id'],
@@ -64,7 +69,7 @@ class AppsResource(Resource):
         db.session.merge(new_app)
         db.session.merge(new_layout)
         db.session.commit()
-        return result(data = args, msg = 'App created')
+        return result(data = args, msg = '添加应用成功')
 
     def delete(self):
         parser = reqparse.RequestParser()
@@ -82,7 +87,7 @@ class AppsResource(Resource):
             if app_dict['pid'] is None:
                 apps = Apps.query.filter(Apps.pid.is_(None)).all()
             else:
-                apps = Apps.query.filter(pid=app_dict['pid']).all()
+                apps = Apps.query.filter(Apps.pid.is_(app_dict['pid'])).all()
             apps_list = [app.to_dict() for app in apps]
             return {'data': apps_list, 'message': f"App with id {args['id']} deleted successfully"}
         else:

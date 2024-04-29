@@ -12,3 +12,4 @@ react_app/static
 main.build
 main.dist
 nuitka-crash-report.xml
+main.onefile-build

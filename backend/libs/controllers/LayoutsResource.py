@@ -51,7 +51,7 @@ class LayoutsResource(Resource):
             layout_data['apps'] = app_data.to_dict() if app_data else None
             rows.append(layout_data)
         apps = []
-        if name_param in ['pane', 'dock']:
+        if name_param == 'pane':
             apps = Apps.query.filter(Apps.pid.is_(None)).all()
             apps = [app.to_dict(include_children = True) for app in apps]
         else:

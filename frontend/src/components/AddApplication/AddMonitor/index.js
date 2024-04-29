@@ -50,6 +50,7 @@ export default function AddMonitor({
                                        appName = '',
                                        appPath = '',
                                        appIcons = [],
+                                       defaultLayout = 'pane',
                                        setRegionDefault = () => {
                                        },
                                        setMonitorSelectorOpen = () => {
@@ -74,11 +75,14 @@ export default function AddMonitor({
 
     const submitBtnClick = () => {
         setSubmitBtn(true)
+        let pid = appBind !== null ? appBind['id'] : null;
+        let layoutName = defaultLayout === 'pane' ? null : defaultLayout;
+        pid = pid !== null ? pid : layoutName;
         const bodySend = {
             "name": name,
             "icon": regionDefault !== [] ? '/api/tools/stream?region=' + encodeURIComponent(regionDefault.join(',')) : '',
             "path": regionDefault !== [] ? regionDefault.join(',') : '',
-            "pid": appBind !== null ? appBind['id'] : null,
+            "pid": pid,
             "type": 'monitor',
         }
         if (app_id != null) {

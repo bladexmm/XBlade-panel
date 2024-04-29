@@ -29,6 +29,9 @@ import InsertLinkIcon from '@mui/icons-material/InsertLink';
 import FolderIcon from '@mui/icons-material/Folder';
 import Input from "@mui/joy/Input";
 import { CopyToClipboard } from 'react-copy-to-clipboard';
+import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
+import PlaylistRemoveIcon from '@mui/icons-material/PlaylistRemove';
+import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
 
 const VisuallyHiddenInput = styled('input')`
     clip: rect(0 0 0 0);
@@ -132,6 +135,29 @@ export default function Qrcode() {
         showMessage("复制成功", 1);
     };
 
+
+    const systemMenu = (type)=>{
+        request({
+            url: "/api/system/menu",
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body:{type:type},
+        }).then((res) => {
+            showMessage(res.msg, res.code);
+        })
+    }
+
+    const startup = (type)=>{
+        request({
+            url: "/api/system/startup",
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body:{type:type},
+        }).then((res) => {
+            showMessage(res.msg, res.code);
+        })
+    }
+
     return (
         <Grid container direction="row" justifyContent="center" alignItems="center" spacing={2} columns={{xs: 6, sm: 8, md: 12}}>
             <Grid xs={6} sm={8} md={12} container direction="row" justifyContent="center" alignItems="center" spacing={2} columns={{xs: 6, sm: 8, md: 12}}>
@@ -185,6 +211,58 @@ export default function Qrcode() {
                         </Button>
                         <Button variant="soft" onClick={() => {setMode("dark"); saveUserSettings('settings.theme', 'dark');}} className="system-recover-btn" color="neutral" startDecorator={<DarkModeIcon sx={{fontSize: "1rem"}}/>}>
                             深色
+                        </Button>
+                    </ButtonGroup>
+                </Grid>
+            </Grid>
+
+
+            <Grid xs={6} sm={8} md={12} container direction="row" justifyContent="center" alignItems="center" spacing={2} columns={{xs: 6, sm: 8, md: 12}}>
+                <Grid xs={6} sm={8} md={3}>
+                    <ListItemContent>
+                        <Typography level="title-lg">
+                            右键菜单
+                        </Typography>
+                        <Typography level="body-xs" fontFamily="monospace" sx={{opacity: '70%'}}>
+                            新增快速添加应用按钮
+                        </Typography>
+                    </ListItemContent>
+                </Grid>
+                <Grid xs={0} sm={0} md={5}></Grid>
+
+                <Grid xs={6} sm={8} md={3}>
+                    <ButtonGroup>
+                        <Button variant="soft" onClick={() => {systemMenu("add");}} className="system-recover-btn" color="neutral" startDecorator={<PlaylistAddIcon sx={{fontSize: "1rem"}}/>}>
+                            添加
+                        </Button>
+                        <Button variant="soft" onClick={() => {systemMenu("remove");}} className="system-recover-btn" color="neutral" startDecorator={<PlaylistRemoveIcon sx={{fontSize: "1rem"}}/>}>
+                            移除
+                        </Button>
+                    </ButtonGroup>
+                </Grid>
+            </Grid>
+
+
+            <Grid xs={6} sm={8} md={12} container direction="row" justifyContent="center" alignItems="center" spacing={2} columns={{xs: 6, sm: 8, md: 12}}>
+                <Grid xs={6} sm={8} md={3}>
+                    <ListItemContent>
+                        <Typography level="title-lg">
+                            开机启动
+                        </Typography>
+                        <Typography level="body-xs" fontFamily="monospace" sx={{opacity: '70%'}}>
+                            将应用添加到开机启动项
+                        </Typography>
+                    </ListItemContent>
+                </Grid>
+                <Grid xs={0} sm={0} md={5}></Grid>
+
+                <Grid xs={6} sm={8} md={3}>
+                    <ButtonGroup>
+                        <Button variant="soft" onClick={() => {startup("add"); }} className="system-recover-btn" color="neutral" startDecorator={<PlaylistAddIcon sx={{fontSize: "1rem"}}/>}>
+                            添加
+                        </Button>
+                        <Button variant="soft" onClick={() => {startup("remove");}} className="system-recover-btn" color="neutral" startDecorator={<PlaylistRemoveIcon sx={{fontSize: "1rem"}}/>}>
+                            移除
                         </Button>
                     </ButtonGroup>
                 </Grid>

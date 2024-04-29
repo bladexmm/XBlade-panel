@@ -10,7 +10,7 @@ import IconSelector from "../IconSelector";
 import CommandEdit from "../CommandEdit";
 import AddMonitor from "./AddMonitor";
 import ScreenSelector from "./AddMonitor/ScreenSelector";
-import {getUserSettings} from "../../utils/settings";
+import AddDesktop from "./AddDesktop";
 
 
 export default function AddApplication({
@@ -22,8 +22,8 @@ export default function AddApplication({
                                            appName = '',
                                            appPath = '',
                                            appIcons = [],
+                                           defaultLayout = 'pane'
                                        }) {
-    const [checked, setChecked] = React.useState(false);
     const [disableTabs, setDisableTabs] = React.useState([false, false]);
     const [defaultTab, setDefaultTab] = React.useState(0);
 
@@ -37,25 +37,28 @@ export default function AddApplication({
     const tabsName = {
         'link': {
             'id': 0,
-            'active': [false, true, true]
+            'active': [false, true, true,false]
         },
         'file': {
             'id': 0,
-            'active':[false, true, true]
+            'active':[false, true, true,false]
         },
         'command': {
             'id': 1,
-            'active': [true, false, true]
+            'active': [true, false, true,true]
         },
         'monitor': {
             'id': 2,
-            'active': [true, true, false]
+            'active': [true, true, false,true]
+        },
+        'desktop': {
+            'id': 3,
+            'active': [false, true, true, false]
         },
     }
 
 
     useState(() => {
-        setChecked(true)
         if (app_id !== null) {
             setDefaultTab(tabsName[app['type']]['id']);
             setDisableTabs(tabsName[app['type']]['active'])
@@ -85,7 +88,8 @@ export default function AddApplication({
                                      appName={appName}
                                      appPath={appPath}
                                      appIcons={appIcons}
-                                     setIconSelectorOpen={setIconSelectorOpen}/>
+                                     setIconSelectorOpen={setIconSelectorOpen}
+                                     defaultLayout={defaultLayout}/>
                         </TabPanel>
                         <TabPanel value={1}>
                             <AddCommand
@@ -101,7 +105,8 @@ export default function AddApplication({
                                 iconDefault={iconDefault}
                                 commandDefault={commandDefault}
                                 setCommandEditOpen={setCommandEditOpen}
-                                setIconDefault={setIconDefault}/>
+                                setIconDefault={setIconDefault}
+                                defaultLayout={defaultLayout}/>
                         </TabPanel>
                         <TabPanel value={2}>
                             <AddMonitor
@@ -114,7 +119,22 @@ export default function AddApplication({
                                 regionDefault={regionDefault}
                                 setRegionDefault={setRegionDefault}
                                 setMonitorSelectorOpen={setMonitorSelectorOpen}
+                                defaultLayout={defaultLayout}
                             />
+                        </TabPanel>
+                        <TabPanel value={3}>
+                            <AddDesktop open={open}
+                                        iconDefault={iconDefault}
+                                        setIconDefault={setIconDefault}
+                                        app_id={app_id}
+                                        apps={apps}
+                                        app={app}
+                                        onClose={onClose}
+                                        appName={appName}
+                                        appPath={appPath}
+                                        appIcons={appIcons}
+                                        setIconSelectorOpen={setIconSelectorOpen}
+                                        defaultLayout={defaultLayout}/>
                         </TabPanel>
                     </React.Fragment>
                 </TabsAdd>

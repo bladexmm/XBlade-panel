@@ -5,48 +5,73 @@ import * as React from "react";
 import request from "../../utils/request";
 import {getUserSettings} from "../../utils/settings";
 import {useEffect} from "react";
+import {useTransition, animated, useSprings, useSpring} from '@react-spring/web'
+
+
+function ListItem({ item }) {
+    // 对每个列表项应用放大动画
+    const styles = useSpring({
+        opacity: 1,
+        transform: 'scale(1)',
+        from: { opacity: 0, transform: 'scale(0.9)' },
+        config: { duration: 500 },
+    });
+
+    return (
+        <animated.div style={styles}>
+            {item.i}
+        </animated.div>
+    );
+}
+
 
 export default function Layouts({
                                     layouts, appsAll, layoutName = "pane",
                                     paneLayouts = [],
-                                    setPaneLayouts = () => {
-                                    },
-                                    setMenuVisible = () => {
-                                    },
-                                    setMenuPosition = () => {
-                                    },
-                                    setRightClickMenuDel = () => {
-                                    },
-                                    setRightClickMenuId = () => {
-                                    },
-                                    setRightClickMenuLayout = () => {
-                                    },
+                                    updateLayouts = () =>{},
+                                    setDefaultLayout = () => {},
+                                    openedLayouts=[],
+                                    setOpenedLayouts=()=>{},
+                                    setPaneLayouts = () => {},
+                                    setMenuVisible = () => {},
+                                    setMenuPosition = () => {},
+                                    setRightClickMenuDel = () => {},
+                                    setRightClickMenuId = () => {},
+                                    setRightClickMenuLayout = () => {},
                                     paneDraggable = false,
-                                    setPaneDraggable = () => {
-                                    },
-                                    setCommandOpen = b => {
-                                    },
+                                    setPaneDraggable = () => {},
+                                    setCommandOpen = b => {},
                                 }) {
     const widthBox = 3600;
     const host = getUserSettings('settings.host');
 
-    function onClicked(id,positionClick) {
+    function onClicked(id, positionClick,setOpenLoad) {
         setMenuVisible(false);
-        if (paneDraggable === false) {
-            let bodySend = {"id": id, "type": "apps"}
-            bodySend['position'] = positionClick != null ? positionClick : null;
-            request({
-                url: "/api/apps/open",
-                method: "POST",
-                headers: {"Content-Type": "application/json"},
-                body: bodySend,
-            }).then((data) => {
-                if (data.msg === 'empty') {
-                    setCommandOpen(true);
-                    setRightClickMenuId(id);
-                }
-            });
+        if (paneDraggable !== false) {
+            return ;
         }
+        setOpenLoad(true);
+        let bodySend = {"id": id, "type": "apps"}
+        bodySend['position'] = positionClick != null ? positionClick : null;
+        request({
+            url: "/api/apps/open",
+            method: "POST",
+            headers: {"Content-Type": "application/json"},
+            body: bodySend,
+        }).then((res) => {
+            if (res.msg === 'empty') {
+                setCommandOpen(true);
+                setRightClickMenuId(id);
+            } else if (res.msg === 'newLayout') {
+                setDefaultLayout(res.data)
+                const isDuplicate = openedLayouts.find((layout) => layout.id === res.data);
+                if (!isDuplicate) {
+                    setOpenedLayouts([...openedLayouts, appsAll[res.data]]);
+                }
+                updateLayouts(res.data);
+            }
+            setOpenLoad(false);
+        });
     }
 
     /**
@@ -128,7 +153,6 @@ export default function Layouts({
                         />
                     </div>
                 ))}
-
             </GridLayout>
         </HorizontalScrollbar>
     )

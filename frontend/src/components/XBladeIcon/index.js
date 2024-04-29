@@ -20,7 +20,7 @@ for (let style in styles) {
 }
 
 const XBladeIcon = ({
-                        id, name, iconPath, appType = "link", appPath = '', onClickedBtn,
+                        id, name, iconPath, appType = "link", appPath = '', onClickedBtn = ()=>{},
                         doubleClickBtn = () => {
                         },
                         onLongPress = () => {
@@ -35,12 +35,12 @@ const XBladeIcon = ({
     const [singleClickTimer, setSingleClickTimer] = useState(null);
     const [iconSVG, setIconSVG] = useState(null);
     const [clickPosition, setClickPosition] = useState([0, 0]);
-
     const [isOverflow, setIsOverflow] = useState(false);
     const [timer, setTimer] = useState(null);
     const [icon, setIcon] = useState('');
     const sizeIcon = (size - 1) * 5;
     let host = getUserSettings('settings.host')
+    const [openLoad,setOpenLoad] = React.useState(false);
 
     /**
      * 处理点击按钮事件
@@ -76,11 +76,10 @@ const XBladeIcon = ({
 
             const relativeToImageX = (relativeX / imgWidth) * 100;
             const relativeToImageY = (relativeY / imgHeight) * 100;
-            onClickedBtn(id, {x: relativeToImageX.toFixed(3), y: relativeToImageY.toFixed(3)});
-
+            onClickedBtn(id, {x: relativeToImageX.toFixed(3), y: relativeToImageY.toFixed(3)},setOpenLoad);
+        }else {
+            onClickedBtn(id,null,setOpenLoad);
         }
-        onClickedBtn(id);
-
     };
 
     /**
@@ -146,11 +145,13 @@ const XBladeIcon = ({
             setClickCount(0);
         }
     }, [id, clickCount, iconPath, icon, size, appPath, appType, lastClickEvent]);
+    const delayTime = [100,500];
+    const randomDelay = Math.floor(Math.random() * (delayTime[1] - delayTime[0] + 1)) + delayTime[0];
 
     return (
-        <div className="icon-container" key={id}>
+        <div className="icon-container" key={id}  style={{ animationDelay:randomDelay+'ms'}}>
             {iconPath === '' ? (
-                <div className='file-icon'
+                <div className={openLoad ? "file-icon flip" : 'file-icon'}
                      id={"icon-img-" + id}
                      onClick={handleButtonClicked}
                      onMouseDown={handleMouseDown}
@@ -170,7 +171,7 @@ const XBladeIcon = ({
 
                 </div>
             ) : (iconPath.replace(host, '').startsWith('{') && iconSVG !== null) ? (
-                <div className='svg-icon'
+                <div className={openLoad ? "svg-icon flip" : 'svg-icon'}
                      id={"icon-img-" + id}
                      onClick={handleButtonClicked}
                      onMouseDown={handleMouseDown}
@@ -202,8 +203,8 @@ const XBladeIcon = ({
                         clearTimeout(timer);
                     }}
                     id={"icon-div-" + id}
-                    className={appType === 'monitor' ? "icon-monitor" : 'icon'}>
-                    <img id={"icon-img-" + id} src={iconPath} alt={name}/>
+                    className={appType === 'monitor' ? "icon-monitor"  : 'icon'}>
+                    <img id={"icon-img-" + id} className={openLoad ? "flip" : ''} src={iconPath} alt={name}/>
                 </div>
 
             )}

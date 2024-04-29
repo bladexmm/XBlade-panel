@@ -112,7 +112,7 @@ export default function IconSelector({
                     <CloseRoundedIcon fontSize="large" sx={{color: "#fff", margin: "auto"}}/>
                 </div>
             </div>
-            <div className="pane-icons">
+            <div className="icon-selector-content">
                 <Grid container
                       columns={{xs: 6, sm: 12, md: 12}}>
                     <Grid

@@ -5,6 +5,7 @@ import Tab, { tabClasses } from '@mui/joy/Tab';
 import TerminalIcon from '@mui/icons-material/Terminal';
 import ListItemDecorator from '@mui/joy/ListItemDecorator';
 import AirplayRoundedIcon from '@mui/icons-material/AirplayRounded';
+import DevicesOtherRoundedIcon from '@mui/icons-material/DevicesOtherRounded';
 import AppsIcon from '@mui/icons-material/Apps';
 import './index.css';
 
@@ -15,7 +16,7 @@ export default function TabsAdd({value=0,disableTabs=[false,false,false],childre
             aria-label="Pricing plan"
             className="tabs-add"
             sx={{
-                width: 343,
+                width: 400,
                 borderRadius: 'lg',
                 boxShadow: 'sm',
                 overflow: 'auto',
@@ -56,6 +57,12 @@ export default function TabsAdd({value=0,disableTabs=[false,false,false],childre
                         <AirplayRoundedIcon />
                     </ListItemDecorator>
                     监控
+                </Tab>
+                <Tab disableIndicator value={3} disabled={disableTabs[3]} variant="soft" sx={{ flexGrow: 1 }}>
+                    <ListItemDecorator>
+                        <DevicesOtherRoundedIcon />
+                    </ListItemDecorator>
+                    桌面
                 </Tab>
 
             </TabList>

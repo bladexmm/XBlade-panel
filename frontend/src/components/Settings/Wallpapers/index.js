@@ -66,7 +66,7 @@ export default function WallpaperBasicGrid({
                                           onClick={() => handleItemClick(video)}
                                           key={index}>
                                         {video.endsWith(".mp4") ? (
-                                            <video className="wallpaper-video" loop muted>
+                                            <video className="wallpaper-video" muted>
                                                 <source src={host + video} type="video/mp4"/>
                                             </video>
                                         ) : (

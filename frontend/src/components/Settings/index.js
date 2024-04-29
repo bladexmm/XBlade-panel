@@ -12,9 +12,9 @@ import DnsIcon from '@mui/icons-material/Dns';
 import CameraRoundedIcon from '@mui/icons-material/CameraRounded';
 import BubbleChartRoundedIcon from '@mui/icons-material/BubbleChartRounded';
 
-export default function SettingsDialog({open, onClose, children}) {
+export default function SettingsDialog({open, onClose,defaultLayout='pane', children}) {
     return (
-            <Modal open={open} keepMounted onClose={onClose}>
+            <Modal open={open} onClose={onClose}>
                 <React.Fragment>
                     <Tabs variant="outlined" aria-label="Pricing plan" className="tabs-add" defaultValue={0}
                         sx={{
@@ -46,7 +46,7 @@ export default function SettingsDialog({open, onClose, children}) {
                                 <DnsIcon />系统
                             </Tab>
                             <Tab disableIndicator variant="soft" sx={{flexGrow: 1}}>
-                                <GridViewRoundedIcon />组件
+                                <GridViewRoundedIcon />应用
                             </Tab>
                             <Tab disableIndicator variant="soft" sx={{flexGrow: 1}}>
                                 <BubbleChartRoundedIcon />关于
@@ -61,8 +61,8 @@ export default function SettingsDialog({open, onClose, children}) {
                             <TabPanel value={1} sx={{height:"100%",overflowY:"scroll"}}>
                                 <Qrcode />
                             </TabPanel>
-                            <TabPanel value={2}>
-                                <Plugin />
+                            <TabPanel value={2} sx={{height:"100%",overflowY:"scroll",overflowX:"hidden"}}>
+                                <Plugin defaultLayout={defaultLayout}/>
                             </TabPanel>
                             <TabPanel value={3}>
                                 <AboutUs />

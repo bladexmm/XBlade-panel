@@ -38,8 +38,8 @@
 .Pane{
     width: 95%;
     height: 43rem;
-    overflow-x: auto;
-    overflow-y: hidden;
+    /*overflow-x: auto;*/
+    /*overflow-y: hidden;*/
     box-sizing: border-box;
     border-radius: 1rem;
     margin-left: 2.5%;
@@ -62,6 +62,16 @@
     left: 50%;
     transform:  translateX(-50%);
     user-select: none;
+    display: flex;
+    flex-direction: row;
+}
+
+.opened-layouts{
+    display: flex;
+    flex-direction: row;
+    justify-content: center;
+    align-items: center;
+    margin-left: 1rem;
 }
 
 .GridItem:nth-child(2n):not(.dragging) > *,
@@ -76,6 +86,11 @@
     flex-direction: column;
     justify-content: center;
     align-items: center;
+}
+.opened-apps{
+    width: 60px !important;
+    height: 90px;
+    margin: auto .5rem;
 }
 
 .GridItem:nth-child(2n-1):not(.dragging) > *,

@@ -31,6 +31,20 @@ function TimeWait() {
 TimeWait.title = "等待(ms)";
 TimeWait.desc = "在等待N毫秒"
 
+function MultiMerge(){
+    this.addInput("cmd", "cmd");
+    this.addInput("cmd", "cmd");
+    this.addInput("cmd", "cmd");
+
+    this.addOutput("cmd", "cmd");
+    this.horizontal = true;
+
+    this.size = [100, 20];
+}
+
+MultiMerge.title = "合并运行";
+MultiMerge.desc = "多个执行合并成一个";
+
 function isNumeric(str) {
     return /^\d+$/.test(str);
 }

@@ -11,10 +11,14 @@ from PIL import ImageGrab
 from libs.model.Apps import Apps
 from libs.model.Layouts import Layouts
 from libs.model.models import db
+from libs.utils.installedApps import get_installed_apps, init_windows_apps, windows_apps_all
+from libs.utils.reg import add_reg, remove_reg, remove_auto_start_key, registry_auto_start_key
+from libs.utils.settings import IMAGE_PATH, HTML_PATH
 from libs.utils.tools import result, extract_icon_from_exe, generate_random_md5_with_timestamp, \
     open_with_default_program, exec_command, generate_random_filename, generate_date_path
 from libs.utils.website import get_page_info, get_domain, md5
 from flask import request
+from PIL import ImageGrab
 
 
 def getWallpapers():
@@ -71,7 +75,7 @@ def openApp():
     data = request.get_json()
     db_session = db.session
     app = db_session.query(Apps).filter_by(id = data['id']).first()
-    app_dict = app.to_dict(include_children=True)
+    app_dict = app.to_dict(include_children = True)
 
     parent = None
     if app_dict['pid'] is not None:
@@ -89,6 +93,8 @@ def openApp():
         open_with_default_program(app_dict['path'])
     elif app_dict['type'] == 'command':
         exec_command(json.loads(app_dict['path']), parent)
+    elif app_dict['type'] == 'desktop':
+        return result(1, app_dict['id'], 'newLayout')
     elif app_dict['type'] == 'monitor' and data['position'] is not None:
         icon = app_dict['icon'].split('?')
         icon = icon[1].replace("region=", '')
@@ -195,3 +201,32 @@ def systemInfo(info):
     if info == 'screen_size':
         screen_width, screen_height = pyautogui.size()
         return result(1, [screen_width, screen_height], 'success')
+    elif info == 'menu':
+        data = json.loads(request.data)
+        if data['type'] == 'add':
+            add_reg()
+        elif data['type'] == 'remove':
+            remove_reg()
+        return result(1, data, '注册成功')
+    elif info == 'startup':
+        data = json.loads(request.data)
+        if data['type'] == 'add':
+            registry_auto_start_key()
+        elif data['type'] == 'remove':
+            remove_auto_start_key()
+        return result(1, data, '注册成功')
+    elif info == 'apps':
+        windows_apps = windows_apps_all()
+        return result(1, windows_apps, '获取成功')
+
+    elif info == 'grabclipboard':
+        # 尝试从剪贴板获取图像
+        image = ImageGrab.grabclipboard()
+        image_path = None
+        if image is not None:
+            image_path = f'{IMAGE_PATH}/{generate_date_path()}{generate_random_filename(5)}.png'
+            # 如果剪贴板中包含图像数据，则可以进一步处理
+            # 例如，使用OCR识别图片中的文本，或者保存图片到磁盘
+            image.save(image_path)
+            image_path = image_path.replace(HTML_PATH, '')
+        return result(1, image_path, '获取成功')

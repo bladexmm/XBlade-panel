@@ -18,13 +18,11 @@ const Header = ({
     const [fullscreen, setFullscreen] = useState(false);
 
     const handleFullScreen = () => {
-        // 如果浏览器支持全屏功能
         if (document.fullscreenEnabled) {
-            // 如果当前不是全屏状态，则请求进入全屏
             if (!document.fullscreenElement) {
                 setFullscreen(true)
                 document.documentElement.requestFullscreen();
-            } else { // 否则退出全屏
+            } else {
                 setFullscreen(false)
                 if (document.exitFullscreen) {
                     document.exitFullscreen();
@@ -38,6 +36,7 @@ const Header = ({
         const intervalId = setInterval(() => {
             setCurrentTime(new Date());
         }, 1000);
+
         return () => clearInterval(intervalId);
     }, []);
 
@@ -49,11 +48,6 @@ const Header = ({
                         <Typography className='time' color="white" level="body-xs" variant="soft">
                             {currentTime.toLocaleTimeString([], {hour: '2-digit', minute: '2-digit',second:'2-digit', hour12: true})}
                         </Typography>
-                        {/*<Typography className='time' color="white" level="body-xs" variant="soft">*/}
-                        {/*    {currentTime.toLocaleTimeString([],*/}
-                        {/*        {year: 'numeric',month: '2-digit',day: '2-digit'}*/}
-                        {/*    ).slice(0, 10)}*/}
-                        {/*</Typography>*/}
                     </ListItemContent>
 
                 </Grid>
@@ -61,6 +55,7 @@ const Header = ({
                 </Grid>
 
                 <Grid xs={4} className='items-right'>
+
                     <Tooltip title="新增应用" size="sm">
                         <IconButton size="sm" variant="soft" onClick={openAddDiag} color="primary" className='right-btn'>
                             <PlaylistAddIcon fontSize="small"
@@ -78,6 +73,8 @@ const Header = ({
                             }
                         </IconButton>
                     </Tooltip>
+
+
 
 
 

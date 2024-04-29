@@ -50,7 +50,7 @@ export default function FileIconAuto({path, img='', appType,width=20,height=20})
                              defaultHeight={24}/>
                 </div>
             ):(
-                <img src={host + img}/>
+                <img src={host + img} style={{maxWidth:"37px",maxHeight:'37px'}}/>
             )}
         </React.Fragment>
     )

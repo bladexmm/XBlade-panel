@@ -1,0 +1,14 @@
+.file-icon{
+    min-width: 3rem;
+    min-height: 3rem;
+    max-width: 100%;
+    max-height: 100%;
+    object-fit: contain;
+    padding: .3rem 0;
+    cursor: pointer;
+    transition: transform 0.3s ease;
+    border-radius: 1.2rem;
+    pointer-events: all;
+    margin-bottom: 0.5rem;
+    box-sizing: border-box;
+}

@@ -2,6 +2,7 @@ function LocateOnScreenNode() {
     this.addInput("cmd", "cmd");
     this.addOutput("cmd", "cmd");
     this.addOutput("location", "location");
+    this.addOutput("error", "cmd");
 
     // 创建 HTML 元素用于上传图片
     const fileInput = document.createElement("input");
@@ -68,6 +69,34 @@ function LocateOnScreenNode() {
         fileInput.click();
     });
 
+    this.addWidget("button", "Paste Image", null, function () {
+        fetch('/api/system/grabclipboard', {
+            method: 'GET',
+        }).then(response => {
+            if (response.ok) {
+                return response.json();
+            } else {
+                throw new Error('File upload failed');
+            }
+        }).then(result => {
+            if (result.code === 1) {
+                const imageUrl = result.data;
+                if (!imageValues.includes(imageUrl) && imageUrl !== null) {
+                    imageValues.push(imageUrl);
+                    self.widgets[2].options.values = imageValues;
+                    self.setProperty('image', imageUrl);
+                    console.log("imageValues",imageValues)
+                    console.log("imageUrl",imageUrl);
+                }
+            } else {
+                throw new Error('File upload failed');
+            }
+        }).catch(error => {
+            console.error('Error:', error);
+        });
+    });
+
+
     this.addProperty("image", '');
     const comboWidget = this.addWidget("combo", "image", "", {values: imageValues, property: "image"});
 
@@ -81,7 +110,8 @@ function LocateOnScreenNode() {
 	this.addProperty("grayscale", false);
     this.addWidget("toggle","grayscale", false,"grayscale", { on: "on", off:"off"} );
 
-    this.size = [200, 350];
+    // 灰度匹配
+    this.size = [200, 420];
 
     this.onPropertyChanged = function (name, value) {
         if (name === 'image') {

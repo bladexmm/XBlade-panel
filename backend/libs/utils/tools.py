@@ -32,6 +32,18 @@ def read_json(file_path, encoding = 'utf-8'):
     return data
 
 
+def read_reg():
+    pass
+
+
+def read_txt(file_path, encoding = 'utf-8'):
+    if not os.path.exists(file_path):
+        return ''
+    with open(file_path, 'r', encoding = encoding) as file:
+        content = file.read()
+        return content
+
+
 def write_json(file, content, mode = 'w', encoding = 'utf-8'):
     dir_name = os.path.dirname(file)  # 获取目录名
     if not os.path.isdir(dir_name):
@@ -157,17 +169,18 @@ def exec_command(commands, parent = None):
         if next_node['type'] == '基础/结束':
             return
         node_outputs = XbladeGraph.call_func_by_alias(next_node['type'], next_node)
-        node_output[next_node['id']] = node_outputs
+        node_output[next_node['id']] = node_outputs['data']
         # noinspection PySimplifyBooleanCheck
-        if node_outputs == False:
+        if node_outputs['code'] == 0:
             print(f"节点：{next_node['type']},出错")
-            return node_outputs
-        link_output = [output for output in next_node['outputs'] if output['type'] == 'cmd']
+        link_output = [output for output in next_node['outputs'] if
+                       output['type'] == 'cmd' and output['name'] == node_outputs['name']]
         i += 1
 
 
 def hotkeys(keys):
     pyautogui.hotkey(*keys)
+
 
 def check_file_or_directory(path):
     if os.path.exists(path):  # 先确认路径存在
@@ -177,6 +190,8 @@ def check_file_or_directory(path):
             return "dir"
     else:
         return "no"
+
+
 def open_with_default_program(file_path):
     system = platform.system()
     file_type = check_file_or_directory(file_path)
@@ -208,6 +223,14 @@ def get_local_ip():
     except Exception as e:
         print(f"获取本地IP时发生错误：{e}")
         return None
+
+
+def default_port():
+    return 58433
+
+
+def exe_name():
+    return "XBLADE"
 
 
 def result(code = 1, data = None, msg = "success"):
