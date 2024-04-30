@@ -13,11 +13,9 @@
 * 数据备份：备份/恢复所有数据
 * 系统应用：自动识别系统已经安装的应用
 ## 项目预览
-![首页](https://raw.githubusercontent.com/bladexmm/XBlade-panel/main/static/imgs/1.png)
-![首页](https://raw.githubusercontent.com/bladexmm/XBlade-panel/main/static/imgs/2.png)
-![新增应用](https://raw.githubusercontent.com/bladexmm/XBlade-panel/main/static/imgs/3.png)
-![搜索](https://raw.githubusercontent.com/bladexmm/XBlade-panel/main/static/imgs/4.png)
-![设置壁纸](https://raw.githubusercontent.com/bladexmm/XBlade-panel/main/static/imgs/5.png)
+
+![首页](https://raw.githubusercontent.com/bladexmm/XBlade-panel/main/static/imgs/all_tiny.png)
+
 
 
 ## 使用教程
