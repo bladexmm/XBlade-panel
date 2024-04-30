@@ -59,7 +59,7 @@ export default function SettingsDialog({open, onClose,defaultLayout='pane', chil
                                 {children}
                             </TabPanel>
                             <TabPanel value={1} sx={{height:"100%",overflowY:"scroll"}}>
-                                <Qrcode />
+                                <Qrcode defaultLayout={defaultLayout}/>
                             </TabPanel>
                             <TabPanel value={2} sx={{height:"100%",overflowY:"scroll",overflowX:"hidden"}}>
                                 <Plugin defaultLayout={defaultLayout}/>

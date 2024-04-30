@@ -56,7 +56,7 @@ const ImportAppsVisuallyHiddenInput = styled('input')`
     white-space: nowrap;
     width: 1px;
 `;
-export default function Qrcode() {
+export default function Qrcode({defaultLayout}) {
     const currentURL = window.location.href;
     const host = getUserSettings('settings.host');
     const {showMessage} = useSnackbar();
@@ -105,6 +105,7 @@ export default function Qrcode() {
     const importApps = (event) =>{
         const formData = new FormData();
         formData.append('file', event.target.files[0]);
+        formData.append('layout', defaultLayout);
         // 使用fetch发送POST请求到Flask上传接口
         fetch(host + '/api/tools/import', {
             method: 'PUT',

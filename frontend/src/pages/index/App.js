@@ -226,20 +226,15 @@ function App() {
     /**
      * 删除应用
      */
-    const deleteApp = (table = defaultLayout) => {
-        let layoutsNew = []
-        if (table === defaultLayout || table === 'search') {
-            layoutsNew = paneLayouts
-        } else if (table === 'dock') {
-            layoutsNew = dockLayouts
-        }
+    const deleteApp = (table = defaultLayout,softDelete=true) => {
+        let layoutsNew = table === 'dock' ? dockLayouts : paneLayouts;
         for (let i = 0; i < layoutsNew.length; i++) {
             if (layoutsNew[i]['i'] === rightClickMenuId) {
                 layoutsNew.splice(i, 1)
                 break
             }
         }
-        if (table === "search" && rightClickMenuDel === true) {
+        if (softDelete === false) {
             request({
                 url: "/api/apps",
                 method: "DELETE",
@@ -259,26 +254,15 @@ function App() {
 
     // 固定应用
     const pinApp = () => {
-        let layoutOld = []
-        let table = ''
-        if (rightClickMenuLayout === defaultLayout) {
-            layoutOld = dockLayouts.slice();
-            table = 'dock'
-        } else if (rightClickMenuLayout === 'dock') {
-            layoutOld = paneLayouts.slice();
-            table = defaultLayout
-        } else if (rightClickMenuLayout === 'search') {
-            layoutOld = paneLayouts.slice();
-            table = defaultLayout;
+        // 固定到dock栏
+        if(rightClickMenuLayout === 'pane'){
+            let layoutOld = dockLayouts.slice();
+            layoutOld.push({'i': rightClickMenuId, 'x': 4, 'y': 0, 'w': 1, 'h': 1})
+            saveLayouts(layoutOld, "dock")
+        }else {
+            // 取消固定
+            deleteApp("dock",true)
         }
-
-        layoutOld.push({'i': rightClickMenuId, 'x': 4, 'y': 0, 'w': 1, 'h': 1})
-        saveLayouts(layoutOld, table)
-        if (table !== "search") {
-            table = table === defaultLayout ? 'dock' : defaultLayout;
-            deleteApp(table)
-        }
-
     }
 
 
@@ -345,7 +329,7 @@ function App() {
                                             setMenuVisible(false);
                                         }}
                                         deleteBtn={(layoutType) => {
-                                            deleteApp(layoutType);
+                                            deleteApp(layoutType,false);
                                         }}
                                         editBtn={() => {
                                             console.log("test", appsAll[rightClickMenuId])

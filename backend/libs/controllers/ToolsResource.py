@@ -1,7 +1,7 @@
 import os
 import time
 
-from flask_restful import Resource
+from flask_restful import Resource, reqparse
 
 from libs.model.Apps import Apps
 from libs.model.Layouts import Layouts
@@ -84,10 +84,12 @@ class BackupResource(Resource):
 
 class ImportResource(Resource):
     def put(self):
+        layout_open = request.form.get('layout', 'pane')
         zip_file = uploadFile('backup/', 'other')
         unzip_file(zip_file, './temp')
         files = copy_dir('./temp/images', './react_app')
         apps = read_json('./temp/apps.json')
+        first_app_id = apps[0]['id']
         apps_dict = list_to_dict(apps, 'id')
         apps_add = []
         for app in apps:
@@ -116,10 +118,18 @@ class ImportResource(Resource):
             if len(layout['name']) >= 30:
                 layout_name = apps_dict[layout['name']]['id'] if layout['name'] in apps_dict else 'pane'
 
+            if first_app_id == layout['i']:
+                layout_name = layout_open
             layout_new = Layouts(
                 id = md5(f"{layout_name}|{app_id}"),
                 name = layout_name,
-                i = app_id
+                i = app_id,
+                x = layout['x'],
+                y = layout['y'],
+                w = layout['w'],
+                h = layout['h'],
+                moved = layout['moved'],
+                static = layout['static']
             )
             layouts_add.append(layout_new)
         db.session.add_all(layouts_add)
