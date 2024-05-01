@@ -32,3 +32,30 @@ class Apps(db.Model):
             'created' : self.created.strftime('%Y-%m-%d %H:%M:%S'),
             'children': [child.to_dict() for child in self.children] if include_children and self.children else None
         }
+
+    def to_dict_recursive(self):
+        app_dict = {
+            'id': self.id,
+            'pid': self.pid,
+            'name': self.name,
+            'icon': self.icon,
+            'pinyin': self.pinyin,
+            'path': self.path,
+            'type': self.type,
+            'open': self.open,
+            'created': self.created.strftime('%Y-%m-%d %H:%M:%S'),
+            'children': [child.to_dict_recursive() for child in self.children] if self.children else []
+        }
+        return app_dict
+
+
+def flatten_tree(app, flattened_list=None):
+    if flattened_list is None:
+        flattened_list = []
+
+    flattened_list.append(app.to_dict())
+
+    for child in app.children:
+        flatten_tree(child, flattened_list)
+
+    return flattened_list

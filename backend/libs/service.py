@@ -227,6 +227,9 @@ def systemInfo(info):
             image_path = f'{IMAGE_PATH}/{generate_date_path()}{generate_random_filename(5)}.png'
             # 如果剪贴板中包含图像数据，则可以进一步处理
             # 例如，使用OCR识别图片中的文本，或者保存图片到磁盘
+            dir_name = os.path.dirname(image_path)  # 获取目录名
+            if not os.path.isdir(dir_name):
+                os.makedirs(dir_name)
             image.save(image_path)
             image_path = image_path.replace(HTML_PATH, '')
         return result(1, image_path, '获取成功')

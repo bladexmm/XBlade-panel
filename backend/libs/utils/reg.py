@@ -95,7 +95,7 @@ def registry_auto_start_key():
     project_path = get_project_path()
     filename = exe_name()
     create_registry_key(r"SOFTWARE\Microsoft\Windows\CurrentVersion\Run", "", value = "XbladePanel",
-                        value_data = rf"{project_path}\{filename}.exe", reg_key = winreg.HKEY_LOCAL_MACHINE)
+                        value_data = rf"\"{project_path}\{filename}.exe\"  --cmd=autorun", reg_key = winreg.HKEY_LOCAL_MACHINE)
 
 
 def remove_auto_start_key():

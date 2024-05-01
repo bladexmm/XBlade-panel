@@ -308,3 +308,20 @@ def copy_app_images(apps):
             for node in nodes['nodes']:
                 if 'image' in node['properties']:
                     copy("./react_app" + node['properties']['image'], "./temp/images" + node['properties']['image'])
+
+
+def sanitize_filename(filename):
+    # 定义非法字符集
+    illegal_chars = set(string.punctuation + '\t\n\r\v\f')
+    # 对于Windows，额外去除以下字符
+    windows_illegal_chars = {'\\', '/', ':', '*', '?', '"', '<', '>', '|'}
+    illegal_chars.update(windows_illegal_chars)
+
+    # 替换非法字符为空格
+    filename = ''.join(char if char not in illegal_chars else ' ' for char in filename)
+
+    # 移除开头的点号（.）
+    filename = filename.lstrip('.')
+
+    # 返回清理过的文件名
+    return filename

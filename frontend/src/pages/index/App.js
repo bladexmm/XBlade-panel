@@ -66,6 +66,7 @@ function App() {
      * 获取最新布局
      */
     const updateLayouts = (layoutName = 'pane') => {
+        console.log('udpate')
         request({
             url: "/api/layouts?name=" + layoutName,
             method: "GET",

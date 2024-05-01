@@ -2,12 +2,14 @@ from flask_restful import Resource, reqparse
 from pypinyin import lazy_pinyin
 import time
 from flask import request
+from sqlalchemy import or_
 
-from libs.model.Apps import Apps
+from libs.model.Apps import Apps, flatten_tree
 from libs.model.Layouts import Layouts
 from libs.model.models import db
 from libs.service import openApp, parseApps
-from libs.utils.tools import result, write_json, copy_app_images, format_date, zipFolder, delete_folder
+from libs.utils.tools import result, write_json, copy_app_images, format_date, zipFolder, delete_folder, \
+    sanitize_filename
 from libs.utils.website import md5
 
 
@@ -109,16 +111,18 @@ class ShareResource(Resource):
     def get(self):
         id = request.args.get('id')
         # 保存apps配置
-        apps = db.session.query(Apps).filter((Apps.id == id) | (Apps.pid == id)).all()
-        apps = [app.to_dict() for app in apps]
+        target_app = db.session.query(Apps).filter_by(id=id).first()
+        apps = flatten_tree(target_app)
+        app_ids = [app['id'] for app in apps]
         write_json('./temp/apps.json', apps)
         copy_app_images(apps)
         # 保存apps布局
-        layouts = db.session.query(Layouts).filter((Layouts.i == id) | (Layouts.name == id)).all()
+        layouts = db.session.query(Layouts).filter(or_(Layouts.i.in_(app_ids), Layouts.name.in_(app_ids))).all()
         layouts = [layout.to_dict() for layout in layouts]
         write_json('./temp/layouts.json', layouts)
         # 开始压缩数据
-        zipFile = f"/backup/share_{format_date()}.zip"
+        filename = target_app.to_dict()['name']
+        zipFile = f"/backup/{sanitize_filename(filename)}_share_{format_date()}.zip"
         zipFolder('./temp/', f'./react_app{zipFile}')  # 压缩文件
         delete_folder('./temp')  # 删除文件
 

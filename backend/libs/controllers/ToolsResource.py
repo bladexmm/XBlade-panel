@@ -115,6 +115,7 @@ class ImportResource(Resource):
         db.session.add_all(apps_add)
         layouts = read_json('./temp/layouts.json')
         layouts_add = []
+        layouts_ids = []
         for layout in layouts:
             app_id = apps_dict[layout['i']]['id']
             layout_name = layout['name']
@@ -123,6 +124,9 @@ class ImportResource(Resource):
 
             if first_app_id == layout['i']:
                 layout_name = layout_open
+            if md5(f"{layout_name}|{app_id}") in layouts_ids:
+                continue
+            layouts_ids.append(md5(f"{layout_name}|{app_id}"))
             layout_new = Layouts(
                 id = md5(f"{layout_name}|{app_id}"),
                 name = layout_name,
@@ -131,8 +135,6 @@ class ImportResource(Resource):
                 y = layout['y'],
                 w = layout['w'],
                 h = layout['h'],
-                moved = layout['moved'],
-                static = layout['static']
             )
             layouts_add.append(layout_new)
         db.session.add_all(layouts_add)
