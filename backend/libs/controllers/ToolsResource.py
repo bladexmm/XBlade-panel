@@ -41,8 +41,11 @@ class WallpaperResource(Resource):
         return getWallpapers()
 
     def post(self):
-        absolute_path = os.path.abspath('./react_app/assets/wallpapers/')
-        os.system(f"start {absolute_path}")
+        # absolute_path = os.path.abspath('./react_app/assets/wallpapers/')
+        # os.system(f"start {absolute_path}")
+        script_dir = os.path.dirname(os.path.abspath(__file__))
+        absolute_path = os.path.join(script_dir, 'react_app/assets/wallpapers/')
+        os.system(f'start {absolute_path}')
         return result(1, '', '打开文件夹成功')
 
 
