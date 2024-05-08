@@ -29,7 +29,6 @@ import InsertLinkIcon from '@mui/icons-material/InsertLink';
 import FolderIcon from '@mui/icons-material/Folder';
 import Input from "@mui/joy/Input";
 import { CopyToClipboard } from 'react-copy-to-clipboard';
-import AppRegistrationIcon from '@mui/icons-material/AppRegistration';
 import PlaylistRemoveIcon from '@mui/icons-material/PlaylistRemove';
 import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
 

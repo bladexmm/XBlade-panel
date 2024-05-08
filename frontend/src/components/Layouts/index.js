@@ -5,25 +5,6 @@ import * as React from "react";
 import request from "../../utils/request";
 import {getUserSettings} from "../../utils/settings";
 import {useEffect} from "react";
-import {useTransition, animated, useSprings, useSpring} from '@react-spring/web'
-
-
-function ListItem({ item }) {
-    // 对每个列表项应用放大动画
-    const styles = useSpring({
-        opacity: 1,
-        transform: 'scale(1)',
-        from: { opacity: 0, transform: 'scale(0.9)' },
-        config: { duration: 500 },
-    });
-
-    return (
-        <animated.div style={styles}>
-            {item.i}
-        </animated.div>
-    );
-}
-
 
 export default function Layouts({
                                     layouts, appsAll, layoutName = "pane",

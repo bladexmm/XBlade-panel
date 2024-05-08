@@ -51,13 +51,12 @@ const Header = ({
                     </ListItemContent>
 
                 </Grid>
-                <Grid xs={7}>
-                </Grid>
+                <Grid xs={7}></Grid>
 
                 <Grid xs={4} className='items-right'>
 
                     <Tooltip title="新增应用" size="sm">
-                        <IconButton size="sm" variant="soft" onClick={openAddDiag} color="primary" className='right-btn'>
+                        <IconButton size="sm" variant="soft" onClick={openAddDiag} color="primary" className='right-btn' id="add-app-btn">
                             <PlaylistAddIcon fontSize="small"
                                  sx={{color: "#fff", margin: "auto"}}
                             />

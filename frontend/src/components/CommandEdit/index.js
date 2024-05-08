@@ -1,4 +1,4 @@
-import {config,animated, useSpring} from "@react-spring/web";
+import {config,useSpring} from "@react-spring/web";
 import * as React from "react";
 import './index.css';
 

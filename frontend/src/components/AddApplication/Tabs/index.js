@@ -13,7 +13,6 @@ export default function TabsAdd({value=0,disableTabs=[false,false,false],childre
     return (
         <Tabs
             variant="outlined"
-            aria-label="Pricing plan"
             className="tabs-add"
             sx={{
                 width: 400,

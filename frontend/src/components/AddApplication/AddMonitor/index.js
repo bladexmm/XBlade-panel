@@ -12,7 +12,6 @@ import FileIconAuto from "../../FileIconAuto/FileIconAuto";
 import Typography from "@mui/joy/Typography";
 import DiamondRoundedIcon from "@mui/icons-material/DiamondRounded";
 import SendRoundedIcon from "@mui/icons-material/SendRounded";
-import CloseRoundedIcon from "@mui/icons-material/CloseRounded";
 import request from "../../../utils/request";
 import {useState} from "react";
 import {IMaskInput} from 'react-imask';

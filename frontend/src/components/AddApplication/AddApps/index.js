@@ -168,7 +168,7 @@ export default function AddApps({
     return (
         <React.Fragment>
 
-            <form>
+            <form id="add-app-dialog">
                 <Stack spacing={2}>
                     <FormControl>
                         <Grid container columns={{xs: 5}} alignItems="center">
@@ -176,7 +176,7 @@ export default function AddApps({
                                 <Typography level="title-sm" startDecorator={<ViewQuiltRoundedIcon/>}> 名称</Typography>
                             </Grid>
                             <Grid xs={4}>
-                                <Input required placeholder="应用程序描述" sx={{
+                                <Input required className="add-app-name-step" placeholder="应用程序描述" sx={{
                                     '--Input-focusedInset': 'var(--any, )',
                                     '--Input-focusedThickness': '0.25rem',
                                     '--Input-focusedHighlight': 'rgba(13,110,253,.25)',

@@ -22,8 +22,8 @@ import {Divider, ThemeProvider} from "@mui/joy";
 import Layouts from "../../components/Layouts";
 import Commands from "../../components/Commands";
 import {SnackbarProvider} from "../../components/SnackbarUtil/SnackbarUtil";
-
 function App() {
+
     const widthBox = 3600;
     const [paneDraggable, setPaneDraggable] = React.useState(false);
     const [paneLayouts, setPaneLayouts] = React.useState([]);
@@ -35,7 +35,7 @@ function App() {
     const [filteredLayouts, setFilteredLayouts] = useState(paneLayouts);
 
     const [openSettingsDialog, setOpenSettingsDialog] = React.useState(false);
-    const [wallPaper, setWallPaper] = React.useState("/assets/wallpapers/动态/wave.mp4");
+    const [wallPaper, setWallPaper] = React.useState("/assets/wallpapers/几何/pexels-jplenio-1103970.jpg");
     const [themeMode, setThemeMode] = React.useState('system');
 
     const [addAppOpen, setAddAppOpen] = React.useState(false);
@@ -66,7 +66,6 @@ function App() {
      * 获取最新布局
      */
     const updateLayouts = (layoutName = 'pane') => {
-        console.log('udpate')
         request({
             url: "/api/layouts?name=" + layoutName,
             method: "GET",
@@ -116,7 +115,6 @@ function App() {
         updateLayouts()
     }, [wallPaper]);
 
-
     /**
      * 打开应用
      * @param id
@@ -157,7 +155,6 @@ function App() {
             throw error; // re-throw the error to propagate it further
         });
     }
-
     /**
      * 保存布局
      * @param layoutIn
@@ -191,8 +188,6 @@ function App() {
         });
 
     }
-
-
     /**
      * 触发右键菜单
      * @param e
@@ -222,8 +217,6 @@ function App() {
         }
 
     };
-
-
     /**
      * 删除应用
      */
@@ -252,7 +245,6 @@ function App() {
         }
         saveLayouts(layoutsNew, table === "dock" ? "dock" : defaultLayout)
     }
-
     // 固定应用
     const pinApp = () => {
         // 固定到dock栏
@@ -265,8 +257,6 @@ function App() {
             deleteApp("dock",true)
         }
     }
-
-
     // 实时搜索
     const handleSearchInput = (searchInput) => {
         // 根据搜索输入过滤 layouts
@@ -299,6 +289,16 @@ function App() {
 
     }
 
+
+    const addAppLayout = () => {
+        setAppName('');
+        setAppIcons([]);
+        setAppPath('');
+        setRightClickMenuId(null);
+        setRightClickMenuApp(null);
+        setMenuVisible(false);
+        setAddAppOpen(true);
+    }
 
     useEffect(() => {
         // 获取当前页面的URL
@@ -333,7 +333,6 @@ function App() {
                                             deleteApp(layoutType,false);
                                         }}
                                         editBtn={() => {
-                                            console.log("test", appsAll[rightClickMenuId])
                                             setAppName(appsAll[rightClickMenuId]['name']);
                                             setAppPath(appsAll[rightClickMenuId]['path']);
                                             setAppIcons([appsAll[rightClickMenuId]['icon']]);
@@ -348,6 +347,7 @@ function App() {
 
                         />
                     )}
+
                     <div className="video-background">
 
                         {commandOpen && (
@@ -406,20 +406,11 @@ function App() {
                                 ))}
                             </Grid>
                         </Search>
-
                         <Header editing={paneDraggable}
                                 StopPaneEditing={() => {
                                     setPaneDraggable(false);
                                     saveLayouts(paneLayouts, defaultLayout);
-                                }} openAddDiag={() => {
-                            setAppName('');
-                            setAppIcons([]);
-                            setAppPath('');
-                            setRightClickMenuId(null);
-                            setRightClickMenuApp(null);
-                            setMenuVisible(false);
-                            setAddAppOpen(true);
-                        }}/>
+                                }} openAddDiag={addAppLayout}/>
                         <div className="Pane">
 
                             <Layouts
