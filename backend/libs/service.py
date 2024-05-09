@@ -52,10 +52,9 @@ def parseApps():
         os.makedirs(download_folder)
     if 'http' in path:
         # 处理网页链接
-        title, icon, images = get_page_info(path, download_folder)
-        imagesIcons = [icon]
-        imagesIcons.extend(images if images is not None else [])
-        imagesIcons = [icon.replace("\\", "/") for icon in imagesIcons if icon != None]
+        title, images = get_page_info(path, download_folder)
+        imagesIcons = images if images is not None else []
+        imagesIcons = [icon.replace("\\", "/") for icon in imagesIcons if icon is not None]
         return result(1, {'title': title, "images": imagesIcons}, "success")
     else:
         # 提取文件名
