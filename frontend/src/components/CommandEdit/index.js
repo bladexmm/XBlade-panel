@@ -12,38 +12,10 @@ export default function CommandEdit({
                                         setCommandDefault,
                                         setCommandEditOpen
                                     }){
-    const [fullscreen, setFullscreen] = React.useState(true);
-    const [fullscreenStyle, setFullscreenStyle] = useSpring(() => ({
-        config: config.stiff,
-        from: {
-            width: "10%",
-            height: "10%",
-            top: '50%',
-            left: '50%',
-        },
-        to: {
-            top: "50%", // 只保留字符串值
-            left: "50%", // 只保留字符串值
-            width: fullscreen ? "100%" : "90%", // 只保留字符串值
-            height: fullscreen ? "100%" : "90%" // 只保留字符串值
-        }
-    }));
     const host = getUserSettings('settings.host');
 
     const close_pane = () => {
-        setFullscreenStyle({
-            config: config.stiff,
-            from: {
-                width: fullscreen ? "100%" : "90%",
-                height: fullscreen ? "100%" : "90%",
-            },
-            to: {
-                width: "0%",
-                height: "0%",
-                top: '110%',
-            },
-            onRest: () => {setCommandEditOpen(false);}
-        });
+        setCommandEditOpen(false);
     }
     const iframe_call_func = (res) => {
         if(res.method === 'close'){
@@ -69,7 +41,7 @@ export default function CommandEdit({
         };
     }, []);
     return (
-        <div className="commands" style={{...fullscreenStyle}}>
+        <div className="commands">
 
             <div className="pane-content" style={{overflowY:'hidden'}}>
                 <iframe id="embeddedIframe"
