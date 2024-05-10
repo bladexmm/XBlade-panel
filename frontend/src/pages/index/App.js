@@ -22,6 +22,7 @@ import {Divider, ThemeProvider} from "@mui/joy";
 import Layouts from "../../components/Layouts";
 import Commands from "../../components/Commands";
 import {SnackbarProvider} from "../../components/SnackbarUtil/SnackbarUtil";
+
 function App() {
 
     const widthBox = 3600;
@@ -43,7 +44,7 @@ function App() {
     const [appPath, setAppPath] = React.useState('');
     const [appIcons, setAppIcons] = React.useState([]);
     const [defaultLayout, setDefaultLayout] = React.useState('pane');
-    const [openedLayouts, setOpenedLayouts] = useState([{id:'pane',name:'Home'}])
+    const [openedLayouts, setOpenedLayouts] = useState([{id: 'pane', name: 'Home'}])
 
     const [menuVisible, setMenuVisible] = useState(false);
     const [menuPosition, setMenuPosition] = useState({x: 0, y: 0});
@@ -155,6 +156,7 @@ function App() {
             throw error; // re-throw the error to propagate it further
         });
     }
+
     /**
      * 保存布局
      * @param layoutIn
@@ -220,7 +222,7 @@ function App() {
     /**
      * 删除应用
      */
-    const deleteApp = (table = defaultLayout,softDelete=true) => {
+    const deleteApp = (table = defaultLayout, softDelete = true) => {
         let layoutsNew = table === 'dock' ? dockLayouts : paneLayouts;
         for (let i = 0; i < layoutsNew.length; i++) {
             if (layoutsNew[i]['i'] === rightClickMenuId) {
@@ -248,13 +250,13 @@ function App() {
     // 固定应用
     const pinApp = () => {
         // 固定到dock栏
-        if(rightClickMenuLayout === 'pane'){
+        if (rightClickMenuLayout === 'pane') {
             let layoutOld = dockLayouts.slice();
             layoutOld.push({'i': rightClickMenuId, 'x': 4, 'y': 0, 'w': 1, 'h': 1})
             saveLayouts(layoutOld, "dock")
-        }else {
+        } else {
             // 取消固定
-            deleteApp("dock",true)
+            deleteApp("dock", true)
         }
     }
     // 实时搜索
@@ -273,9 +275,9 @@ function App() {
     const pageGo = (layoutName) => {
         setDefaultLayout(layoutName);
         updateLayouts(layoutName)
-        if (layoutName === 'pane'){
-            setOpenedLayouts([{id:'pane',name:'Home'}]);
-        }else {
+        if (layoutName === 'pane') {
+            setOpenedLayouts([{id: 'pane', name: 'Home'}]);
+        } else {
             let layoutsNew = [];
             for (let i = 0; i < openedLayouts.length; i++) {
                 layoutsNew.push(openedLayouts[i]);
@@ -330,7 +332,7 @@ function App() {
                                             setMenuVisible(false);
                                         }}
                                         deleteBtn={(layoutType) => {
-                                            deleteApp(layoutType,false);
+                                            deleteApp(layoutType, false);
                                         }}
                                         editBtn={() => {
                                             setAppName(appsAll[rightClickMenuId]['name']);
@@ -448,87 +450,91 @@ function App() {
                         </div>
 
                         <div className="Dock">
-                            <div className="opened-layouts">
-                                {openedLayouts.map((appOpen, idx) => {
-                                    if(appOpen.id === 'pane'){
-                                        return (
-                                            <div key={appOpen.id} className="xBlade-icons opened-apps">
-                                                <XBladeIcon id="btn|home" name="首页"
-                                                            iconPath={host + "/assets/icons/home.png"}
-                                                            onClickedBtn={(id, location, setOpenLoad) => {
-                                                                pageGo('pane')
-                                                                setOpenLoad(false)
-                                                            }}/>
-                                            </div>
-
-                                        );
-                                    }else {
-                                        return (
-                                            <div key={appOpen.id} className="xBlade-icons opened-apps">
-                                                <XBladeIcon id={appOpen.id} size={1}
-                                                            onClickedBtn={(id, location, setOpenLoad) => {
-                                                                pageGo(id);
-                                                                setOpenLoad(false);
-                                                            }}
-                                                            appType={appOpen.type}
-                                                            name={appOpen.name}
-                                                            iconPath={(appOpen['icon'] && appOpen['icon'].length > 0) ?
-                                                                host + appOpen['icon'] : ''}
-                                                            appPath={(appOpen['path'] && appOpen['path'].length > 0) ?
-                                                                host + appOpen['path'] : ''}/>
-                                            </div>
-                                        );
-                                    }
-                                })}
-                            </div>
-                            <Divider orientation="vertical"  sx={{backgroundColor:"#ffffff73",height:"70%",margin:"auto"}}/>
-
                             <HorizontalScrollbar>
-                                <GridLayout className="layout" layout={dockLayouts}
-                                            cols={42} rowHeight={90} compactType={'horizontal'}
-                                            width={widthBox} isDraggable={false} isResizable={false}
-                                            onLayoutChange={(layoutIn) => {
-                                                setDockLayouts(layoutIn);
-                                            }}>
-                                    <div key="btn|settings">
-                                        <XBladeIcon id="btn|settings" name="设置"
-                                                    iconPath={host + "/assets/icons/settings-light.png"}
-                                                    onClickedBtn={(id, location, setOpenLoad) => {
-                                                        setOpenSettingsDialog(true);
-                                                        setMenuVisible(false);
-                                                        setOpenLoad(false);
-                                                    }}/>
+                                <div style={{display: "flex", flexDirection: "row"}}>
+                                    <div className="opened-layouts">
+                                        {openedLayouts.map((appOpen, idx) => {
+                                            if (appOpen.id === 'pane') {
+                                                return (
+                                                    <div key={appOpen.id} className="xBlade-icons opened-apps">
+                                                        <XBladeIcon id="btn|home" name="首页"
+                                                                    iconPath={host + "/assets/icons/home.png"}
+                                                                    onClickedBtn={(id, location, setOpenLoad) => {
+                                                                        pageGo('pane')
+                                                                        setOpenLoad(false)
+                                                                    }}/>
+                                                    </div>
+
+                                                );
+                                            } else {
+                                                return (
+                                                    <div key={appOpen.id} className="xBlade-icons opened-apps">
+                                                        <XBladeIcon id={appOpen.id} size={1}
+                                                                    onClickedBtn={(id, location, setOpenLoad) => {
+                                                                        pageGo(id);
+                                                                        setOpenLoad(false);
+                                                                    }}
+                                                                    appType={appOpen.type}
+                                                                    name={appOpen.name}
+                                                                    iconPath={(appOpen['icon'] && appOpen['icon'].length > 0) ?
+                                                                        host + appOpen['icon'] : ''}
+                                                                    appPath={(appOpen['path'] && appOpen['path'].length > 0) ?
+                                                                        host + appOpen['path'] : ''}/>
+                                                    </div>
+                                                );
+                                            }
+                                        })}
                                     </div>
-                                    <div key="btn|search">
-                                        <XBladeIcon id="btn|search" name="搜索"
-                                                    iconPath={host + "/assets/icons/apps.png"}
-                                                    onClickedBtn={(id, location, setOpenLoad) => {
-                                                        setSearchOpen(true);
-                                                        setMenuVisible(false);
-                                                        setOpenLoad(false);
-                                                    }}/>
-                                    </div>
+                                    <div style={{backgroundColor: "#ffffff73",width:"1px", height: "5rem", margin: "auto 0 auto 0.5rem"}}></div>
+
+                                    <GridLayout className="layout" layout={dockLayouts}
+                                                cols={42} rowHeight={90} compactType={'horizontal'}
+                                                width={widthBox} isDraggable={false} isResizable={false}
+                                                onLayoutChange={(layoutIn) => {
+                                                    setDockLayouts(layoutIn);
+                                                }}>
+                                        <div key="btn|settings">
+                                            <XBladeIcon id="btn|settings" name="设置"
+                                                        iconPath={host + "/assets/icons/settings-light.png"}
+                                                        onClickedBtn={(id, location, setOpenLoad) => {
+                                                            setOpenSettingsDialog(true);
+                                                            setMenuVisible(false);
+                                                            setOpenLoad(false);
+                                                        }}/>
+                                        </div>
+                                        <div key="btn|search">
+                                            <XBladeIcon id="btn|search" name="搜索"
+                                                        iconPath={host + "/assets/icons/apps.png"}
+                                                        onClickedBtn={(id, location, setOpenLoad) => {
+                                                            setSearchOpen(true);
+                                                            setMenuVisible(false);
+                                                            setOpenLoad(false);
+                                                        }}/>
+                                        </div>
 
 
-                                    {dockLayouts.map((app, index) => {
-                                        if (!app['i'].startsWith('btn|')) {
-                                            return (
-                                                <div key={app['i']} className="xBlade-icons opened-apps"
-                                                     onContextMenu={(e) => handleContextMenu(e, 'dock', app['i'], true, false)}>
-                                                    <XBladeIcon id={app['i']} size={app['w']} onClickedBtn={onClicked}
-                                                                appType={app['i'] in appsAll ? appsAll[app['i']]['type'] : ''}
-                                                                name={app['i'] in appsAll ? appsAll[app['i']]['name'] : ''}
-                                                                iconPath={(app['i'] in appsAll && appsAll[app['i']]['icon'] && appsAll[app['i']]['icon'].length > 0) ?
-                                                                    host + appsAll[app['i']]['icon'] : ''}
-                                                                appPath={(app['i'] in appsAll && appsAll[app['i']]['path'] && appsAll[app['i']]['path'].length > 0) ?
-                                                                    host + appsAll[app['i']]['path'] : ''}
-                                                                doubleClickBtn={(e) => handleContextMenu(e, 'dock', app['i'], false, true)}/>
-                                                </div>
-                                            );
-                                        }
-                                        return null;
-                                    })}
-                                </GridLayout>
+                                        {dockLayouts.map((app, index) => {
+                                            if (!app['i'].startsWith('btn|')) {
+                                                return (
+                                                    <div key={app['i']} className="xBlade-icons opened-apps"
+                                                         onContextMenu={(e) => handleContextMenu(e, 'dock', app['i'], true, false)}>
+                                                        <XBladeIcon id={app['i']} size={app['w']}
+                                                                    onClickedBtn={onClicked}
+                                                                    appType={app['i'] in appsAll ? appsAll[app['i']]['type'] : ''}
+                                                                    name={app['i'] in appsAll ? appsAll[app['i']]['name'] : ''}
+                                                                    iconPath={(app['i'] in appsAll && appsAll[app['i']]['icon'] && appsAll[app['i']]['icon'].length > 0) ?
+                                                                        host + appsAll[app['i']]['icon'] : ''}
+                                                                    appPath={(app['i'] in appsAll && appsAll[app['i']]['path'] && appsAll[app['i']]['path'].length > 0) ?
+                                                                        host + appsAll[app['i']]['path'] : ''}
+                                                                    doubleClickBtn={(e) => handleContextMenu(e, 'dock', app['i'], false, true)}/>
+                                                    </div>
+                                                );
+                                            }
+                                            return null;
+                                        })}
+                                    </GridLayout>
+                                </div>
+
                             </HorizontalScrollbar>
                         </div>
                         {wallPaper.endsWith(".mp4") ? (
