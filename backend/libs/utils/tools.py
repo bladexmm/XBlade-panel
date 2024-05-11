@@ -1,7 +1,6 @@
 import json
 import base64
 import hashlib
-import shlex
 import shutil
 import time
 import os
@@ -22,7 +21,7 @@ from datetime import datetime
 from flask import jsonify
 
 from libs.utils.graph import XbladeGraph
-
+from libs.utils.xprofile import profile
 
 def read_json(file_path, encoding = 'utf-8'):
     if not os.path.exists(file_path):
@@ -34,7 +33,6 @@ def read_json(file_path, encoding = 'utf-8'):
 
 def read_reg():
     pass
-
 
 def read_txt(file_path, encoding = 'utf-8'):
     if not os.path.exists(file_path):
@@ -132,6 +130,7 @@ def extract_icon_from_exe(icon_in_path, icon_name, icon_out_path, out_width = 56
     return full_outpath
 
 
+# @profile
 def exec_command(commands, parent = None):
     nodes = list_to_dict(commands['nodes'], "id")
     start_node = [row for row in commands['nodes'] if row['type'] == '基础/开始']
@@ -170,7 +169,6 @@ def exec_command(commands, parent = None):
             return
         node_outputs = XbladeGraph.call_func_by_alias(next_node['type'], next_node)
         node_output[next_node['id']] = node_outputs['data']
-        # noinspection PySimplifyBooleanCheck
         if node_outputs['code'] == 0:
             print(f"节点：{next_node['type']},出错")
         link_output = [output for output in next_node['outputs'] if

@@ -1,17 +1,17 @@
 import io
 import json
 import os
+
 import time
 import webbrowser
 from glob import glob
 from urllib.parse import unquote
 import pyautogui
-from PIL import ImageGrab
 
 from libs.model.Apps import Apps
 from libs.model.Layouts import Layouts
 from libs.model.models import db
-from libs.utils.installedApps import get_installed_apps, init_windows_apps, windows_apps_all
+from libs.utils.installedApps import windows_apps_all
 from libs.utils.reg import add_reg, remove_reg, remove_auto_start_key, registry_auto_start_key
 from libs.utils.settings import IMAGE_PATH, HTML_PATH
 from libs.utils.tools import result, extract_icon_from_exe, generate_random_md5_with_timestamp, \
@@ -76,14 +76,6 @@ def openApp():
     app = db_session.query(Apps).filter_by(id = data['id']).first()
     app_dict = app.to_dict(include_children = True)
 
-    parent = None
-    if app_dict['pid'] is not None:
-        parent = db_session.query(Apps).filter_by(id = app_dict['pid']).first()
-        parent = parent.to_dict()
-
-    app.open += 1
-    db_session.commit()
-
     if app_dict['type'] == 'link':
         webbrowser.open(app_dict['path'])
     elif app_dict['type'] == 'file':
@@ -91,6 +83,10 @@ def openApp():
             return result(1, app_dict, 'empty')
         open_with_default_program(app_dict['path'])
     elif app_dict['type'] == 'command':
+        parent = None
+        if app_dict['pid'] is not None:
+            parent = db_session.query(Apps).filter_by(id = app_dict['pid']).first()
+            parent = parent.to_dict()
         exec_command(json.loads(app_dict['path']), parent)
     elif app_dict['type'] == 'desktop':
         return result(1, app_dict['id'], 'newLayout')
