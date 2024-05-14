@@ -15,7 +15,7 @@ from libs import router
 
 from libs.model.models import db
 from flask_cors import CORS
-from libs.service import systemInfo, openApp
+from libs.service import systemInfo
 from libs.utils.installedApps import init_windows_apps
 from libs.utils.tools import get_local_ip, default_port
 
@@ -63,7 +63,6 @@ with app.app_context():
     db.create_all()
     init_windows_apps()
     # openApp()
-
 
 
 def windows():

@@ -24,6 +24,7 @@
 
 </div>
 <div class="header">
+    <button class="btn" id="debug">运行</button>
     <button class="btn" id="save">保存</button>
     <button class="btn" id="close">关闭</button>
 </div>
@@ -113,6 +114,22 @@
     document.getElementById('save').addEventListener('click', function () {
         const serializedData = canvas.graph.serialize();
         parent.postMessage({method: "save", data: serializedData}, "*");
+    });
+
+    document.getElementById('debug').addEventListener('click', function () {
+        const formdata = new FormData();
+        formdata.append("cmd", JSON.stringify(canvas.graph.serialize()));
+
+        const requestOptions = {
+            method: 'POST',
+            body: formdata,
+            redirect: 'follow'
+        };
+
+        fetch("/api/tools/commands", requestOptions)
+           .then(response => response.json())
+           .then(result => console.log(result))
+           .catch(error => console.log('error', error));
     });
 
 

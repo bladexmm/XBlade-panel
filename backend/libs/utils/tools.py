@@ -23,6 +23,7 @@ from flask import jsonify
 from libs.utils.graph import XbladeGraph
 from libs.utils.xprofile import profile
 
+
 def read_json(file_path, encoding = 'utf-8'):
     if not os.path.exists(file_path):
         return None
@@ -33,6 +34,7 @@ def read_json(file_path, encoding = 'utf-8'):
 
 def read_reg():
     pass
+
 
 def read_txt(file_path, encoding = 'utf-8'):
     if not os.path.exists(file_path):
@@ -133,9 +135,9 @@ def extract_icon_from_exe(icon_in_path, icon_name, icon_out_path, out_width = 56
 # @profile
 def exec_command(commands, parent = None):
     nodes = list_to_dict(commands['nodes'], "id")
-    start_node = [row for row in commands['nodes'] if row['type'] == '基础/开始']
+    start_node = [row for row in commands['nodes'] if row['type'] == '基础/开始' and len(row['outputs'][0]['links']) > 0]
     if len(start_node) == 0:
-        return
+        return []
     start_node = start_node[0]
     links = [{
         'id'       : link[0],
@@ -150,6 +152,7 @@ def exec_command(commands, parent = None):
     max_node = 500
     i = 0
     node_output = {}
+    outputs = []
     while len(link_output) > 0 and i < max_node:
         # 查找下一个节点
         next_link_id = link_output[0]['links'][0]
@@ -166,14 +169,18 @@ def exec_command(commands, parent = None):
             link['value'] = link_node_outputs[link_input['port_from']]  # 开始获取指定值
         next_node['parent'] = parent
         if next_node['type'] == '基础/结束':
-            return
+            return outputs
         node_outputs = XbladeGraph.call_func_by_alias(next_node['type'], next_node)
         node_output[next_node['id']] = node_outputs['data']
+        node_outputs['type'] = next_node['type']
+        node_outputs['id'] = next_node['id']
+        outputs.append(node_outputs)
         if node_outputs['code'] == 0:
             print(f"节点：{next_node['type']},出错")
         link_output = [output for output in next_node['outputs'] if
                        output['type'] == 'cmd' and output['name'] == node_outputs['name']]
         i += 1
+    return outputs
 
 
 def hotkeys(keys):
@@ -214,7 +221,6 @@ def open_with_default_program(file_path):
 def get_local_ip():
     try:
         host_name = socket.gethostname()
-
         local_ip = socket.gethostbyname(host_name)
 
         return local_ip

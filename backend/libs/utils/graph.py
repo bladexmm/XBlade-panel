@@ -103,6 +103,8 @@ def MouseMoveTO(next_node):
             offset_x, offset_y = int(parts[0]), int(parts[1])
             x, y = x + offset_x, y + offset_y
     else:
+        if next_node['properties']['value'] == 'x,y':
+            return output(1, 'cmd', '')
         parts = next_node['properties']['value'].split(',')
         x, y = int(parts[0]), int(parts[1])
 
@@ -121,7 +123,7 @@ def LocateOnScreenNode(next_node):
             confidence = round(next_node['properties']['confidence'], 2))
     except pyautogui.ImageNotFoundException:
         return output(0, 'error', '')
-    return output(1, 'cmd', [[], [x, y]])
+    return output(1, 'cmd', [[], [int(x), int(y)]])
 
 
 @XbladeGraph.decorator("自动化/运行软件")

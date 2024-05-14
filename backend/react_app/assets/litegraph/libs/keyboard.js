@@ -163,10 +163,11 @@ function MouseMove() {
     this.addProperty("value", "x,y");
     this.widget = this.addWidget("text", "location", "x,y", "value");
 
-    this.addProperty("duration", 2);
-    this.widget = this.addWidget("number", "duration", 2, "duration");
+    this.addProperty("duration", 0);
+    this.widget = this.addWidget("number", "duration", 0, "duration");
     this.widgets_up = true;
     this.size = [190, 60];
+
 }
 
 MouseMove.title = "鼠标移动";

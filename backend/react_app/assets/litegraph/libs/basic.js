@@ -1,5 +1,6 @@
 function CMDStart() {
-    this.addOutput("out", "cmd");
+    this.addOutput("out", "cmd")
+    this.addInput("event", LiteGraph.ACTION);
     this.size = [80, 30];
 }
 
@@ -8,6 +9,7 @@ CMDStart.desc = "程序开始";
 CMDStart.prototype.onExecute = function () {
     this.setOutputData(0, 'start');
 };
+
 
 
 function CMDEnd() {
@@ -22,7 +24,7 @@ function TimeWait() {
     this.addInput("cmd", "cmd");
     this.addOutput("cmd", "cmd");
     this._value = [];
-    this.addProperty("value", "50");
+    this.addProperty("value", "500");
     this.widget = this.addWidget("text", "w", this.properties.value, "value");
     this.widgets_up = true;
     this.size = [100, 30];
@@ -31,19 +33,6 @@ function TimeWait() {
 TimeWait.title = "等待(ms)";
 TimeWait.desc = "在等待N毫秒"
 
-function MultiMerge(){
-    this.addInput("cmd", "cmd");
-    this.addInput("cmd", "cmd");
-    this.addInput("cmd", "cmd");
-
-    this.addOutput("cmd", "cmd");
-    this.horizontal = true;
-
-    this.size = [100, 20];
-}
-
-MultiMerge.title = "合并运行";
-MultiMerge.desc = "多个执行合并成一个";
 
 function isNumeric(str) {
     return /^\d+$/.test(str);
@@ -61,4 +50,32 @@ TimeWait.prototype.onPropertyChanged = function (name, value) {
         this.boxcolor = "red";
         alert("只能输入整数")
     }
+};
+
+function MultiMerge(){
+    this.addInput("cmd", "cmd");
+    this.addInput("cmd", "cmd");
+    this.addInput("cmd", "cmd");
+
+    this.addOutput("cmd", "cmd");
+    this.horizontal = true;
+
+    this.size = [100, 20];
+}
+
+MultiMerge.title = "合并运行";
+MultiMerge.desc = "多个执行合并成一个";
+
+
+
+function CMDDebug() {
+    this.addInput("in", "cmd");
+    this.addOutput("out", "cmd");
+    this.size = [80, 30];
+}
+
+CMDDebug.title = "调试";
+CMDDebug.desc = "从调试节点开始运行";
+CMDDebug.prototype.onExecute = function () {
+    this.setOutputData(0, 'start');
 };

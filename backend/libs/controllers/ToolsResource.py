@@ -1,3 +1,4 @@
+import json
 import os
 import time
 
@@ -8,7 +9,7 @@ from libs.model.Layouts import Layouts
 from libs.model.models import db
 from libs.service import generate_video, getWallpapers, uploadFile
 from libs.utils.tools import read_json, result, copy, zipFolder, format_date, delete_folder, unzip_file, copy_dir, \
-    copy_app_images, list_to_dict, generate_random_filename, open_with_default_program
+    copy_app_images, list_to_dict, generate_random_filename, open_with_default_program, exec_command
 from flask import Response, request
 
 from libs.utils.website import md5
@@ -23,6 +24,12 @@ class CMDResource(Resource):
     def get(self):
         rows = read_json('./data/commands.json')
         return result(1, {'commands': rows}, 'success')
+
+    def post(self):
+        cmd = request.form.get('cmd', '{}')
+        cmd = json.loads(cmd)
+        outputs = exec_command(cmd, None)
+        return result(1, outputs, 'success')
 
 
 class StreamResource(Resource):
