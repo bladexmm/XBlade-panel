@@ -8132,26 +8132,27 @@ LGraphNode.prototype.executeAction = function(action)
         var num = subnode.inputs ? subnode.inputs.length : 0;
         var w = 200;
         var h = Math.floor(LiteGraph.NODE_SLOT_HEIGHT * 1.6);
+        var y = 100;
 
         ctx.fillStyle = "#111";
         ctx.globalAlpha = 0.8;
         ctx.beginPath();
-        ctx.roundRect(10, 10, w, (num + 1) * h + 50, [8]);
+        ctx.roundRect(10, y+10, w, (num + 1) * h + 50, [8]);
         ctx.fill();
         ctx.globalAlpha = 1;
 
         ctx.fillStyle = "#888";
         ctx.font = "14px Arial";
         ctx.textAlign = "left";
-        ctx.fillText("Graph Inputs", 20, 34);
+        ctx.fillText("Inputs", 20, y+34);
         // var pos = this.mouse;
 
-        if (this.drawButton(w - 20, 20, 20, 20, "X", "#151515")) {
+        if (this.drawButton(w - 20, y + 20, 20, 20, "X", "#151515")) {
             this.closeSubgraph();
             return;
         }
+        y += 50;
 
-        var y = 50;
         ctx.font = "14px Arial";
         if (subnode.inputs)
             for (var i = 0; i < subnode.inputs.length; ++i) {
@@ -8161,7 +8162,7 @@ LGraphNode.prototype.executeAction = function(action)
 
                 //input button clicked
                 if (this.drawButton(20, y + 2, w - 20, h - 2)) {
-                    var type = subnode.constructor.input_node_type || "graph/input";
+                    var type = subnode.constructor.input_node_type || "组件/输入";
                     this.graph.beforeChange();
                     var newnode = LiteGraph.createNode(type);
                     if (newnode) {
@@ -8201,27 +8202,27 @@ LGraphNode.prototype.executeAction = function(action)
         var canvas_w = this.bgcanvas.width
         var w = 200;
         var h = Math.floor(LiteGraph.NODE_SLOT_HEIGHT * 1.6);
-
+        var y = 100;
         ctx.fillStyle = "#111";
         ctx.globalAlpha = 0.8;
         ctx.beginPath();
-        ctx.roundRect(canvas_w - w - 10, 10, w, (num + 1) * h + 50, [8]);
+        ctx.roundRect(canvas_w - w - 10, y + 10, w, (num + 1) * h + 50, [8]);
         ctx.fill();
         ctx.globalAlpha = 1;
 
         ctx.fillStyle = "#888";
         ctx.font = "14px Arial";
         ctx.textAlign = "left";
-        var title_text = "Graph Outputs"
+        var title_text = "Outputs"
         var tw = ctx.measureText(title_text).width
-        ctx.fillText(title_text, (canvas_w - tw) - 20, 34);
+        ctx.fillText(title_text, (canvas_w - tw) - 20, y + 34);
         // var pos = this.mouse;
-        if (this.drawButton(canvas_w - w, 20, 20, 20, "X", "#151515")) {
+        if (this.drawButton(canvas_w - w, y + 20, 20, 20, "X", "#151515")) {
             this.closeSubgraph();
             return;
         }
 
-        var y = 50;
+        y += 50;
         ctx.font = "14px Arial";
         if (subnode.outputs)
             for (var i = 0; i < subnode.outputs.length; ++i) {
@@ -8231,7 +8232,7 @@ LGraphNode.prototype.executeAction = function(action)
 
                 //output button clicked
                 if (this.drawButton(canvas_w - w, y + 2, w - 20, h - 2)) {
-                    var type = subnode.constructor.output_node_type || "graph/output";
+                    var type = subnode.constructor.output_node_type || "组件/输出";
                     this.graph.beforeChange();
                     var newnode = LiteGraph.createNode(type);
                     if (newnode) {
@@ -8737,7 +8738,7 @@ LGraphNode.prototype.executeAction = function(action)
 						if(low_quality)
 	                        ctx.rect(pos[0] - 4, pos[1] - 4, 8, 8 ); //faster
 						else
-	                        ctx.arc(pos[0], pos[1], 4, 0, Math.PI * 2);
+	                        ctx.arc(pos[0] - 10, pos[1], 4, 0, Math.PI * 2);
                     }
                     ctx.fill();
 
@@ -8836,7 +8837,7 @@ LGraphNode.prototype.executeAction = function(action)
 						if(low_quality)
 	                        ctx.rect(pos[0] - 4, pos[1] - 4, 8, 8 );
 						else
-	                        ctx.arc(pos[0], pos[1], 4, 0, Math.PI * 2);
+	                        ctx.arc(pos[0] + 10, pos[1], 4, 0, Math.PI * 2);
                     }
 
                     //trigger

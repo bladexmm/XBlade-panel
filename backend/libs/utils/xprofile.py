@@ -10,13 +10,7 @@ def profile(func):
         result = func(*args, **kwargs)
         end_time = time.time()
         execution_time = end_time - start_time
-
-        # 获取函数的源代码和行号
-        source_lines, first_line = linecache.getlines(func.__code__.co_filename), func.__code__.co_firstlineno
-        last_line = len(source_lines) - 1
-        for lineno in range(first_line, last_line):
-            print(source_lines[lineno])
-
+        print(f"函数 {func.__name__} 执行时间：{execution_time}")
         return result
-
+    
     return wrapper

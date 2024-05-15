@@ -1,6 +1,5 @@
 function CMDStart() {
     this.addOutput("out", "cmd")
-    this.addInput("event", LiteGraph.ACTION);
     this.size = [80, 30];
 }
 

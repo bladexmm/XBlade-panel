@@ -6,7 +6,7 @@ import pyperclip
 from string import Template
 
 
-def output(code, name = 'cmd', data = None):
+def nodeOutput(code, name = 'cmd', data = None):
     return {"code": code, "name": name, "data": data if data is not None else ""}
 
 
@@ -33,14 +33,14 @@ class XbladeGraph:
 def wait(next_node):
     wait_time = int(next_node['properties']['value']) / 1000
     time.sleep(wait_time)
-    return output(1, 'cmd', '')
+    return nodeOutput(1, 'cmd', '')
 
 
 @XbladeGraph.decorator("输入/文本输入")
 def typewrite(next_node):
     pyperclip.copy(next_node['properties']['value'])
     pyautogui.hotkey("ctrl", "v")
-    return output(1, 'cmd', '')
+    return nodeOutput(1, 'cmd', '')
 
 
 @XbladeGraph.decorator("输入/快捷键")
@@ -57,7 +57,7 @@ def hotkey(next_node):
             pyautogui.keyUp(key)
     elif type == 'typeWrite':
         pyautogui.typewrite(keys, interval = 0.05)
-    return output(1, 'cmd', '')
+    return nodeOutput(1, 'cmd', '')
 
 
 @XbladeGraph.decorator("输入/鼠标左键")
@@ -69,7 +69,7 @@ def leftClick(next_node):
         pyautogui.mouseDown()
     elif type == 'mouseUp':
         pyautogui.mouseUp()
-    return output(1, 'cmd', '')
+    return nodeOutput(1, 'cmd', '')
 
 
 @XbladeGraph.decorator("输入/鼠标中键")
@@ -81,13 +81,13 @@ def middleClick(next_node):
         pyautogui.scroll(-10)
     elif type == 'scrollDown':
         pyautogui.scroll(10)
-    return output(1, 'cmd', '')
+    return nodeOutput(1, 'cmd', '')
 
 
 @XbladeGraph.decorator("输入/鼠标右键")
 def rightClick(next_node):
     pyautogui.rightClick()
-    return output(1, 'cmd', '')
+    return nodeOutput(1, 'cmd', '')
 
 
 @XbladeGraph.decorator("输入/鼠标移动")
@@ -95,7 +95,7 @@ def MouseMoveTO(next_node):
     # 优先用传入的坐标
     if 'value' in next_node['inputs'][1]:
         if next_node['inputs'][1]['value'] is None:
-            return output(1, 'cmd', '')
+            return nodeOutput(1, 'cmd', '')
         x, y = next_node['inputs'][1]['value']
         # 开始设置点击偏移
         if next_node['properties']['value'] != 'x,y':
@@ -104,17 +104,21 @@ def MouseMoveTO(next_node):
             x, y = x + offset_x, y + offset_y
     else:
         if next_node['properties']['value'] == 'x,y':
-            return output(1, 'cmd', '')
+            return nodeOutput(1, 'cmd', '')
         parts = next_node['properties']['value'].split(',')
         x, y = int(parts[0]), int(parts[1])
 
     pyautogui.moveTo(x, y, duration = next_node['properties']['duration'])
-    return output(1, 'cmd', '')
+    return nodeOutput(1, 'cmd', '')
 
 
 @XbladeGraph.decorator("自动化/图片定位")
 def LocateOnScreenNode(next_node):
-    image_path = 'react_app' + next_node['properties']['image']
+    # 判断是否有外部图片输入
+    if len(next_node['inputs'][1]['value']) > 0 :
+        image_path = 'react_app' + next_node['inputs'][1]['value']
+    else:
+        image_path = 'react_app' + next_node['properties']['image']
     try:
         x, y = pyautogui.locateCenterOnScreen(
             image_path,
@@ -122,8 +126,8 @@ def LocateOnScreenNode(next_node):
             grayscale = next_node['properties']['grayscale'],
             confidence = round(next_node['properties']['confidence'], 2))
     except pyautogui.ImageNotFoundException:
-        return output(0, 'error', '')
-    return output(1, 'cmd', [[], [int(x), int(y)]])
+        return nodeOutput(0, 'error', '')
+    return nodeOutput(1, 'cmd', [[], [int(x), int(y)]])
 
 
 @XbladeGraph.decorator("自动化/运行软件")
@@ -134,9 +138,19 @@ def StartApp(next_node):
         templ = Template(app)
         app = templ.safe_substitute(**next_node['parent'])
     subprocess.Popen([app, folder])
-    return output(1, 'cmd', '')
+    return nodeOutput(1, 'cmd', '')
 
 
 @XbladeGraph.decorator("基础/合并运行")
 def MultiMerge(next_node):
-    return output(1, 'cmd', '')
+    return nodeOutput(1, 'cmd', '')
+
+
+@XbladeGraph.decorator("交互/图片")
+def imageInput(next_node):
+    return nodeOutput(1, 'cmd', [next_node['properties']['image']])
+
+
+@XbladeGraph.decorator("交互/文本")
+def TextInput(next_node):
+    return nodeOutput(1, 'cmd', [next_node['properties']['text']])

@@ -34,6 +34,8 @@
 <script src="libs/keyboard.js"></script>
 <script src="libs/gui.js"></script>
 <script src="libs/keys.js"></script>
+<script src="libs/group.js"></script>
+<script src="libs/interaction.js"></script>
 <script>
     function addCols(col) {
         let keys_html = ''
@@ -78,6 +80,15 @@
     LiteGraph.registerNodeType("基础/结束", CMDEnd);
     LiteGraph.registerNodeType("基础/等待", TimeWait);
     LiteGraph.registerNodeType("基础/合并运行", MultiMerge);
+
+    LiteGraph.registerNodeType("组件/实例化", Subgraph);
+    LiteGraph.registerNodeType("组件/输入", SubgraphInput);
+    LiteGraph.registerNodeType("组件/输出", SubgraphOutput);
+
+
+    LiteGraph.registerNodeType("交互/文本", TextInput);
+    // LiteGraph.registerNodeType("交互/数字", TextInput);
+    LiteGraph.registerNodeType("交互/图片", ImageInput);
 
 
     LiteGraph.registerNodeType("输入/快捷键", Hotkeys);

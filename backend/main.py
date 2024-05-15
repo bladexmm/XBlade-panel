@@ -72,42 +72,36 @@ def windows():
     def quit_window(shortIcon: pystray.Icon):
         shortIcon.stop()
         flask_App.join(timeout = 1)
-        win.destroy()
-
-    def on_exit():
-        win.withdraw()
 
     def open_panel():
         webbrowser.open(f'http://{host}:{port}')
 
     def run_flask():
         try:
-            # app.run(host="0.0.0.0", port=port, debug=False)
+            # 确保Flask应用能够独立于Tkinter运行
             socket.run(app = app, host = "0.0.0.0", port = port, allow_unsafe_werkzeug = True)
         except Exception as e:
-            print(f"Flask app failed to basic: {e}")
+            print(f"Flask app failed to start: {e}")
 
     menu = (
-        # MenuItem('显示面板地址', show_window, default=True),
-        # Menu.SEPARATOR,
         MenuItem('打开面板', open_panel, default = True),
         Menu.SEPARATOR,
         MenuItem('退出', quit_window),
     )
+    # 继续使用系统托盘图标
     image = Image.open("data/blade.png")
     icon = pystray.Icon("data/blade.ico", image, "XBlade", menu)
-    win = tk.Tk()
-    win.title("XBlade-Panel")
-    win.iconbitmap("data/blade.ico")
-    win.wm_iconbitmap('data/blade.ico')
-    win.geometry("500x300")
-    win.protocol('WM_DELETE_WINDOW', on_exit)
 
-    threading.Thread(target = icon.run, daemon = True).start()
+    menu = (
+        MenuItem('打开面板', open_panel, default = True),
+        Menu.SEPARATOR,
+        MenuItem('退出', quit_window),
+    )
+    icon.menu = menu
     flask_App = threading.Thread(target = run_flask, daemon = True)
     flask_App.start()
     open_panel()
-    win.mainloop()
+    icon.run()
 
 
 if __name__ == "__main__":
