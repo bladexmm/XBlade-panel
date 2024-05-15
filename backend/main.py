@@ -61,8 +61,12 @@ for resource, route in router.resources:
 
 with app.app_context():
     db.create_all()
-    init_windows_apps()
-    # openApp()
+    # init_windows_apps()
+
+
+def init_app():
+    with app.app_context():
+        init_windows_apps()
 
 
 def windows():
@@ -99,6 +103,7 @@ def windows():
     )
     icon.menu = menu
     flask_App = threading.Thread(target = run_flask, daemon = True)
+    threading.Thread(target = init_app, daemon = True).start()
     flask_App.start()
     open_panel()
     icon.run()

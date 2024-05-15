@@ -1,4 +1,6 @@
 from glob import glob
+
+import pythoncom
 import win32com.client
 import os
 import ctypes
@@ -25,9 +27,12 @@ def is_valid_path(path):
 
 
 def get_shortcut_target(lnk_path):
+    pythoncom.CoInitialize()
     shell = win32com.client.Dispatch("WScript.Shell")
     shortcut = shell.CreateShortCut(lnk_path)
-    return shortcut.Targetpath
+    path = shortcut.Targetpath
+    pythoncom.CoUninitialize()
+    return path
 
 
 def get_exe_icon_to_base64(exe_path):

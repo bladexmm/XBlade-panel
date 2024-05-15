@@ -10,7 +10,9 @@ nuitka --standalone `
   --include-data-dir=data=data `
   --include-data-dir=react_app=react_app `
   --windows-icon-from-ico=data/blade.ico `
-  --windows-uac-admin --nofollow-imports --disable-console `
+  --windows-uac-admin `
+  --nofollow-imports `
+  --disable-console `
   --include-package=flask `
   --plugin-enable=tk-inter `
   --include-module=win32com `
@@ -35,7 +37,17 @@ nuitka --mingw64 `
 ```
 优化包大小版
 ```shell
-nuitka --standalone --onefile --include-data-dir=data=data --include-data-dir=react_app=react_app --nofollow-imports --windows-icon-from-ico=data/blade.ico --plugin-enable=tk-inter --windows-uac-admin --disable-console --include-package=flask -o XBLADE main.py 
+nuitka --standalone `
+  --onefile `
+  --include-data-dir=data=data `
+  --include-data-dir=react_app=react_app `
+  --nofollow-imports `
+  --windows-icon-from-ico=data/blade.ico `
+  --plugin-enable=tk-inter `
+  --windows-uac-admin `
+  --disable-console `
+  --include-package=flask `
+  -o XBLADE main.py 
 ```
 用python flask 查询和新增用 restful
 数据保存用flask_sqlalchemy sqlite 
