@@ -115,7 +115,7 @@ def MouseMoveTO(next_node):
 @XbladeGraph.decorator("自动化/图片定位")
 def LocateOnScreenNode(next_node):
     # 判断是否有外部图片输入
-    if len(next_node['inputs'][1]['value']) > 0 :
+    if len(next_node['inputs'][1].get('value','')) > 0 :
         image_path = 'react_app' + next_node['inputs'][1]['value']
     else:
         image_path = 'react_app' + next_node['properties']['image']
