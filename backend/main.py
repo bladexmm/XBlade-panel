@@ -95,12 +95,6 @@ def windows():
     # 继续使用系统托盘图标
     image = Image.open("data/blade.png")
     icon = pystray.Icon("data/blade.ico", image, "XBlade", menu)
-
-    menu = (
-        MenuItem('打开面板', open_panel, default = True),
-        Menu.SEPARATOR,
-        MenuItem('退出', quit_window),
-    )
     icon.menu = menu
     flask_App = threading.Thread(target = run_flask, daemon = True)
     threading.Thread(target = init_app, daemon = True).start()

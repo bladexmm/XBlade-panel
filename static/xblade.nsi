@@ -17,10 +17,7 @@
 !define MUI_ABORTWARNING
 !define MUI_ICON "XBlade-panel\backend\data\blade.ico"
 !define MUI_UNICON "${NSISDIR}\Contrib\Graphics\Icons\modern-uninstall.ico"
-; 开机自启动
-!define MUI_FINISHPAGE_SHOWREADME
-!define MUI_FINISHPAGE_SHOWREADME_Function AutoBoot
-!define MUI_FINISHPAGE_SHOWREADME_TEXT "开机自启动"
+
 ; Welcome page
 !insertmacro MUI_PAGE_WELCOME
 ; License page
@@ -39,8 +36,11 @@ var ICONS_GROUP
 !insertmacro MUI_PAGE_INSTFILES
 ; Finish page
 !define MUI_FINISHPAGE_RUN "$INSTDIR\XBLADE.exe"
+; 开机自启动
+!define MUI_FINISHPAGE_SHOWREADME
+!define MUI_FINISHPAGE_SHOWREADME_Function AutoBoot
+!define MUI_FINISHPAGE_SHOWREADME_TEXT "开机自启动"
 !insertmacro MUI_PAGE_FINISH
-
 ; Uninstaller pages
 !insertmacro MUI_UNPAGE_INSTFILES
 
@@ -1252,8 +1252,7 @@ Section -Post
 SectionEnd
 
 Function AutoBoot
-    WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Run" "ServerBridge"'"$INSTDIR\XBLADE.exe"'
-    WriteRegStr HKCU "Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers" "$INSTDIR\XBLADE.exe" "RUNASADMIN"
+    WriteRegStr HKCU "Software\Microsoft\Windows\CurrentVersion\Run" "Xblade" "$INSTDIR\XBLADE.exe"
 FunctionEnd
 
 
@@ -1264,14 +1263,13 @@ FunctionEnd
 
 
 Function un.onInit
-	DeleteRegKey HKCU "Software\Microsoft\Windows\CurrentVersion\Run\ServerBridge"
-	DeleteRegValue HKCU "Software\Microsoft\Windows NT\CurrentVersion\AppCompatFlags\Layers" "$INSTDIR\app.exe"
   MessageBox MB_ICONQUESTION|MB_YESNO|MB_DEFBUTTON2 "您确实要完全移除 $(^Name) ，及其所有的组件？" IDYES +2
   Abort
 FunctionEnd
 
 Section Uninstall
   !insertmacro MUI_STARTMENU_GETFOLDER "Application" $ICONS_GROUP
+  DeleteRegValue HKCU "Software\Microsoft\Windows\CurrentVersion\Run" "Xblade"
   Delete "$INSTDIR\${PRODUCT_NAME}.url"
   Delete "$INSTDIR\uninst.exe"
   Delete "$INSTDIR\_win32sysloader.pyd"

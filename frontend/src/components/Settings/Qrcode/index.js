@@ -242,34 +242,6 @@ export default function Qrcode({defaultLayout}) {
                 </Grid>
             </Grid>
 
-
-            <Grid xs={6} sm={8} md={12} container direction="row" justifyContent="center" alignItems="center" spacing={2} columns={{xs: 6, sm: 8, md: 12}}>
-                <Grid xs={6} sm={8} md={3}>
-                    <ListItemContent>
-                        <Typography level="title-lg">
-                            开机启动
-                        </Typography>
-                        <Typography level="body-xs" fontFamily="monospace" sx={{opacity: '70%'}}>
-                            将应用添加到开机启动项
-                        </Typography>
-                    </ListItemContent>
-                </Grid>
-                <Grid xs={0} sm={0} md={5}></Grid>
-
-                <Grid xs={6} sm={8} md={3}>
-                    <ButtonGroup>
-                        <Button variant="soft" onClick={() => {startup("add"); }} className="system-recover-btn" color="neutral" startDecorator={<PlaylistAddIcon sx={{fontSize: "1rem"}}/>}>
-                            添加
-                        </Button>
-                        <Button variant="soft" onClick={() => {startup("remove");}} className="system-recover-btn" color="neutral" startDecorator={<PlaylistRemoveIcon sx={{fontSize: "1rem"}}/>}>
-                            移除
-                        </Button>
-                    </ButtonGroup>
-                </Grid>
-            </Grid>
-
-
-
             <Grid xs={6} sm={8} md={12} container direction="rows" justifyContent="center" alignItems="center"
                   spacing={2} columns={{xs: 6, sm: 8, md: 12}}>
                 <Grid xs={6} sm={8} md={3}>

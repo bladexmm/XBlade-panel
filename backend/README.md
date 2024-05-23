@@ -10,7 +10,6 @@ nuitka --standalone `
   --include-data-dir=data=data `
   --include-data-dir=react_app=react_app `
   --windows-icon-from-ico=data/blade.ico `
-  --windows-uac-admin `
   --nofollow-imports `
   --disable-console `
   --include-package=flask `
@@ -30,7 +29,6 @@ nuitka --mingw64 `
   --include-module=win32com `
   --windows-icon-from-ico=data/blade.ico `
   --plugin-enable=tk-inter `
-  --windows-uac-admin `
   --nofollow-imports `
   --standalone `
   -o XBLADE main.py 
@@ -44,7 +42,6 @@ nuitka --standalone `
   --nofollow-imports `
   --windows-icon-from-ico=data/blade.ico `
   --plugin-enable=tk-inter `
-  --windows-uac-admin `
   --disable-console `
   --include-package=flask `
   -o XBLADE main.py
