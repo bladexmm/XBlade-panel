@@ -126,7 +126,7 @@ def LocateOnScreenNode(next_node):
             grayscale = next_node['properties']['grayscale'],
             confidence = round(next_node['properties']['confidence'], 2))
     except pyautogui.ImageNotFoundException:
-        return nodeOutput(0, 'error', '')
+        return nodeOutput(1, 'error', '')
     return nodeOutput(1, 'cmd', [[], [int(x), int(y)]])
 
 

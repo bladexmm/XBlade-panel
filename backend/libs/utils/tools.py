@@ -239,8 +239,13 @@ def exec_command(commands, parent = None, inputs = [], compOutputs = []):
         outputs.append(node_outputs)
         if node_outputs['code'] == 0:
             print(f"节点：{next_node['type']},出错")
+            return outputs if len(inputs) == 0 else nodeOutput(0, 'error', node_outputs)
         link_output = [output for output in next_node['outputs'] if
                        output['type'] == 'cmd' and output['name'] == node_outputs['name']]
+        if len(link_output) == 0 and len(inputs) != 0:
+            return nodeOutput(0, 'error', node_outputs)
+        if len(link_output) == 0:
+            return outputs
         i += 1
     if len(inputs) != 0:
         node_outputs = compNodeOutputs(commands['nodes'], links, node_output, compOutputs)

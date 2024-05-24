@@ -10,6 +10,7 @@ nuitka --standalone `
   --include-data-dir=data=data `
   --include-data-dir=react_app=react_app `
   --windows-icon-from-ico=data/blade.ico `
+  --windows-uac-admin `
   --nofollow-imports `
   --disable-console `
   --include-package=flask `

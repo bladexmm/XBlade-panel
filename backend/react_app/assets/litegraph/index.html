@@ -81,25 +81,23 @@
     LiteGraph.registerNodeType("基础/等待", TimeWait);
     LiteGraph.registerNodeType("基础/合并运行", MultiMerge);
 
+    LiteGraph.registerNodeType("交互/文本", TextInput);
+    LiteGraph.registerNodeType("交互/图片", ImageInput);
+
+    LiteGraph.registerNodeType("自动化/图片定位", LocateOnScreenNode)
+    LiteGraph.registerNodeType("自动化/运行软件", startApp)
+
     LiteGraph.registerNodeType("组件/实例化", Subgraph);
     LiteGraph.registerNodeType("组件/输入", SubgraphInput);
     LiteGraph.registerNodeType("组件/输出", SubgraphOutput);
 
-
-    LiteGraph.registerNodeType("交互/文本", TextInput);
-    // LiteGraph.registerNodeType("交互/数字", TextInput);
-    LiteGraph.registerNodeType("交互/图片", ImageInput);
-
-
     LiteGraph.registerNodeType("输入/快捷键", Hotkeys);
     LiteGraph.registerNodeType("输入/文本输入", Type_Text);
+    LiteGraph.registerNodeType("输入/鼠标移动", MouseMove);
     LiteGraph.registerNodeType("输入/鼠标左键", MouseLeft);
     LiteGraph.registerNodeType("输入/鼠标中键", MouseMiddle);
     LiteGraph.registerNodeType("输入/鼠标右键", MouseRight);
-    LiteGraph.registerNodeType("输入/鼠标移动", MouseMove);
 
-    LiteGraph.registerNodeType("自动化/图片定位", LocateOnScreenNode)
-    LiteGraph.registerNodeType("自动化/运行软件", startApp)
 
 
     const node_const = LiteGraph.createNode("基础/开始");
