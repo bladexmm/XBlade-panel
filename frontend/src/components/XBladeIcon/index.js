@@ -147,7 +147,7 @@ const XBladeIcon = ({
                         {...defaultStyles[icon]} />
 
                 </div>
-            ) : (iconPath.replace(host, '').startsWith('{') && iconSVG !== null) ? (
+            ) : (iconPath.replace(host, '').startsWith('{')) ? (
                 <div className={openLoad ? "svg-icon flip" : 'svg-icon'}
                      id={"icon-img-" + id}
                      onClick={handleButtonClicked}
