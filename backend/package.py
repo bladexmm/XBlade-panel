@@ -22,13 +22,12 @@ def clear_apps():
     print("Table 'system_apps' has been dropped if it existed.")
 
 
-clear_apps()
 # 删除旧数据
 delete_folder('./main.dist/react_app/backup')
 delete_folder('./main.dist/react_app/img')
 delete_folder('./main.dist/react_app/assets/web')
 
-
 copy('default/data/database.db', './main.dist/data/database.db', True)
+clear_apps()
 copy_dir('./default/assets', './main.dist/react_app/assets')
 copy_dir('./default/img', './main.dist/react_app/img')
