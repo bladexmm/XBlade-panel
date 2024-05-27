@@ -419,6 +419,8 @@ function App() {
                                 layouts={paneLayouts} paneDraggable={paneDraggable} appsAll={appsAll}
                                 updateLayouts={updateLayouts}
                                 layoutName={defaultLayout}
+                                rowHeight={25}
+                                cols={120}
                                 setDefaultLayout={setDefaultLayout}
                                 openedLayouts={openedLayouts}
                                 setOpenedLayouts={setOpenedLayouts}

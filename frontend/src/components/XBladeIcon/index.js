@@ -1,13 +1,12 @@
-import React, {useState, useEffect} from 'react';
-import "./index.css"
-import {FileIcon, defaultStyles} from "react-file-icon";
-import {getUserSettings} from "../../utils/settings";
+import React, { useState, useEffect, useLayoutEffect, useRef } from 'react';
+import "./index.css";
+import { FileIcon, defaultStyles } from "react-file-icon";
+import { getUserSettings } from "../../utils/settings";
 import SVGIcon from "./SVGIcon";
-
 
 let styles = defaultStyles;
 for (let style in styles) {
-    if ((style = "csv")) {
+    if (style === "csv") {
         styles[style] = {
             ...styles[style],
             color: "#1A754C",
@@ -20,16 +19,10 @@ for (let style in styles) {
 }
 
 const XBladeIcon = ({
-                        id, name, iconPath, appType = "link", appPath = '', onClickedBtn = ()=>{},
-                        doubleClickBtn = () => {
-                        },
-                        onLongPress = () => {
-                        },
-                        setMenuPosition = () => {
-                        },
+                        id, name, iconPath, appType = "link", appPath = '', onClickedBtn = () => {},
+                        doubleClickBtn = () => {}, onLongPress = () => {}, setMenuPosition = () => {},
                         size = 1
                     }) => {
-
     const [clickCount, setClickCount] = useState(0);
     const [lastClickEvent, setLastClickEvent] = useState(null);
     const [singleClickTimer, setSingleClickTimer] = useState(null);
@@ -39,75 +32,65 @@ const XBladeIcon = ({
     const [timer, setTimer] = useState(null);
     const [icon, setIcon] = useState('');
     const sizeIcon = (size - 1) * 5;
-    let host = getUserSettings('settings.host')
-    const [openLoad,setOpenLoad] = React.useState(false);
+    let host = getUserSettings('settings.host');
+    const [openLoad, setOpenLoad] = React.useState(false);
+    const containerRef = useRef(null);
+    const [containerDimensions, setContainerDimensions] = useState({ width: 0, height: 0 });
 
-    /**
-     * 处理点击按钮事件
-     * @param e
-     */
+    const updateContainerDimensions = () => {
+        if (containerRef.current) {
+            const { width, height } = containerRef.current.getBoundingClientRect();
+            setContainerDimensions({ width, height });
+        }
+    };
+
+    useLayoutEffect(() => {
+        updateContainerDimensions();
+    }, [size]);
+
     const handleButtonClicked = (e) => {
-        const clickX = e.clientX; // 获取点击事件的横坐标
-        const clickY = e.clientY; // 获取点击事件的纵坐标
-        setClickPosition([clickX, clickY]); // 记录点击的位置
+        const clickX = e.clientX;
+        const clickY = e.clientY;
+        setClickPosition([clickX, clickY]);
         setLastClickEvent(e);
         setClickCount(prev => prev + 1);
         setMenuPosition(e);
     };
 
-    /**
-     * 处理单击
-     */
-
     const handleClick = () => {
-        const clickX = clickPosition[0]; // 获取点击事件记录的横坐标
-        const clickY = clickPosition[1]; // 获取点击事件记录的纵坐标
+        const clickX = clickPosition[0];
+        const clickY = clickPosition[1];
         if (appType === 'monitor') {
-            // 获取图片容器的位置和尺寸
             const imgContainer = document.querySelector('#icon-img-' + id);
             const imgContainerRect = imgContainer.getBoundingClientRect();
-            // 计算点击位置相对于容器的位置
             const relativeX = clickX - imgContainerRect.left;
             const relativeY = clickY - imgContainerRect.top;
-
-            // 获取背景图片的尺寸
             const imgWidth = imgContainer.offsetWidth;
             const imgHeight = imgContainer.offsetHeight;
-
             const relativeToImageX = (relativeX / imgWidth) * 100;
             const relativeToImageY = (relativeY / imgHeight) * 100;
-            onClickedBtn(id, {x: relativeToImageX.toFixed(3), y: relativeToImageY.toFixed(3)},setOpenLoad);
-        }else {
-            onClickedBtn(id,null,setOpenLoad);
+            onClickedBtn(id, { x: relativeToImageX.toFixed(3), y: relativeToImageY.toFixed(3) }, setOpenLoad);
+        } else {
+            onClickedBtn(id, null, setOpenLoad);
         }
     };
 
-    /**
-     * 处理双击
-     * @param e
-     */
     const handleDoubleClick = (e) => {
         clearTimeout(singleClickTimer);
-        doubleClickBtn(e)
+        doubleClickBtn(e);
     };
 
-
-    /**
-     * 处理长按
-     */
     const handleMouseDown = () => {
         const timeout = setTimeout(() => {
             onLongPress();
-        }, 700); // 2秒钟
-
+        }, 700);
         setTimer(timeout);
     };
 
     useEffect(() => {
         if (appType === 'file') {
-            const app_path = appPath.replace(host, '')
+            const app_path = appPath.replace(host, '');
             const isFolder = app_path.endsWith('/') || app_path.endsWith('\\');
-            // 获取文件扩展名
             let extension = isFolder ? '' : app_path.split('.').pop();
             extension = extension === '' ? app_path.split('/').pop() : extension;
             extension = extension === '' ? app_path.split('\\').pop() : extension;
@@ -121,9 +104,8 @@ const XBladeIcon = ({
         }
 
         if (iconPath.replace(host, '') !== '' && iconPath.replace(host, '').startsWith('{')) {
-            setIconSVG(JSON.parse(iconPath.replace(host, '')))
+            setIconSVG(JSON.parse(iconPath.replace(host, '')));
         }
-
 
         const textContainer = document.getElementById("icon-" + id);
         if (textContainer.scrollWidth > textContainer.clientWidth) {
@@ -131,33 +113,28 @@ const XBladeIcon = ({
         } else {
             setIsOverflow(false);
         }
-        /**
-         * 处理双击
-         */
         if (clickCount === 1) {
             const timer = setTimeout(() => {
-                handleClick(); // 处理单击事件
+                handleClick();
                 setClickCount(0);
-            }, 300); // 设置单击事件触发的延迟时间
-            setSingleClickTimer(timer)
+            }, 300);
+            setSingleClickTimer(timer);
         } else if (clickCount === 2) {
             handleDoubleClick(lastClickEvent);
             setClickCount(0);
         }
-    }, [id, clickCount, iconPath, icon, size, appPath, appType, lastClickEvent]);
-    const delayTime = [100,500];
-    const randomDelay = Math.floor(Math.random() * (delayTime[1] - delayTime[0] + 1)) + delayTime[0];
+    }, [id, clickCount, iconPath, icon, size, appPath, appType, lastClickEvent, host]);
 
     return (
-        <div className="icon-container" key={id}  style={{ animationDelay:randomDelay+'ms'}}>
+        <div className="icon-container" key={id} ref={containerRef}>
             {iconPath === '' ? (
                 <div className={openLoad ? "file-icon flip" : 'file-icon'}
                      id={"icon-img-" + id}
                      onClick={handleButtonClicked}
                      onMouseDown={handleMouseDown}
-                     onMouseUp={() => {clearTimeout(timer);}}
+                     onMouseUp={() => { clearTimeout(timer); }}
                      onTouchStart={handleMouseDown}
-                     onTouchEnd={() => {clearTimeout(timer);}}
+                     onTouchEnd={() => { clearTimeout(timer); }}
                      style={{
                          marginBottom: (size - 1) + "rem",
                          width: 3 + sizeIcon + "rem",
@@ -175,45 +152,33 @@ const XBladeIcon = ({
                      id={"icon-img-" + id}
                      onClick={handleButtonClicked}
                      onMouseDown={handleMouseDown}
-                     onMouseUp={() => {
-                         clearTimeout(timer);
-                     }}
+                     onMouseUp={() => { clearTimeout(timer); }}
                      onTouchStart={handleMouseDown}
-                     onTouchEnd={() => {
-                         clearTimeout(timer);
-                     }}
+                     onTouchEnd={() => { clearTimeout(timer); }}
                      style={{
-
                          background: iconSVG !== null ? iconSVG.background.style : '',
                      }}>
                     <SVGIcon svgJson={iconSVG !== null ? iconSVG.icon.path : ''}
                              defaultColor={iconSVG !== null ? iconSVG.color.style : ''}
-                             defaultWidth={size * 33}
-                             defaultHeight={size * 33}/>
+                             defaultWidth={containerDimensions.width - 40 < 40 ? 40 : containerDimensions.width - 40}
+                             defaultHeight={containerDimensions.width - 40 < 40 ? 40 : containerDimensions.height - 40} />
                 </div>
             ) : (
                 <div
                     onClick={handleButtonClicked}
                     onMouseDown={handleMouseDown}
-                    onMouseUp={() => {
-                        clearTimeout(timer);
-                    }}
+                    onMouseUp={() => { clearTimeout(timer); }}
                     onTouchStart={handleMouseDown}
-                    onTouchEnd={() => {
-                        clearTimeout(timer);
-                    }}
+                    onTouchEnd={() => { clearTimeout(timer); }}
                     id={"icon-div-" + id}
                     className={appType === 'monitor' ? "icon-monitor"  : 'icon'}>
-                    <img id={"icon-img-" + id} className={openLoad ? "flip" : ''} src={iconPath} alt={name}/>
+                    <img id={"icon-img-" + id} className={openLoad ? "flip" : ''} src={iconPath.replace(host,'').startsWith("/") ? iconPath : iconPath.replace(host,'')} alt={name}/>
                 </div>
-
             )}
-
 
             <div id={"icon-" + id} className={`icon-name ${isOverflow ? 'overflow' : ''}`}>{name}</div>
         </div>
-    )
-        ;
+    );
 };
 
 export default XBladeIcon;

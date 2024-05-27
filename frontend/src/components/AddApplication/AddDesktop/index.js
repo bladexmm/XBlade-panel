@@ -55,6 +55,7 @@ export default function AddDesktop({
     const [icons, setIcons] = React.useState(appIcons);
     const [iconSelect, setIconSelect] = React.useState(0);
     const host = getUserSettings('settings.host');
+    const [thirdImg,setThirdImg] = React.useState('');
 
     useState(() => {
         setName(appName)
@@ -82,9 +83,11 @@ export default function AddDesktop({
         let pid = appBind !== null ? appBind['id'] : null;
         let layoutName = defaultLayout === 'pane' ? null : defaultLayout;
         pid = pid !== null ? pid : layoutName;
+        let appImg = iconDefault !== null ? JSON.stringify(iconDefault) : icon;
+        appImg = thirdImg !== '' ? thirdImg: appImg;
         const bodySend = {
             "name": name,
-            "icon": iconDefault !== null ? JSON.stringify(iconDefault) : icon,
+            "icon": appImg,
             "path": path,
             "pid": pid,
             "type": 'desktop',
@@ -235,11 +238,30 @@ export default function AddDesktop({
                             <Grid xs={1} alignItems='center'>
                                 <Typography level="title-sm" startDecorator={<DiamondRoundedIcon/>}> 图标</Typography>
                             </Grid>
-                            <Grid xs={2}>
-                                <Button style={{width: "95%"}} loadingPosition="end" color="neutral" variant="outlined"
-                                        onClick={() => setIconSelectorOpen(true)}><MenuOpenIcon/>&ensp;选择图标</Button>
+                            <Grid xs={4}>
+                                <Input required
+                                       placeholder="三方图片地址"
+                                       value={thirdImg}
+                                       sx={{
+                                           '--Input-focusedInset': 'var(--any, )',
+                                           '--Input-focusedThickness': '0.25rem',
+                                           '--Input-focusedHighlight': 'rgba(13,110,253,.25)',
+                                           '&::before': {
+                                               transition: 'box-shadow .15s ease-in-out',
+                                           },
+                                           '&:focus-within': {
+                                               borderColor: '#86b7fe',
+                                           },
+                                       }}
+                                       onChange={(event) => setThirdImg(event.target.value)}/>
+
                             </Grid>
-                            <Grid xs={2}>
+                            <Grid xs={1} alignItems='center'></Grid>
+                            <Grid xs={2}  style={{marginTop:".5rem"}}>
+                                <Button style={{width: "95%"}} loadingPosition="end" color="neutral" variant="outlined"
+                                        onClick={() => setIconSelectorOpen(true)}><MenuOpenIcon/>&ensp;自定义</Button>
+                            </Grid>
+                            <Grid xs={2}  style={{marginTop:".5rem"}}>
                                 <Button
                                     style={{width: "100%"}}
                                     component="label"
@@ -265,7 +287,7 @@ export default function AddDesktop({
                                         </SvgIcon>
                                     }
                                 >
-                                    上传图标
+                                    上传
                                     <VisuallyHiddenInput onChange={handleFileChange} type="file"/>
                                 </Button>
                             </Grid>

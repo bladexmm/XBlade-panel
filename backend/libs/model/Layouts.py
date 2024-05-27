@@ -8,8 +8,8 @@ class Layouts(db.Model):
     i             = db.Column(db.String(32))
     x             = db.Column(db.Integer, default=3)
     y             = db.Column(db.Integer, default=0)
-    w             = db.Column(db.Integer, default=1)
-    h             = db.Column(db.Integer, default=1)
+    w             = db.Column(db.Integer, default=3)
+    h             = db.Column(db.Integer, default=3)
     moved         = db.Column(db.Boolean, default=False)
     static        = db.Column(db.Boolean, default=False)
 

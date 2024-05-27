@@ -22,6 +22,8 @@ export default function Layouts({
                                     paneDraggable = false,
                                     setPaneDraggable = () => {},
                                     setCommandOpen = b => {},
+                                    cols = 50,
+                                    rowHeight = 90
                                 }) {
     const widthBox = 3600;
     const host = getUserSettings('settings.host');
@@ -94,8 +96,8 @@ export default function Layouts({
             <GridLayout
                 className="layout"
                 layout={paneLayouts}
-                cols={50}
-                rowHeight={90}
+                cols={cols}
+                rowHeight={rowHeight}
                 compactType={'horizontal'}
                 width={widthBox}
                 isDraggable={paneDraggable}
@@ -117,7 +119,7 @@ export default function Layouts({
                          }}>
                         <XBladeIcon
                             id={app['i']}
-                            size={app['w']}
+                            size={cols === 50 ? app['w'] : app['w'] * app['h'] }
                             name={app['i'] in appsAll ? appsAll[app['i']]['name'] : ''}
                             appType={app['i'] in appsAll ? appsAll[app['i']]['type'] : ''}
                             iconPath={app['i'] in appsAll ? (appsAll[app['i']]['icon'] !== '' ? host + appsAll[app['i']]['icon'] : '') : ''}
