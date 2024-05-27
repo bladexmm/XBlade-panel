@@ -420,7 +420,7 @@ function App() {
                                 updateLayouts={updateLayouts}
                                 layoutName={defaultLayout}
                                 rowHeight={25}
-                                cols={120}
+                                cols={140}
                                 setDefaultLayout={setDefaultLayout}
                                 openedLayouts={openedLayouts}
                                 setOpenedLayouts={setOpenedLayouts}

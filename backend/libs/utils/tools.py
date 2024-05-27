@@ -375,7 +375,8 @@ def get_files_in_directory(directory):
 
 def copy_app_images(apps):
     for app in apps:
-        if app['icon'] is not None and not app['icon'].startswith('{') and '?region=' not in app['icon']:
+        if (app['icon'] is not None and not app['icon'].startswith('{') and '?region=' not in app['icon'] and
+                not app['icon'].startswith('http') and not app['icon'].startswith('//')):
             copy("./react_app" + app['icon'], "./temp/images" + app['icon'])
         if app['type'] == 'command' and app['path'] is not None:
             nodes = json.loads(app['path'])
