@@ -172,7 +172,7 @@ const XBladeIcon = ({
                     onTouchEnd={() => { clearTimeout(timer); }}
                     id={"icon-div-" + id}
                     className={appType === 'monitor' ? "icon-monitor"  : 'icon'}>
-                    <img id={"icon-img-" + id} className={openLoad ? "flip" : ''} src={iconPath.replace(host,'').startsWith("/") ? iconPath : iconPath.replace(host,'')} alt={name}/>
+                    <img id={"icon-img-" + id} className={openLoad ? (appType === 'monitor' ? ""  : 'flip') : ''} src={iconPath.replace(host,'').startsWith("/") ? iconPath : iconPath.replace(host,'')} alt={name}/>
                 </div>
             )}
 

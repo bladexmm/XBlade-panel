@@ -345,9 +345,7 @@ function App() {
                                         pinBtn={pinApp} commandBtn={() => {
                             setCommandOpen(true);
                         }}
-                                        setMenuVisible={setMenuVisible} layoutType={rightClickMenuLayout}
-
-                        />
+                        setMenuVisible={setMenuVisible} layoutType={rightClickMenuLayout}/>
                     )}
 
                     <div className="video-background">
