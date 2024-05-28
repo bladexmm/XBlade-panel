@@ -90,7 +90,7 @@ def windows():
     menu = (
         MenuItem('打开面板', open_panel, default = True),
         Menu.SEPARATOR,
-        MenuItem('退出', quit_window),
+        MenuItem('退出软件', quit_window),
     )
     # 继续使用系统托盘图标
     image = Image.open("data/blade.png")
