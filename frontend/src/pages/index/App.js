@@ -53,8 +53,8 @@ function App() {
     const [rightClickMenuDel, setRightClickMenuDel] = useState(false);
     const [rightClickMenuApp, setRightClickMenuApp] = useState(null);
 
-    const host = '';
-    // const host = 'http://localhost:58433';
+    // const host = '';
+    const host = 'http://localhost:58433';
 
     const [dockLayouts, setDockLayouts] = React.useState([]);
     const systemApps = [
@@ -460,8 +460,9 @@ function App() {
                                                         <XBladeIcon id="btn|home" name="首页"
                                                                     iconPath={host + "/assets/icons/home.png"}
                                                                     onClickedBtn={(id, location, setOpenLoad) => {
-                                                                        pageGo('pane')
-                                                                        setOpenLoad(false)
+                                                                        // pageGo('pane')
+                                                                        // setOpenLoad(false)
+                                                                        window.location.reload();
                                                                     }}/>
                                                     </div>
 

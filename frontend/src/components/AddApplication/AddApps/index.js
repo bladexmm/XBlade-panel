@@ -144,30 +144,6 @@ export default function AddApps({
             setIconDefault(null);
         })
     };
-    // const [socket, setSocket] = useState(io('http://localhost:54321'));
-    useEffect(() => {
-        // 监听组件挂载时设置WebSocket监听器
-        // const setSocketListeners = () => {
-        //     socket.on('connect', () => {
-        //         console.log("Websocket connected: " + socket.connected);
-        //     });
-        //
-        //     socket.on('chat', (data) => {
-        //         console.log("Data received: ",data);
-        //     });
-        //
-        //     // 在组件卸载时清理连接和监听器
-        //     return () => {
-        //         socket.off('connect');
-        //         socket.off('custom-server-msg');
-        //         socket.close();
-        //     };
-        // };
-
-        // setSocketListeners();
-        // 注意：仅在组件挂载时执行一次
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
     return (
         <React.Fragment>
 
