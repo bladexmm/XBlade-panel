@@ -59,12 +59,15 @@
         CARD_SHAPE: 4,
         ARROW_SHAPE: 5,
         GRID_SHAPE: 6, // intended for slot arrays
+        CMD_SHAPE: 7,
+        INPUT_SHAPE: 8,
+        INPUT_SHAPE: 9,
 
         //enums
         INPUT: 1,
         OUTPUT: 2,
 
-        EVENT: -1, //for outputs
+        EVENT:-1, //for outputs
         ACTION: -1, //for inputs
 
         NODE_MODES: ["Always", "On Event", "Never", "On Trigger"], // helper, will add "On Request" and more in the future
@@ -8657,7 +8660,7 @@ LGraphNode.prototype.executeAction = function(action)
 
         var max_y = 0;
         var slot_pos = new Float32Array(2); //to reuse
-
+        let input_slot_types = ['image','text','location'];
         //render inputs and outputs
         if (!node.flags.collapsed) {
             //input connection slots
@@ -8690,13 +8693,22 @@ LGraphNode.prototype.executeAction = function(action)
                     if (max_y < pos[1] + LiteGraph.NODE_SLOT_HEIGHT * 0.5) {
                         max_y = pos[1] + LiteGraph.NODE_SLOT_HEIGHT * 0.5;
                     }
+                    // pos[0] = pos[0] - 10;
 
                     ctx.beginPath();
 
 					if (slot_type == "array"){
                         slot_shape = LiteGraph.GRID_SHAPE; // place in addInput? addOutput instead?
                     }
-                    
+
+                    if(slot_type == "cmd"){
+                        slot_shape = LiteGraph.CMD_SHAPE;
+                    }
+
+                    if(input_slot_types.includes(slot_type)){
+                        slot_shape = LiteGraph.INPUT_SHAPE;
+                    }
+
                     var doStroke = true;
                     
                     if (
@@ -8723,6 +8735,51 @@ LGraphNode.prototype.executeAction = function(action)
                         ctx.lineTo(pos[0] - 4, pos[1] + 6 + 0.5);
                         ctx.lineTo(pos[0] - 4, pos[1] - 6 + 0.5);
                         ctx.closePath();
+                    } else if (slot_shape === LiteGraph.CMD_SHAPE) {
+                        ctx.lineWidth = 1; // 设置边框宽度
+                        let diffX = -4;
+                        let diffY = -4;
+                        let scale = 0.6;
+                        ctx.beginPath();
+                        ctx.moveTo(pos[0] + (0  * scale) + diffX, pos[1] + (0  * scale) + diffY);
+                        ctx.lineTo(pos[0] + (8  * scale) + diffX, pos[1] + (0  * scale) + diffY);
+                        ctx.lineTo(pos[0] + (16 * scale) + diffX, pos[1] + (7  * scale) + diffY);
+                        ctx.lineTo(pos[0] + (8  * scale) + diffX, pos[1] + (14 * scale) + diffY);
+                        ctx.lineTo(pos[0] + (0  * scale) + diffX, pos[1] + (14 * scale) + diffY);
+                        ctx.closePath();
+                    } else if (slot_shape === LiteGraph.INPUT_SHAPE) {
+                        let color = '';
+                        if(slot_type == "image"){
+                            color = '#86A6B3';
+                        }else if(slot_type == "text"){
+                            color = '#83B37B';
+                        }else if(slot_type == "location"){
+                            color = '#D9C50F';
+                        }
+                        var radius = 4.5;
+                        ctx.beginPath();
+                        ctx.arc(pos[0], pos[1], radius, 0, 2 * Math.PI, false);
+
+                        ctx.fillStyle = slot.link != null ? color : 'rgba(0, 0, 0, 0)'; // 设置填充颜色
+                        ctx.fill();
+                        ctx.lineWidth = 1; // 设置边框宽度
+                        ctx.strokeStyle = color; // 设置边框颜色
+                        ctx.stroke();
+                        
+                        // 箭头参数
+                        let arrowSize = 2.8;
+                        let diffX = pos[0] + radius;
+                        let diffY = pos[1];
+
+                        // 绘制箭头
+                        ctx.beginPath();
+                        ctx.moveTo(diffX, diffY - arrowSize); // 箭头顶部
+                        ctx.lineTo(diffX + arrowSize, diffY); // 箭头尖端
+                        ctx.lineTo(diffX, diffY + arrowSize); // 箭头底部
+                        ctx.closePath();
+
+                        ctx.fillStyle = color; // 设置箭头颜色
+                        ctx.fill();
                     } else if (slot_shape === LiteGraph.GRID_SHAPE) {
                         ctx.rect(pos[0] - 4, pos[1] - 4, 2, 2);
                         ctx.rect(pos[0] - 1, pos[1] - 4, 2, 2);
@@ -8779,6 +8836,7 @@ LGraphNode.prototype.executeAction = function(action)
                     if (max_y < pos[1] + LiteGraph.NODE_SLOT_HEIGHT * 0.5) {
                         max_y = pos[1] + LiteGraph.NODE_SLOT_HEIGHT * 0.5;
                     }
+                    // pos[0] = pos[0] + 10;
 
                     ctx.fillStyle =
                         slot.links && slot.links.length
@@ -8790,12 +8848,19 @@ LGraphNode.prototype.executeAction = function(action)
                               this.default_connection_color_byType[slot_type] ||
                               this.default_connection_color.output_off;
                     ctx.beginPath();
-                    //ctx.rect( node.size[0] - 14,i*14,10,10);
 
 					if (slot_type == "array"){
                         slot_shape = LiteGraph.GRID_SHAPE;
                     }
-                    
+
+                    if(slot_type == "cmd"){
+                        slot_shape = LiteGraph.CMD_SHAPE;
+                    }
+
+                    if(input_slot_types.includes(slot_type)){
+                        slot_shape = LiteGraph.INPUT_SHAPE;
+                    }
+
                     var doStroke = true;
                     
                     if (
@@ -8822,6 +8887,54 @@ LGraphNode.prototype.executeAction = function(action)
                         ctx.lineTo(pos[0] - 4, pos[1] + 6 + 0.5);
                         ctx.lineTo(pos[0] - 4, pos[1] - 6 + 0.5);
                         ctx.closePath();
+                    } else if (slot_shape === LiteGraph.INPUT_SHAPE) {
+                        let color = '';
+                        
+                        if(slot_type == "image"){
+                            color = '#86A6B3';
+                        }else if(slot_type == "text"){
+                            color = '#83B37B';
+                        }else if(slot_type == "location"){
+                            color = '#D9C50F';
+                        }
+                        var radius = 4.5;
+                        ctx.beginPath();
+                        ctx.arc(pos[0], pos[1], radius, 0, 2 * Math.PI, false);
+                        ctx.fillStyle = (slot.links && slot.links.length) ? color : 'rgba(0, 0, 0, 0)'; // 设置填充颜色
+                        ctx.fill();
+                        ctx.lineWidth = 1; // 设置边框宽度
+                        ctx.strokeStyle = color; // 设置边框颜色
+                        ctx.stroke();
+                        
+                        // 箭头参数
+                        let arrowSize = 2.8;
+                        let diffX = pos[0] + radius;
+                        let diffY = pos[1];
+
+                        // 绘制箭头
+                        ctx.beginPath();
+                        ctx.moveTo(diffX, diffY - arrowSize); // 箭头顶部
+                        ctx.lineTo(diffX + arrowSize, diffY); // 箭头尖端
+                        ctx.lineTo(diffX, diffY + arrowSize); // 箭头底部
+                        ctx.closePath();
+
+                        ctx.fillStyle = color; // 设置箭头颜色
+                        ctx.fill();
+
+                    } else if (slot_shape === LiteGraph.CMD_SHAPE) {
+                        let diffX = -4;
+                        let diffY = -4;
+                        let scale = 0.6;
+                        ctx.beginPath();
+                        ctx.moveTo(pos[0] + (0  * scale) + diffX, pos[1] + (0  * scale) + diffY);
+                        ctx.lineTo(pos[0] + (8  * scale) + diffX, pos[1] + (0  * scale) + diffY);
+                        ctx.lineTo(pos[0] + (16 * scale) + diffX, pos[1] + (7  * scale) + diffY);
+                        ctx.lineTo(pos[0] + (8  * scale) + diffX, pos[1] + (14 * scale) + diffY);
+                        ctx.lineTo(pos[0] + (0  * scale) + diffX, pos[1] + (14 * scale) + diffY);
+                        ctx.strokeStyle = 'black'; // 设置边框颜色
+                        ctx.closePath();
+                
+
                     }  else if (slot_shape === LiteGraph.GRID_SHAPE) {
                         ctx.rect(pos[0] - 4, pos[1] - 4, 2, 2);
                         ctx.rect(pos[0] - 1, pos[1] - 4, 2, 2);

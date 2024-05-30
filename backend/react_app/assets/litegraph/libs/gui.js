@@ -1,3 +1,47 @@
+function FindImage(){
+
+    this.title = "查找图片";
+    this.desc = "根据图片定位屏幕指定坐标";
+
+    this.addProperty("searchTime", 5);
+    this.addWidget("number","searchTime", 5, "searchTime");
+
+    this.addProperty("confidence", 0.9);
+    this.addWidget("slider","confidence", 0.9, "confidence", { min: 0, max: 1} );
+
+    // 灰度匹配
+	this.addProperty("grayscale", false);
+    this.addWidget("toggle","grayscale", false,"grayscale", { on: "on", off:"off"} );
+
+
+    this.addInput("cmd", "cmd");
+    this.addInput("1", "image");
+    this.addInput("2", "image");
+    this.addInput("3", "image");
+    this.addInput("4", "image");
+    this.addInput("5", "image");
+    this.addInput("6", "image");
+    this.addInput("7", "image");
+    this.addInput("8", "image");
+    this.addInput("9", "image");
+
+    this.addOutput("1", "cmd");
+    this.addOutput("2", "cmd");
+    this.addOutput("3", "cmd");
+    this.addOutput("4", "cmd");
+    this.addOutput("5", "cmd");
+    this.addOutput("6", "cmd");
+    this.addOutput("7", "cmd");
+    this.addOutput("8", "cmd");
+    this.addOutput("9", "cmd");
+    this.addOutput("error", "cmd");
+
+    this.size = [180, 210];
+    this.widgets_up = true;
+}
+
+
+
 function LocateOnScreenNode() {
     this.addInput("cmd", "cmd");
     this.addInput("image", "image");

@@ -30,7 +30,6 @@ function ImageInput() {
     this.addWidget("image", "", null, img);
     const self = this;
     let imageValues = []; // 存储图片地址的数组
-    this.size = [180, 400];
 
     // 当文件被选择时触发
     fileInput.onchange = function (e) {
@@ -130,12 +129,13 @@ function ImageInput() {
         }
 
         // 计算图标在节点内部的位置
-        const x = (this.size[0] - iconWidth) / 2;
+        const x = (this.size[0] - iconWidth) + 200;
         const y = iconHeight;
 
         // 在节点内部绘制图标
         ctx.drawImage(img, 0, y, this.size[0], iconHeight);
     };
+    this.size = [120, 240];
 
 }
 

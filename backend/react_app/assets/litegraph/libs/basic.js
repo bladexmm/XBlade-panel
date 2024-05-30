@@ -57,9 +57,9 @@ function MultiMerge(){
     this.addInput("cmd", "cmd");
 
     this.addOutput("cmd", "cmd");
-    this.horizontal = true;
+    // this.horizontal = true;
 
-    this.size = [100, 20];
+    this.size = [100, 70];
 }
 
 MultiMerge.title = "合并运行";

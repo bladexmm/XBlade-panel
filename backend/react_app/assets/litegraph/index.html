@@ -85,6 +85,7 @@
     LiteGraph.registerNodeType("交互/图片", ImageInput);
 
     LiteGraph.registerNodeType("自动化/图片定位", LocateOnScreenNode)
+    LiteGraph.registerNodeType("自动化/查找图片", FindImage)
     LiteGraph.registerNodeType("自动化/运行软件", startApp)
 
     LiteGraph.registerNodeType("组件/实例化", Subgraph);
@@ -98,7 +99,9 @@
     LiteGraph.registerNodeType("输入/鼠标中键", MouseMiddle);
     LiteGraph.registerNodeType("输入/鼠标右键", MouseRight);
 
-
+    const find_image_idx = LiteGraph.createNode("自动化/查找图片");
+    find_image_idx.pos = [500, 200];
+    graph.add(find_image_idx);
 
     const node_const = LiteGraph.createNode("基础/开始");
     node_const.pos = [200, 200];

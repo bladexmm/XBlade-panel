@@ -53,8 +53,8 @@ function App() {
     const [rightClickMenuDel, setRightClickMenuDel] = useState(false);
     const [rightClickMenuApp, setRightClickMenuApp] = useState(null);
 
-    // const host = '';
-    const host = 'http://localhost:58433';
+    const host = '';
+    // const host = 'http://localhost:58433';
 
     const [dockLayouts, setDockLayouts] = React.useState([]);
     const systemApps = [

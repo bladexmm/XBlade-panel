@@ -115,7 +115,7 @@ def MouseMoveTO(next_node):
 @XbladeGraph.decorator("自动化/图片定位")
 def LocateOnScreenNode(next_node):
     # 判断是否有外部图片输入
-    if len(next_node['inputs'][1].get('value','')) > 0 :
+    if len(next_node['inputs'][1].get('value', '')) > 0:
         image_path = 'react_app' + next_node['inputs'][1]['value']
     else:
         image_path = 'react_app' + next_node['properties']['image']
@@ -128,6 +128,27 @@ def LocateOnScreenNode(next_node):
     except pyautogui.ImageNotFoundException:
         return nodeOutput(1, 'error', '')
     return nodeOutput(1, 'cmd', [[], [int(x), int(y)]])
+
+
+@XbladeGraph.decorator("自动化/查找图片")
+def FindImage(next_node):
+    start_time = time.time()
+    search_time = int(next_node['properties']['searchTime'])
+    while time.time() - start_time < search_time:
+        for idx, node_input in enumerate(next_node['inputs']):
+
+            if node_input.get('value', '') == '':
+                continue
+            image_path = 'react_app' + node_input['value']
+            try:
+                x, y = pyautogui.locateCenterOnScreen(
+                    image_path,
+                    grayscale = next_node['properties']['grayscale'],
+                    confidence = round(next_node['properties']['confidence'], 2))
+                return nodeOutput(1, str(idx + 1), [])
+            except pyautogui.ImageNotFoundException:
+                pass
+    return nodeOutput(1, 'error', [])
 
 
 @XbladeGraph.decorator("自动化/运行软件")

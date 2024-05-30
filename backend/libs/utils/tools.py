@@ -246,6 +246,9 @@ def exec_command(commands, parent = None, inputs = [], compOutputs = []):
             return nodeOutput(0, 'error', node_outputs)
         if len(link_output) == 0:
             return outputs
+        # 未找到下一个连接点直接结束
+        if link_output[0]['links'] is None:
+            return outputs
         i += 1
     if len(inputs) != 0:
         node_outputs = compNodeOutputs(commands['nodes'], links, node_output, compOutputs)
