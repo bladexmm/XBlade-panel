@@ -55,7 +55,7 @@ export default function AddApps({
     const [iconSelect, setIconSelect] = React.useState(0);
     const host = getUserSettings('settings.host');
     const [appBind, setAppBind] = React.useState(null);
-    const [thirdImg,setThirdImg] = React.useState('');
+    const [thirdImg, setThirdImg] = React.useState('');
 
     useState(() => {
         setName(appName)
@@ -99,7 +99,7 @@ export default function AddApps({
         let layoutName = defaultLayout === 'pane' ? null : defaultLayout;
         pid = pid !== null ? pid : layoutName;
         let appImg = iconDefault !== null ? JSON.stringify(iconDefault) : icon;
-        appImg = thirdImg !== '' ? thirdImg: appImg;
+        appImg = thirdImg !== '' ? thirdImg : appImg;
         const bodySend = {
             "name": name,
             "icon": appImg,
@@ -211,25 +211,28 @@ export default function AddApps({
                                     defaultValue={appBind}
                                     onChange={onAppBindChange}
                                     getOptionLabel={(option) => option.name}
-                                    renderOption={(props, option) => (
-                                        <AutocompleteOption {...props}>
-                                            <ListItemDecorator>
-                                                <FileIconAuto path={option.path} appType={option.type}
-                                                              img={option.icon}/>
-                                            </ListItemDecorator>
-                                            <ListItemContent sx={{fontSize: 'sm'}}>
-                                                {option.name}
-                                                <Typography level="body-xs" sx={{
-                                                    overflow: 'hidden',
-                                                    textOverflow: 'ellipsis',
-                                                    whiteSpace: 'nowrap',
-                                                    maxWidth: '200px' // 设置最大宽度，可以根据您的需求调整
-                                                }}>
-                                                    {option.path}
-                                                </Typography>
-                                            </ListItemContent>
-                                        </AutocompleteOption>
-                                    )}
+                                    renderOption={(props, option) => {
+                                        if (option.type !== 'component') {
+                                            return (<AutocompleteOption {...props}>
+                                                <ListItemDecorator>
+                                                    <FileIconAuto path={option.path} appType={option.type}
+                                                                  img={option.icon}/>
+                                                </ListItemDecorator>
+                                                <ListItemContent sx={{fontSize: 'sm'}}>
+                                                    {option.name}
+                                                    <Typography level="body-xs" sx={{
+                                                        overflow: 'hidden',
+                                                        textOverflow: 'ellipsis',
+                                                        whiteSpace: 'nowrap',
+                                                        maxWidth: '200px' // 设置最大宽度，可以根据您的需求调整
+                                                    }}>
+                                                        {option.path}
+                                                    </Typography>
+                                                </ListItemContent>
+                                            </AutocompleteOption>)
+                                        }
+
+                                    }}
                                 />
                             </Grid>
 
@@ -260,11 +263,11 @@ export default function AddApps({
 
                             </Grid>
                             <Grid xs={1} alignItems='center'></Grid>
-                            <Grid xs={2} style={{marginTop:".5rem"}}>
+                            <Grid xs={2} style={{marginTop: ".5rem"}}>
                                 <Button style={{width: "95%"}} loadingPosition="end" color="neutral" variant="outlined"
                                         onClick={() => setIconSelectorOpen(true)}><MenuOpenIcon/>&ensp;自定义</Button>
                             </Grid>
-                            <Grid xs={2} style={{marginTop:".5rem"}}>
+                            <Grid xs={2} style={{marginTop: ".5rem"}}>
                                 <Button
                                     style={{width: "100%"}}
                                     component="label"

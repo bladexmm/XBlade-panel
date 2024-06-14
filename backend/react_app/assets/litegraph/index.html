@@ -1,161 +1,251 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="UTF-8">
     <link rel="stylesheet" href="./index.css">
     <link rel="stylesheet" type="text/css" href="litegraph.css">
+    <link rel="stylesheet" href="base.css">
     <script type="text/javascript" src="litegraph.core.js"></script>
+    <link rel="stylesheet" href="libs/grid/gridstack-extra.min.css">
+    <link rel="stylesheet" href="libs/grid/gridstack.min.css">
+    <script src="libs/grid/gridstack-all.js"></script>
+    <script src="libs/jquery-3.6.0.min.js" crossorigin="anonymous"></script>
+
 </head>
+
 <body>
-<div class="virtual-keyboard hidden">
-    <div class="virtual-col keyboard-input-preview">
-        <div class="virtual-keys" ><span class="virtual-keys-input"></span></div>
-        <div class="virtual-keys virtual-keys-delete"><span>删除</span></div>
-        <div class="virtual-keys virtual-keys-close"><span>确认</span></div>
+    <div class="virtual-keyboard hidden">
+        <div class="virtual-col keyboard-input-preview">
+            <div class="virtual-keys"><span class="virtual-keys-input"></span></div>
+            <div class="virtual-keys virtual-keys-delete"><span>删除</span></div>
+            <div class="virtual-keys virtual-keys-close"><span>确认</span></div>
+        </div>
+
+        <div class="virtual-col Fn"></div>
+        <div class="virtual-col first"></div>
+        <div class="virtual-col second"></div>
+        <div class="virtual-col third"></div>
+        <div class="virtual-col fourth"></div>
+        <div class="virtual-col fifth"></div>
+        <div class="virtual-col sixth"></div>
+
     </div>
 
-    <div class="virtual-col Fn"></div>
-    <div class="virtual-col first"></div>
-    <div class="virtual-col second"></div>
-    <div class="virtual-col third"></div>
-    <div class="virtual-col fourth"></div>
-    <div class="virtual-col fifth"></div>
-    <div class="virtual-col sixth"></div>
+    <div class="display-grid-edit hidden">
+        <div class="virtual-col grid-default-setting">
+            <hr>
+            <input class="grid-layout-input layout-x" type="number" value="3" />
+            <div class="grid-text"><span>X</span></div>
+            <input class="grid-layout-input layout-y" type="number" value="3" />
+            <div class="virtual-keys grid-layout-update" onclick="gridUpdate()"><span>更新布局</span></div>
+            <div class="virtual-keys grid-layout-update" id="grid-save"><span>确认</span></div>
+            <hr>
+        </div>
 
-</div>
-<div class="header">
-    <button class="btn" id="debug">运行</button>
-    <button class="btn" id="save">保存</button>
-    <button class="btn" id="close">关闭</button>
-</div>
+        <div class="grid-content">
+            <!-- 应用管理 -->
+            <div class="grid-apps-layout">
 
-<canvas id='mycanvas'></canvas>
-<script src="libs/basic.js"></script>
-<script src="libs/keyboard.js"></script>
-<script src="libs/gui.js"></script>
-<script src="libs/keys.js"></script>
-<script src="libs/group.js"></script>
-<script src="libs/interaction.js"></script>
-<script>
-    function addCols(col) {
-        let keys_html = ''
-        for (let i = 0; i < col.label.length; i++) {
-            keys_html += '<span>' + col.label[i] + '</span>'
+
+                <div class="flex-col gap-1 grid-apps-display" id="grid-app-trash">
+                    <div class="grid-app"><span>删除</span></div>
+                </div>
+
+
+                <div class="flex-col gap-1 grid-apps-display grid-stack-item newWidget">
+                    <div class="grid-stack-item-content" onclick="gridAdd('图片','grid_image')">
+                        <span class="grid-app-new" >图片</span>
+                    </div>
+                </div>
+
+                <div class="flex-col gap-1 grid-apps-display grid-stack-item newWidget">
+                    <div class="grid-stack-item-content" onclick="gridAdd('文字','grid_string')">
+                        <span class="grid-app-new">文字</span>
+                    </div>
+                </div>
+
+                <div class="flex-col gap-1 grid-apps-display grid-stack-item newWidget">
+                    <div class="grid-stack-item-content" onclick="gridAdd('输入框','grid_input')">
+                        <span class="grid-app-new" data-type="input">输入框</span>
+                    </div>
+                </div>
+
+                <div class="flex-col gap-1 grid-apps-display grid-stack-item newWidget">
+                    <div class="grid-stack-item-content" onclick="gridAdd('折线图','grid_line_chart')">
+                        <span class="grid-app-new">折线图</span>
+                    </div>
+                </div>
+                
+                <div class="flex-col gap-1 grid-apps-display grid-stack-item newWidget">
+                    <div class="grid-stack-item-content" onclick="gridAdd('按钮','grid_button')">
+                        <span class="grid-app-new">按钮</span>
+                    </div>
+                </div>
+
+                
+
+            </div>
+
+
+        </div>
+
+        <div class="grid"></div>
+    </div>
+
+    <div class="header">
+        <!-- <button class="btn" id="draw">绘图</button> -->
+        <button class="btn" id="debug">运行</button>
+        <button class="btn" id="save">保存</button>
+        <button class="btn" id="close">关闭</button>
+    </div>
+
+    <canvas id='mycanvas'></canvas>
+    <script src="libs/nodes/00_basic.js"></script>
+    <script src="libs/nodes/01_draw.js"></script>
+    <script src="libs/nodes/02_program.js"></script>
+    <script src="libs/nodes/03_input.js"></script>
+    <script src="libs/nodes/04_auto.js"></script>
+    <script src="libs/nodes/05_components.js"></script>
+    <script src="libs/nodes/06_simulation.js"></script>
+    <script src="libs/components/keys.js"></script>
+    <script src="libs/components/virtual-keyboard.js"></script>
+    <script src="libs/components/display-grid-edit.js"></script>
+    <script>
+        var graph = new LGraph();
+        var canvas = new LGraphCanvas("#mycanvas", graph);
+
+        LiteGraph.registerNodeType("基础/开始(CMDStart)", CMDStart);
+        LiteGraph.registerNodeType("基础/结束(CMDEnd)", CMDEnd);
+        LiteGraph.registerNodeType("基础/合并运行(MultiMerge)", MultiMerge);
+
+
+        LiteGraph.registerNodeType("绘图/开始(DisplayStart)", DisplayStart);
+        LiteGraph.registerNodeType("绘图/布局(DisplayGrid)", DisplayGrid);
+        LiteGraph.registerNodeType("绘图/图片(DisplayImage)", DisplayImage);
+        LiteGraph.registerNodeType("绘图/文字(DisplayText)", DisplayText);
+        LiteGraph.registerNodeType("绘图/输入框(DisplayInput)", DisplayInput);
+        LiteGraph.registerNodeType("绘图/折线图(DisplayLineChart)", DisplayLineChart);
+        LiteGraph.registerNodeType("绘图/按钮(DisplayButton)", DisplayButton);
+
+
+        LiteGraph.registerNodeType("编程/等待(TimeWait)", TimeWait);
+        LiteGraph.registerNodeType("编程/请求接口(FetchApi)", FetchApi);
+        LiteGraph.registerNodeType("编程/获取JSON参数(GetJson)", GetJson);
+        LiteGraph.registerNodeType("编程/判断(IfValid)", IfValid);
+        LiteGraph.registerNodeType("编程/选择结构(switchValid)", SwitchValid);
+        LiteGraph.registerNodeType("编程/格式化字符串(FormatText)", FormatText);
+        LiteGraph.registerNodeType("编程/记录日志(logDebug)", logDebug);
+        LiteGraph.registerNodeType("编程/配置局部变量(SetLocalVariables)", SetLocalVariables);
+        LiteGraph.registerNodeType("编程/获取局部变量(GetLocalVariables)", GetLocalVariables);
+        LiteGraph.registerNodeType("编程/配置全局变量(SetGlobalVariables)", SetGlobalVariables);
+        LiteGraph.registerNodeType("编程/获取全局变量(GetGlobalVariables)", GetGlobalVariables);
+
+
+        LiteGraph.registerNodeType("输入/文本(TextInput)", TextInput);
+        LiteGraph.registerNodeType("输入/列表(ArrayInput)", ArrayInput);
+        LiteGraph.registerNodeType("输入/图片(ImageInput)", ImageInput);
+
+        LiteGraph.registerNodeType("自动化/图片定位(LocateOnScreenNode)", LocateOnScreenNode);
+        LiteGraph.registerNodeType("自动化/查找图片(FindImage)", FindImage);
+        LiteGraph.registerNodeType("自动化/运行软件(startApp)", startApp);
+        LiteGraph.registerNodeType("自动化/打开链接(openLink)", openLink);
+
+        LiteGraph.registerNodeType("组件/实例化(Subgraph)", Subgraph);
+        LiteGraph.registerNodeType("组件/输入(SubgraphInput)", SubgraphInput);
+        LiteGraph.registerNodeType("组件/输出(SubgraphOutput)", SubgraphOutput);
+
+        LiteGraph.registerNodeType("模拟/快捷键(Hotkeys)", Hotkeys);
+        LiteGraph.registerNodeType("模拟/文本输入(TypeText)", Type_Text);
+        LiteGraph.registerNodeType("模拟/鼠标移动(MouseMove)", MouseMove);
+        LiteGraph.registerNodeType("模拟/鼠标左键(MouseLeft)", MouseLeft);
+        LiteGraph.registerNodeType("模拟/鼠标中键(MouseMiddle)", MouseMiddle);
+        LiteGraph.registerNodeType("模拟/鼠标右键(MouseRight)", MouseRight);
+
+
+        // let nodes = ['绘图/图片(DisplayImage)','绘图/文字(DisplayText)',
+        // '绘图/输入框(DisplayInput)','绘图/图表(DisplayChart)','绘图/按钮(DisplayButton)',
+        // '绘图/布局(DisplayGrid)'];
+        // for (let idx = 0; idx < nodes.length; idx++) {
+        //     const element = nodes[idx];
+        //     const ACimg = LiteGraph.createNode(element);
+        //     ACimg.pos = [200, 120 * (idx + 1)];
+        //     graph.add(ACimg);
+        // }
+        
+        
+
+
+        const node_const = LiteGraph.createNode("基础/开始(CMDStart)");
+        node_const.pos = [100, 100];
+        graph.add(node_const);
+        const node_watch = LiteGraph.createNode("基础/结束(CMDEnd)");
+        node_watch.pos = [700, 100];
+        graph.add(node_watch);
+        node_const.connect(0, node_watch, 0);
+
+        graph.start()
+
+        function resizeCanvas() {
+            var canvasElement = document.getElementById('mycanvas');
+            canvasElement.width = window.innerWidth;
+            canvasElement.height = window.innerHeight;
         }
-        let keysPress = 'data-keys="' + col.values.join(',') + '"';
-        if (col.label.length === 0) {
-            return '<div class="virtual-keys virtual-keys-empty"></div>';
-        } else {
-            return '<div class="virtual-keys virtual-keys-click" ' + keysPress + '>' + keys_html + '</div>';
+
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+        document.getElementById('close').addEventListener('click', function () {
+            parent.postMessage({ method: 'close' }, "*");
+        });
+        document.getElementById('save').addEventListener('click', function () {
+            const serializedData = canvas.graph.serialize();
+            parent.postMessage({ method: "save", data: serializedData }, "*");
+        });
+
+        document.getElementById('debug').addEventListener('click', function () {
+            const formdata = new FormData();
+            formdata.append("cmd", JSON.stringify(canvas.graph.serialize()));
+
+            const requestOptions = {
+                method: 'POST',
+                body: formdata,
+                redirect: 'follow'
+            };
+
+            fetch("/api/tools/commands", requestOptions)
+                .then(response => response.json())
+                .then(result => console.log(result))
+                .catch(error => console.log('error', error));
+        });
+
+        // document.getElementById('draw').addEventListener('click', function () {
+        //     const formdata = new FormData();
+        //     formdata.append("cmd", JSON.stringify(canvas.graph.serialize()));
+
+        //     const requestOptions = {
+        //         method: 'POST',
+        //         body: formdata,
+        //         redirect: 'follow'
+        //     };
+
+        //     fetch("/api/tools/draw", requestOptions)
+        //         .then(response => response.json())
+        //         .then(result => console.log(result))
+        //         .catch(error => console.log('error', error));
+        // });
+
+        //回调函数
+        function receiveMessageFromIndex(event) {
+            if (event.data !== null && typeof event.data === 'string') {
+                canvas.graph.configure(JSON.parse(event.data));
+            }
         }
-    }
+
+        //监听message事件
+        window.addEventListener("message", receiveMessageFromIndex, false);
 
 
-    // 获取具有 virtual-keys-close 类名的元素
-    var closeButton = document.querySelector('.virtual-keys-close');
-
-    // 添加点击事件监听器
-    closeButton.addEventListener('click', function () {
-        var keyboard = document.querySelector('.virtual-keyboard');
-        keyboard.classList.add('hidden'); // 添加 visible 类
-    });
-
-    virtual_keyboards.forEach(function (keys) {
-        const keyboard_col = document.querySelector('.virtual-col.' + keys.name);
-        let html = "";
-        for (let i = 0; i < keys.cols.length; i++) {
-            html += addCols(keys.cols[i]);
-        }
-        keyboard_col.innerHTML += html;
-    });
-
-
-</script>
-
-<script>
-    var graph = new LGraph();
-    var canvas = new LGraphCanvas("#mycanvas", graph);
-
-    LiteGraph.registerNodeType("基础/开始", CMDStart);
-    LiteGraph.registerNodeType("基础/结束", CMDEnd);
-    LiteGraph.registerNodeType("基础/等待", TimeWait);
-    LiteGraph.registerNodeType("基础/合并运行", MultiMerge);
-
-    LiteGraph.registerNodeType("交互/文本", TextInput);
-    LiteGraph.registerNodeType("交互/图片", ImageInput);
-
-    LiteGraph.registerNodeType("自动化/图片定位", LocateOnScreenNode)
-    LiteGraph.registerNodeType("自动化/查找图片", FindImage)
-    LiteGraph.registerNodeType("自动化/运行软件", startApp)
-
-    LiteGraph.registerNodeType("组件/实例化", Subgraph);
-    LiteGraph.registerNodeType("组件/输入", SubgraphInput);
-    LiteGraph.registerNodeType("组件/输出", SubgraphOutput);
-
-    LiteGraph.registerNodeType("输入/快捷键", Hotkeys);
-    LiteGraph.registerNodeType("输入/文本输入", Type_Text);
-    LiteGraph.registerNodeType("输入/鼠标移动", MouseMove);
-    LiteGraph.registerNodeType("输入/鼠标左键", MouseLeft);
-    LiteGraph.registerNodeType("输入/鼠标中键", MouseMiddle);
-    LiteGraph.registerNodeType("输入/鼠标右键", MouseRight);
-
-    const find_image_idx = LiteGraph.createNode("自动化/查找图片");
-    find_image_idx.pos = [500, 200];
-    graph.add(find_image_idx);
-
-    const node_const = LiteGraph.createNode("基础/开始");
-    node_const.pos = [200, 200];
-    graph.add(node_const);
-    const node_watch = LiteGraph.createNode("基础/结束");
-    node_watch.pos = [700, 200];
-    graph.add(node_watch);
-    node_const.connect(0, node_watch, 0);
-    graph.start()
-
-    function resizeCanvas() {
-        var canvasElement = document.getElementById('mycanvas');
-        canvasElement.width = window.innerWidth;
-        canvasElement.height = window.innerHeight;
-    }
-
-    resizeCanvas();
-    window.addEventListener('resize', resizeCanvas);
-    document.getElementById('close').addEventListener('click', function () {
-        parent.postMessage({method: 'close'}, "*");
-    });
-    document.getElementById('save').addEventListener('click', function () {
-        const serializedData = canvas.graph.serialize();
-        parent.postMessage({method: "save", data: serializedData}, "*");
-    });
-
-    document.getElementById('debug').addEventListener('click', function () {
-        const formdata = new FormData();
-        formdata.append("cmd", JSON.stringify(canvas.graph.serialize()));
-
-        const requestOptions = {
-            method: 'POST',
-            body: formdata,
-            redirect: 'follow'
-        };
-
-        fetch("/api/tools/commands", requestOptions)
-           .then(response => response.json())
-           .then(result => console.log(result))
-           .catch(error => console.log('error', error));
-    });
-
-
-    //回调函数
-    function receiveMessageFromIndex(event) {
-        if (event.data !== null && typeof event.data === 'string') {
-            canvas.graph.configure(JSON.parse(event.data));
-        }
-    }
-
-    //监听message事件
-    window.addEventListener("message", receiveMessageFromIndex, false);
-
-
-</script>
+    </script>
 </body>
+
 </html>

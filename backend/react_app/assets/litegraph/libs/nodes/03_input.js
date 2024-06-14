@@ -2,7 +2,7 @@
 function TextInput() {
     this.addOutput("text", "text");
     this.addProperty("text", "");
-    this.widget = this.addWidget("text", "text", "", "text");  //link to property value
+    this.widget = this.addWidget("text", "text", "", "text",{multiline: true});  //link to property value
     this.widgets_up = true;
     this.size = [180, 30];
 }
@@ -10,6 +10,19 @@ function TextInput() {
 TextInput.title = "文本";
 TextInput.desc = "文本";
 
+
+
+
+function ArrayInput() {
+    this.addOutput("array", "array");
+    this.addProperty("value", "");
+    this.addWidget("text", "array", "", "value",{multiline: true});  //link to property value
+    this.widgets_up = true;
+    this.size = [180, 30];
+}
+
+ArrayInput.title = "列表";
+ArrayInput.desc = "列表";
 
 
 function ImageInput() {

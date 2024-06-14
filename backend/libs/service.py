@@ -11,11 +11,12 @@ import pyautogui
 from libs.model.Apps import Apps
 from libs.model.Layouts import Layouts
 from libs.model.models import db
+from libs.utils.LiteGraph import LiteGraph
 from libs.utils.installedApps import windows_apps_all
 from libs.utils.reg import add_reg, remove_reg, remove_auto_start_key, registry_auto_start_key
 from libs.utils.settings import IMAGE_PATH, HTML_PATH
 from libs.utils.tools import result, extract_icon_from_exe, generate_random_md5_with_timestamp, \
-    open_with_default_program, exec_command, generate_random_filename, generate_date_path
+    open_with_default_program, generate_random_filename, generate_date_path
 from libs.utils.website import get_page_info, get_domain, md5
 from flask import request
 from PIL import ImageGrab
@@ -87,7 +88,10 @@ def openApp():
         if app_dict['pid'] is not None:
             parent = db_session.query(Apps).filter_by(id = app_dict['pid']).first()
             parent = parent.to_dict()
-        exec_command(json.loads(app_dict['path']), parent)
+        app_dict['path'] = json.loads(app_dict['path'])
+        dg = LiteGraph(app_dict, parent, {"type": "CMDStart", "slot": "out"})
+        logs = dg.execute()
+        return result(1, logs, 'opened')
     elif app_dict['type'] == 'desktop':
         return result(1, app_dict['id'], 'newLayout')
     elif app_dict['type'] == 'monitor' and data['position'] is not None:

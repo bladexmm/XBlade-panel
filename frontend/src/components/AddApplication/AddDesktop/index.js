@@ -209,24 +209,28 @@ export default function AddDesktop({
                                     defaultValue={appBind}
                                     onChange={onAppBindChange}
                                     getOptionLabel={(option) => option.name}
-                                    renderOption={(props, option) => (
-                                        <AutocompleteOption {...props}>
-                                            <ListItemDecorator>
-                                                <FileIconAuto path={option.path} appType={option.type} img={option.icon}/>
-                                            </ListItemDecorator>
-                                            <ListItemContent sx={{fontSize: 'sm'}}>
-                                                {option.name}
-                                                <Typography level="body-xs"  sx={{
-                                                    overflow: 'hidden',
-                                                    textOverflow: 'ellipsis',
-                                                    whiteSpace: 'nowrap',
-                                                    maxWidth: '200px' // 设置最大宽度，可以根据您的需求调整
-                                                }}>
-                                                    {option.path}
-                                                </Typography>
-                                            </ListItemContent>
-                                        </AutocompleteOption>
-                                    )}
+                                    renderOption={(props, option) => {
+                                        if (option.type !== 'component') {
+                                            return (<AutocompleteOption {...props}>
+                                                <ListItemDecorator>
+                                                    <FileIconAuto path={option.path} appType={option.type}
+                                                                  img={option.icon}/>
+                                                </ListItemDecorator>
+                                                <ListItemContent sx={{fontSize: 'sm'}}>
+                                                    {option.name}
+                                                    <Typography level="body-xs" sx={{
+                                                        overflow: 'hidden',
+                                                        textOverflow: 'ellipsis',
+                                                        whiteSpace: 'nowrap',
+                                                        maxWidth: '200px' // 设置最大宽度，可以根据您的需求调整
+                                                    }}>
+                                                        {option.path}
+                                                    </Typography>
+                                                </ListItemContent>
+                                            </AutocompleteOption>)
+                                        }
+
+                                    }}
                                 />
                             </Grid>
 

@@ -32,7 +32,7 @@ const VisuallyHiddenInput = styled('input')`
 `;
 
 
-export default function AddCommand({
+export default function AddComponent({
                                        open,
                                        onClose,
                                        app = null,
@@ -63,16 +63,6 @@ export default function AddCommand({
     const [appBind, setAppBind] = React.useState(null);
     const [thirdImg,setThirdImg] = React.useState('');
 
-    const fetchCommands = () => {
-        request({
-            url: "/api/tools/commands",
-            method: "GET",
-            headers: {"Content-Type": "application/json"},
-            body: {},
-        }).then((data) => {
-            // setCommands(data.data.commands)
-        });
-    }
 
     const submitBtnClick = () => {
         let icon = icons.length > 0 ? icons[iconSelect] : appIcons[0];
@@ -86,7 +76,7 @@ export default function AddCommand({
             "icon": appImg,
             "path": commandDefault !== null ? commandDefault : path,
             "pid": pid,
-            "type": 'command',
+            "type": 'component',
         }
         if (app_id != null) {
             bodySend.id = app_id
@@ -104,29 +94,6 @@ export default function AddCommand({
         });
     }
 
-    const handleFileChange = (event) => {
-        const formData = new FormData();
-        formData.append('file', event.target.files[0]);
-        // 使用fetch发送POST请求到Flask上传接口
-        fetch(host + '/api/upload/script', {
-            method: 'POST',
-            body: formData
-        }).then(response => {
-            if (response.ok) {
-                // 解析JSON格式的响应数据
-                return response.json();
-            } else {
-                throw new Error('File upload failed');
-            }
-        }).then(result => {
-            // Ensure icons is initialized as an array
-            const iconsArray = Array.isArray(icons) ? icons : [];
-            if (!iconsArray.includes(result.data)) {
-                setIcons([result.data, ...iconsArray]);
-            }
-            setIconDefault(null);
-        })
-    };
 
 
     const onAppBindChange = (event, values) => {
@@ -134,8 +101,8 @@ export default function AddCommand({
     }
 
     useState(() => {
-        setName(appName)
-        setIcons(appIcons)
+        setName(appName);
+        setIcons(appIcons);
         if (appPath !== null && appPath !== '') {
             setPath(JSON.parse(appPath));
             if (commandDefault === null) {
@@ -152,7 +119,6 @@ export default function AddCommand({
         } else {
             setPath([]);
         }
-        fetchCommands()
     }, [iconDefault])
 
     return (
@@ -232,88 +198,7 @@ export default function AddCommand({
                         </Grid>
 
                     </FormControl>
-                    <FormControl>
-                        <Grid container columns={{xs: 5}} alignItems="center">
-                            <Grid xs={1} alignItems='center'>
-                                <Typography level="title-sm" startDecorator={<DiamondRoundedIcon/>}> 图标</Typography>
-                            </Grid>
-                            <Grid xs={4}>
-                                <Input required
-                                       placeholder="三方图片地址"
-                                       value={thirdImg}
-                                       sx={{
-                                           '--Input-focusedInset': 'var(--any, )',
-                                           '--Input-focusedThickness': '0.25rem',
-                                           '--Input-focusedHighlight': 'rgba(13,110,253,.25)',
-                                           '&::before': {
-                                               transition: 'box-shadow .15s ease-in-out',
-                                           },
-                                           '&:focus-within': {
-                                               borderColor: '#86b7fe',
-                                           },
-                                       }}
-                                       onChange={(event) => setThirdImg(event.target.value)}/>
 
-                            </Grid>
-                            <Grid xs={1} alignItems='center'></Grid>
-                            <Grid xs={2} style={{marginTop:".5rem"}}>
-                                <Button style={{width: "95%"}} loadingPosition="end" color="neutral" variant="outlined"
-                                        onClick={() => setIconSelectorOpen(true)}><MenuOpenIcon/>&ensp;自定义</Button>
-                            </Grid>
-                            <Grid xs={2} style={{marginTop:".5rem"}}>
-                                <Button
-                                    style={{width: "100%"}}
-                                    component="label"
-                                    role={undefined}
-                                    tabIndex={-1}
-                                    variant="outlined"
-                                    color="neutral"
-                                    startDecorator={
-                                        <SvgIcon>
-                                            <svg
-                                                xmlns="http://www.w3.org/2000/svg"
-                                                fill="none"
-                                                viewBox="0 0 24 24"
-                                                strokeWidth={1.5}
-                                                stroke="currentColor"
-                                            >
-                                                <path
-                                                    strokeLinecap="round"
-                                                    strokeLinejoin="round"
-                                                    d="M12 16.5V9.75m0 0l3 3m-3-3l-3 3M6.75 19.5a4.5 4.5 0 01-1.41-8.775 5.25 5.25 0 0110.233-2.33 3 3 0 013.758 3.848A3.752 3.752 0 0118 19.5H6.75z"
-                                                />
-                                            </svg>
-                                        </SvgIcon>
-                                    }
-                                >
-                                    上传
-                                    <VisuallyHiddenInput onChange={handleFileChange} type="file"/>
-                                </Button>
-                            </Grid>
-                        </Grid>
-                        <Grid container spacing={1}
-                              sx={{overflowY: "scroll", height: "8rem", marginTop: "1rem"}}>
-                            {iconDefault !== null ? (
-                                <Grid xs={1}>
-                                    <div className='icon-selected' style={{background: iconDefault.background.style}}
-                                         onClick={() => {
-                                         }}>
-                                        <SVGIcon svgJson={iconDefault.icon.path}
-                                                 defaultColor={iconDefault.color.style}/>
-                                    </div>
-                                </Grid>
-                            ) : (<React.Fragment>
-                                {(appIcons.lenght > 0 ? appIcons : icons).map((iconSource, index) => (
-                                    <Grid xs={2}>
-                                        <Avatar onClick={() => setIconSelect(index)}
-                                                className={iconSelect === index ? "avatars select" : "avatars"}
-                                                src={host + iconSource}/>
-                                    </Grid>
-                                ))}
-                            </React.Fragment>)}
-                        </Grid>
-
-                    </FormControl>
                     <Button loadingPosition="end" onClick={submitBtnClick} loading={submitBtn}>提交&ensp;
                         <SendRoundedIcon/></Button>
                 </Stack>

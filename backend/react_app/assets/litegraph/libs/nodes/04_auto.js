@@ -1,6 +1,5 @@
 function FindImage(){
 
-    this.title = "查找图片";
     this.desc = "根据图片定位屏幕指定坐标";
 
     this.addProperty("searchTime", 5);
@@ -14,7 +13,7 @@ function FindImage(){
     this.addWidget("toggle","grayscale", false,"grayscale", { on: "on", off:"off"} );
 
 
-    this.addInput("cmd", "cmd");
+    this.addInput("in", "cmd");
     this.addInput("1", "image");
     this.addInput("2", "image");
     this.addInput("3", "image");
@@ -24,7 +23,8 @@ function FindImage(){
     this.addInput("7", "image");
     this.addInput("8", "image");
     this.addInput("9", "image");
-
+    
+    this.addOutput("location", "location");
     this.addOutput("1", "cmd");
     this.addOutput("2", "cmd");
     this.addOutput("3", "cmd");
@@ -36,16 +36,17 @@ function FindImage(){
     this.addOutput("9", "cmd");
     this.addOutput("error", "cmd");
 
-    this.size = [180, 210];
+    this.size = [180, 230];
     this.widgets_up = true;
 }
 
+FindImage.title = "查找图片";
 
 
 function LocateOnScreenNode() {
-    this.addInput("cmd", "cmd");
+    this.addInput("in", "cmd");
     this.addInput("image", "image");
-    this.addOutput("cmd", "cmd");
+    this.addOutput("out", "cmd");
     this.addOutput("location", "location");
     this.addOutput("error", "cmd");
 
@@ -201,8 +202,8 @@ LocateOnScreenNode.desc = "根据图片定位屏幕指定坐标";
 
 
 function startApp(){
-    this.addInput("cmd", "cmd");
-    this.addOutput("cmd", "cmd");
+    this.addInput("in", "cmd");
+    this.addOutput("out", "cmd");
     this.addProperty("app", '$path');
     this.addWidget("text","app", '$path', "app");
     this.addProperty("folder", '');
@@ -211,3 +212,16 @@ function startApp(){
 
 startApp.title = "启动应用";
 startApp.desc = "启动应用，可用指定软件打开文件夹/文件";
+
+
+
+
+function openLink() {
+    this.addInput("in", "cmd");
+    this.addInput("link", "text");
+    this.addOutput("out", "cmd");
+    this.size = [120, 50];
+}
+
+openLink.title = "打开链接";
+openLink.desc = "打开链接";

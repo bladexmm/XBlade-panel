@@ -15,7 +15,7 @@ class Apps(db.Model):
     icon = db.Column(db.String(255))
     pinyin = db.Column(db.String(255))
     path = db.Column(db.Text)
-    type = db.Column(db.Enum('file', 'link', 'command', 'monitor', 'components', 'desktop'))
+    type = db.Column(db.Enum('file', 'link', 'command', 'monitor', 'component', 'desktop'))
     open = db.Column(db.Integer, default = 0)
     created = db.Column(db.DateTime, default = datetime.utcnow)  # Set a default value
 

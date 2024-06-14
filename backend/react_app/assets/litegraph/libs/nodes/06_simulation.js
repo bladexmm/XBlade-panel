@@ -46,8 +46,8 @@ function findKeyLabel(keys){
 }
 
 function Hotkeys() {
-    this.addInput("cmd", "cmd");
-    this.addOutput("cmd", "cmd");
+    this.addInput("in", "cmd");
+    this.addOutput("out", "cmd");
     this._value = [];
     this.addProperty("value", '["win","r"]');
     this.addProperty("inputType", 'hotkeys');
@@ -107,8 +107,8 @@ Hotkeys.desc = "同时按下多个按键";
 
 
 function Type_Text() {
-    this.addInput("cmd", "cmd");
-    this.addOutput("cmd", "cmd");
+    this.addInput("in", "cmd");
+    this.addOutput("out", "cmd");
     this.addProperty("value", "");
     this.widget = this.addWidget("text", "value", "", "value");  //link to property value
     this.widgets_up = true;
@@ -120,8 +120,8 @@ Type_Text.desc = "文本输入";
 
 
 function MouseLeft() {
-    this.addInput("cmd", "cmd");
-    this.addOutput("cmd", "cmd");
+    this.addInput("in", "cmd");
+    this.addOutput("out", "cmd");
     this.addProperty("type", 'click');
     this.addWidget("combo", "type", "click", {values: ["click", "mouseDown", "mouseUp"], property: "type"});
     this.widgets_up = true;
@@ -133,8 +133,8 @@ MouseLeft.desc = "鼠标左键";
 
 
 function MouseMiddle() {
-    this.addInput("cmd", "cmd");
-    this.addOutput("cmd", "cmd");
+    this.addInput("in", "cmd");
+    this.addOutput("out", "cmd");
     this.addProperty("type", 'click');
     this.addWidget("combo", "type", "click", {values: ["click", "scrollUp", "scrollDown"], property: "type"});
     this.widgets_up = true;
@@ -146,8 +146,8 @@ MouseMiddle.desc = "鼠标中键";
 
 
 function MouseRight() {
-    this.addInput("cmd", "cmd");
-    this.addOutput("cmd", "cmd");
+    this.addInput("in", "cmd");
+    this.addOutput("out", "cmd");
     this.widgets_up = true;
     this.size = [120, 30];
 }
@@ -157,9 +157,9 @@ MouseRight.desc = "鼠标右键";
 
 
 function MouseMove() {
-    this.addInput("cmd", "cmd");
+    this.addInput("in", "cmd");
     this.addInput("location", "location");
-    this.addOutput("cmd", "cmd");
+    this.addOutput("out", "cmd");
     this.addProperty("value", "x,y");
     this.widget = this.addWidget("text", "location", "x,y", "value");
 

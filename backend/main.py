@@ -106,3 +106,4 @@ def windows():
 if __name__ == "__main__":
     windows()
     # socket.run(app = app, host = "0.0.0.0", port = default_port(), debug = True, allow_unsafe_werkzeug = True)
+    # socket.run(app = app, host = "0.0.0.0", port = default_port(), allow_unsafe_werkzeug = True)

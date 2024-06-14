@@ -1,8 +1,8 @@
 //Subgraph: a node that contains a graph
 function Subgraph() {
     var that = this;
-    this.addInput("cmd", "cmd");
-    this.addOutput("cmd", "cmd");
+    this.addInput("in", "cmd");
+    this.addOutput("out", "cmd");
     this.size = [140, 80];
     this.properties = { enabled: true };
     this.enabled = true;

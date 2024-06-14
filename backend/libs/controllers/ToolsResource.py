@@ -8,8 +8,9 @@ from libs.model.Apps import Apps
 from libs.model.Layouts import Layouts
 from libs.model.models import db
 from libs.service import generate_video, getWallpapers, uploadFile
+from libs.utils.LiteGraph import LiteGraph
 from libs.utils.tools import read_json, result, copy, zipFolder, format_date, delete_folder, unzip_file, copy_dir, \
-    copy_app_images, list_to_dict, generate_random_filename, open_with_default_program, exec_command
+    copy_app_images, list_to_dict, generate_random_filename
 from flask import Response, request
 
 from libs.utils.website import md5
@@ -28,8 +29,13 @@ class CMDResource(Resource):
     def post(self):
         cmd = request.form.get('cmd', '{}')
         cmd = json.loads(cmd)
-        outputs = exec_command(cmd, None)
-        return result(1, outputs, 'success')
+        app = {
+            'id': 'debug',
+            'path': cmd
+        }
+        dg = LiteGraph(app, None, {"type": "CMDStart", "slot": "out"})
+        logs = dg.execute()
+        return result(1, logs, 'success')
 
 
 class StreamResource(Resource):
@@ -148,5 +154,3 @@ class ImportResource(Resource):
         db.session.commit()
         delete_folder('./temp')
         return result(data = files, msg = "导入成功")
-
-

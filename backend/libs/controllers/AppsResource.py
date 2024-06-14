@@ -1,3 +1,6 @@
+import base64
+import json
+
 from flask_restful import Resource, reqparse
 from pypinyin import lazy_pinyin
 import time
@@ -8,6 +11,9 @@ from libs.model.Apps import Apps, flatten_tree
 from libs.model.Layouts import Layouts
 from libs.model.models import db
 from libs.service import openApp, parseApps
+
+from libs.utils.LiteGraph import LiteGraph
+from libs.utils.log import Logger
 from libs.utils.tools import result, write_json, copy_app_images, format_date, zipFolder, delete_folder, \
     sanitize_filename
 from libs.utils.website import md5
@@ -28,7 +34,7 @@ class AppsResource(Resource):
         parser.add_argument('icon', type = str, required = False, help = 'App icon')
         parser.add_argument('path', type = str, required = True, help = 'App path')
         parser.add_argument('type', type = str,
-                            choices = ['default', 'file', 'link', 'command', 'monitor', 'desktop', 'components'],
+                            choices = ['default', 'file', 'link', 'command', 'monitor', 'desktop', 'component'],
                             required = True,
                             help = 'App type')
         parser.add_argument('open', type = int, required = False, help = 'App open')
@@ -100,6 +106,41 @@ class OpenResource(Resource):
     def post(self):
         return openApp()
 
+    def get(self):
+        id = request.args.get('id')
+        nodes = request.args.get('nodes', None)
+        start = request.args.get('startNode', None)
+
+        db_session = db.session
+        app = db_session.query(Apps).filter_by(id = id).first()
+        if app is None:
+            return result(1, app, '数据已经生成')
+        app = app.to_dict()
+        app['path'] = json.loads(app['path'])
+        parent = None
+        if app['pid'] is not None:
+            parent = db_session.query(Apps).filter_by(id = app['pid']).first()
+            parent = parent.to_dict()
+        startNode = {"type": "DisplayStart", "slot": "out"}
+
+        if nodes is not None:
+            nodes = json.loads(nodes)
+            start = json.loads(start)
+            initNode = [node for node in nodes if node["type"] == "grid_input"]
+            for node in app['path']['nodes']:
+                findInputNode = [nd for nd in initNode if nd["nid"] == node['id']]
+                if start['nid'] == node['id']:
+                    startNode = {"id": node['id'], "slot": start['method']}
+                if len(findInputNode) == 0:
+                    continue
+                node['value'] = findInputNode[0]['value']
+        dg = LiteGraph(app, parent, startNode)
+        logs = dg.execute()
+        if 'data' not in logs[-1]:
+            return result(3, logs, '数据已经生成')
+        layout = logs[-1]['data'] if 'grid-template-areas' in logs[-1]['data'] else None
+        return result(1, layout, '数据已经生成')
+
 
 class FetchResource(Resource):
     def post(self):
@@ -111,7 +152,7 @@ class ShareResource(Resource):
     def get(self):
         id = request.args.get('id')
         # 保存apps配置
-        target_app = db.session.query(Apps).filter_by(id=id).first()
+        target_app = db.session.query(Apps).filter_by(id = id).first()
         apps = flatten_tree(target_app)
         app_ids = [app['id'] for app in apps]
         write_json('./temp/apps.json', apps)

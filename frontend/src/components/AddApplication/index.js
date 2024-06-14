@@ -11,6 +11,7 @@ import CommandEdit from "../CommandEdit";
 import AddMonitor from "./AddMonitor";
 import ScreenSelector from "./AddMonitor/ScreenSelector";
 import AddDesktop from "./AddDesktop";
+import AddComponent from "./AddComponent";
 
 
 export default function AddApplication({
@@ -32,28 +33,32 @@ export default function AddApplication({
 
     const [commandEditOpen, setCommandEditOpen] = useState(false);
     const [commandDefault, setCommandDefault] = useState(null);
-    const [monitorSelectOpen,setMonitorSelectorOpen] = useState(false);
-    const [regionDefault,setRegionDefault] = useState(null);
+    const [monitorSelectOpen, setMonitorSelectorOpen] = useState(false);
+    const [regionDefault, setRegionDefault] = useState(null);
     const tabsName = {
         'link': {
             'id': 0,
-            'active': [false, true, true,false]
+            'active': [false, true, true, false, true]
         },
         'file': {
             'id': 0,
-            'active':[false, true, true,false]
+            'active': [false, true, true, false, true]
         },
         'command': {
             'id': 1,
-            'active': [true, false, true,true]
+            'active': [true, false, true, true, true]
         },
         'monitor': {
             'id': 2,
-            'active': [true, true, false,true]
+            'active': [true, true, false, true, true]
         },
         'desktop': {
             'id': 3,
-            'active': [false, true, true, false]
+            'active': [false, true, true, false, true]
+        },
+        'component': {
+            'id': 4,
+            'active': [false, true, true, true, false]
         },
     }
 
@@ -62,7 +67,7 @@ export default function AddApplication({
         if (app_id !== null) {
             setDefaultTab(tabsName[app['type']]['id']);
             setDisableTabs(tabsName[app['type']]['active'])
-            if (commandDefault === null && app['type'] === 'command') {
+            if (commandDefault === null && ['command','component'].includes(app['type'])) {
                 setCommandDefault(JSON.parse(appPath));
             }
         }
@@ -135,6 +140,24 @@ export default function AddApplication({
                                         appIcons={appIcons}
                                         setIconSelectorOpen={setIconSelectorOpen}
                                         defaultLayout={defaultLayout}/>
+                        </TabPanel>
+
+                        <TabPanel value={4}>
+                            <AddComponent
+                                open={open}
+                                app={app}
+                                app_id={app_id}
+                                apps={apps}
+                                onClose={onClose}
+                                appName={appName}
+                                appPath={appPath}
+                                appIcons={appIcons}
+                                setIconSelectorOpen={setIconSelectorOpen}
+                                iconDefault={iconDefault}
+                                commandDefault={commandDefault}
+                                setCommandEditOpen={setCommandEditOpen}
+                                setIconDefault={setIconDefault}
+                                defaultLayout={defaultLayout}/>
                         </TabPanel>
                     </React.Fragment>
                 </TabsAdd>

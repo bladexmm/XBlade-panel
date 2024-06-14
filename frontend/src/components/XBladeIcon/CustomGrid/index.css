@@ -1,0 +1,7 @@
+.grid-component-node img{
+    cursor: pointer;
+    pointer-events: all;
+}
+.grid-component-node .MuiTypography-root{
+    cursor: pointer;
+}

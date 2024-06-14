@@ -28,10 +28,14 @@
     transition: ease-in-out 0.1s;
     border-radius: 0.55rem !important;
     margin-right: 0.7rem !important;
-    backdrop-filter: blur(30px) !important;
+    backdrop-filter: blur(40px) !important;
     background-color: rgb(255 255 255 / 30%) !important;
     min-width: 1.5rem;
     min-height: 1.5rem;
+
+    border: 1px solid;
+    box-shadow: 0 0 0 2px hsla(210, 100%, 45%, 0.1), 0 2px 12px 0 rgba(234, 237, 241, 0.3) inset;
+
 }
 .done{
     font-size: 0.7rem;

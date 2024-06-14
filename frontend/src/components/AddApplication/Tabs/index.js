@@ -6,6 +6,7 @@ import TerminalIcon from '@mui/icons-material/Terminal';
 import ListItemDecorator from '@mui/joy/ListItemDecorator';
 import AirplayRoundedIcon from '@mui/icons-material/AirplayRounded';
 import DevicesOtherRoundedIcon from '@mui/icons-material/DevicesOtherRounded';
+import GridViewIcon from '@mui/icons-material/GridView';
 import AppsIcon from '@mui/icons-material/Apps';
 import './index.css';
 
@@ -15,7 +16,7 @@ export default function TabsAdd({value=0,disableTabs=[false,false,false],childre
             variant="outlined"
             className="tabs-add"
             sx={{
-                width: 400,
+                width: 500,
                 borderRadius: 'lg',
                 boxShadow: 'sm',
                 overflow: 'auto',
@@ -62,6 +63,13 @@ export default function TabsAdd({value=0,disableTabs=[false,false,false],childre
                         <DevicesOtherRoundedIcon />
                     </ListItemDecorator>
                     桌面
+                </Tab>
+
+                <Tab disableIndicator value={4} disabled={disableTabs[4]} variant="soft" sx={{ flexGrow: 1 }}>
+                    <ListItemDecorator>
+                        <GridViewIcon />
+                    </ListItemDecorator>
+                    组件
                 </Tab>
 
             </TabList>

@@ -20,10 +20,6 @@ import platform
 from datetime import datetime
 from flask import jsonify
 
-from libs.utils.graph import XbladeGraph, nodeOutput
-from libs.utils.xprofile import profile
-
-
 def read_json(file_path, encoding = 'utf-8'):
     if not os.path.exists(file_path):
         return None
@@ -131,133 +127,6 @@ def extract_icon_from_exe(icon_in_path, icon_name, icon_out_path, out_width = 56
     icon.save(full_outpath)
     return full_outpath
 
-
-def compNew(next_node, parent):
-    inputs = next_node['inputs'] if len(next_node['inputs']) > 0 else []
-    outputs = next_node['outputs'] if len(next_node['outputs']) > 0 else []
-    try:
-        return exec_command(next_node['subgraph'], parent, inputs, outputs)
-    except Exception as e:
-        return nodeOutput(1, 'cmd', [''])
-
-
-# 获取组件内的函数并输出
-def compNodeOutputs(nodes, links, node_output, comp_output):
-    # 获取所有输出的值
-    outputs = []
-    for node in nodes:
-        if node['type'] != '组件/输出':
-            continue
-        # 未连接输入
-        if node['inputs'][0]['link'] is None:
-            continue
-        # 命令输入
-        if node['inputs'][0]['type'] == 'cmd':
-            outputs.append({
-                'name' : node['properties']['name'],
-                'type' : node['properties']['type'],
-                'value': ''
-            })
-            continue
-        input_link_id = node['inputs'][0]['link']
-        link = links[input_link_id]
-        node_input = node_output[link['from']]
-        link_input_value = node_input[link['port_from']]
-        outputs.append({
-            'name' : node['properties']['name'],
-            'type' : node['properties']['type'],
-            'value': link_input_value
-        })
-
-    component_outputs = []
-    for output in comp_output:
-        output_values = [row for row in outputs if row['name'] == output['name'] and row['type'] == output['type']]
-        value = output_values[0]['value'] if len(output_values) > 0 else ''
-        component_outputs.append(value)
-    return component_outputs
-
-
-# @profile
-def exec_command(commands, parent = None, inputs = [], compOutputs = []):
-    nodes = list_to_dict(commands['nodes'], "id")
-    start_node = [row for row in commands['nodes'] if
-                  row['type'] in ['基础/开始', '组件/输入'] and len(row['outputs'][0]['links']) > 0 and
-                  row['outputs'][0]['type'] == 'cmd']
-    if len(start_node) == 0:
-        return []
-    start_node = start_node[0]
-    links = [{
-        'id'       : link[0],
-        'from'     : link[1],
-        'port_from': link[2],
-        'to'       : link[3],
-        'port_to'  : link[4],
-        'type'     : link[5],
-    } for link in commands['links']]
-    links = list_to_dict(links, 'id')
-    link_output = [output for output in start_node['outputs'] if output['type'] == 'cmd']
-    max_node = 500
-    i = 0
-    node_output = {}
-    for node in commands['nodes']:
-        if "交互" in node['type']:
-            node_outputs = XbladeGraph.call_func_by_alias(node['type'], node)
-            node_output[node['id']] = node_outputs['data']
-        if "组件/输入" == node['type']:
-            input_value = [row for row in inputs if
-                           row['name'] == node['properties']['name'] and row['type'] == node['properties']['type']]
-            node_output[node['id']] = [''] if len(input_value) == 0 else [input_value[0].get('value', '')]
-    outputs = []
-    while len(link_output) > 0 and i < max_node:
-        # 查找下一个节点
-        next_link_id = link_output[0]['links'][0]
-        next_link = links[next_link_id]
-        next_node = nodes[next_link['to']]
-        for link in next_node['inputs']:
-            if link['link'] is None:
-                continue
-            if link['type'] == 'cmd':
-                continue
-            link_input = links[link['link']]  # 获取链接的配置
-            link_node_outputs = node_output[link_input['from']]  # 获取连接的节点
-            link['value'] = link_node_outputs[link_input['port_from']]  # 开始获取指定值
-        next_node['parent'] = parent
-
-        if next_node['type'] == '基础/结束' and next_node['inputs'][0]['type'] == 'cmd':
-            return outputs
-
-        if next_node['type'] == '组件/输出' and next_node['inputs'][0]['type'] == 'cmd':
-            node_outputs = compNodeOutputs(commands['nodes'], links, node_output, compOutputs)
-            return nodeOutput(1, next_node['properties']['name'], node_outputs)
-        if next_node['type'] == "组件/实例化":
-            node_outputs = compNew(next_node, parent)
-        else:
-            node_outputs = XbladeGraph.call_func_by_alias(next_node['type'], next_node)
-        node_output[next_node['id']] = node_outputs['data']
-        node_outputs['type'] = next_node['type']
-        node_outputs['id'] = next_node['id']
-        outputs.append(node_outputs)
-        if node_outputs['code'] == 0:
-            print(f"节点：{next_node['type']},出错")
-            return outputs if len(inputs) == 0 else nodeOutput(0, 'error', node_outputs)
-        link_output = [output for output in next_node['outputs'] if
-                       output['type'] == 'cmd' and output['name'] == node_outputs['name']]
-        if len(link_output) == 0 and len(inputs) != 0:
-            return nodeOutput(0, 'error', node_outputs)
-        if len(link_output) == 0:
-            return outputs
-        # 未找到下一个连接点直接结束
-        if link_output[0]['links'] is None:
-            return outputs
-        i += 1
-    if len(inputs) != 0:
-        node_outputs = compNodeOutputs(commands['nodes'], links, node_output, compOutputs)
-        return nodeOutput(1, 'cmd', node_outputs)
-    return outputs
-
-
-def hotkeys(keys):
-    pyautogui.hotkey(*keys)
 
 
 def check_file_or_directory(path):
@@ -403,3 +272,24 @@ def sanitize_filename(filename):
 
     # 返回清理过的文件名
     return filename
+
+
+def has_intersection(list1, list2):
+    # 将列表转换为集合
+    set1 = set(list1)
+    set2 = set(list2)
+
+    # 使用集合的交集方法 '&' 来找出两个集合中的公共元素
+    intersection = set1 & set2
+
+    # 如果交集不为空，说明两个列表有交集
+    return bool(intersection)
+
+
+def prt(line, sign):
+    signLine = ""
+    for a in range(20):
+        signLine += sign
+    print(signLine)
+    print(line)
+    print(signLine)

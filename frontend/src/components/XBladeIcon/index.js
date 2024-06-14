@@ -3,6 +3,7 @@ import "./index.css";
 import { FileIcon, defaultStyles } from "react-file-icon";
 import { getUserSettings } from "../../utils/settings";
 import SVGIcon from "./SVGIcon";
+import CustomGrid from "./CustomGrid";
 
 let styles = defaultStyles;
 for (let style in styles) {
@@ -127,14 +128,20 @@ const XBladeIcon = ({
 
     return (
         <div className="icon-container" key={id} ref={containerRef}>
-            {iconPath === '' ? (
+            {appType === 'component' ? (
+                <CustomGrid id={id}/>
+            ) : iconPath === '' ? (
                 <div className={openLoad ? "file-icon flip" : 'file-icon'}
                      id={"icon-img-" + id}
                      onClick={handleButtonClicked}
                      onMouseDown={handleMouseDown}
-                     onMouseUp={() => { clearTimeout(timer); }}
+                     onMouseUp={() => {
+                         clearTimeout(timer);
+                     }}
                      onTouchStart={handleMouseDown}
-                     onTouchEnd={() => { clearTimeout(timer); }}
+                     onTouchEnd={() => {
+                         clearTimeout(timer);
+                     }}
                      style={{
                          marginBottom: (size - 1) + "rem",
                          width: 3 + sizeIcon + "rem",
@@ -152,31 +159,40 @@ const XBladeIcon = ({
                      id={"icon-img-" + id}
                      onClick={handleButtonClicked}
                      onMouseDown={handleMouseDown}
-                     onMouseUp={() => { clearTimeout(timer); }}
+                     onMouseUp={() => {
+                         clearTimeout(timer);
+                     }}
                      onTouchStart={handleMouseDown}
-                     onTouchEnd={() => { clearTimeout(timer); }}
+                     onTouchEnd={() => {
+                         clearTimeout(timer);
+                     }}
                      style={{
                          background: iconSVG !== null ? iconSVG.background.style : '',
                      }}>
                     <SVGIcon svgJson={iconSVG !== null ? iconSVG.icon.path : ''}
                              defaultColor={iconSVG !== null ? iconSVG.color.style : ''}
                              defaultWidth={containerDimensions.width - 40 < 40 ? 40 : containerDimensions.width - 40}
-                             defaultHeight={containerDimensions.width - 40 < 40 ? 40 : containerDimensions.height - 40} />
+                             defaultHeight={containerDimensions.width - 40 < 40 ? 40 : containerDimensions.height - 40}/>
                 </div>
             ) : (
                 <div
                     onClick={handleButtonClicked}
                     onMouseDown={handleMouseDown}
-                    onMouseUp={() => { clearTimeout(timer); }}
+                    onMouseUp={() => {
+                        clearTimeout(timer);
+                    }}
                     onTouchStart={handleMouseDown}
-                    onTouchEnd={() => { clearTimeout(timer); }}
+                    onTouchEnd={() => {
+                        clearTimeout(timer);
+                    }}
                     id={"icon-div-" + id}
-                    className={appType === 'monitor' ? "icon-monitor"  : 'icon'}>
-                    <img id={"icon-img-" + id} className={openLoad ? (appType === 'monitor' ? ""  : 'flip') : ''} src={iconPath.replace(host,'').startsWith("/") ? iconPath : iconPath.replace(host,'')} alt={name}/>
+                    className={appType === 'monitor' ? "icon-monitor" : 'icon'}>
+                    <img id={"icon-img-" + id} className={openLoad ? (appType === 'monitor' ? "" : 'flip') : ''}
+                         src={iconPath.replace(host, '').startsWith("/") ? iconPath : iconPath.replace(host, '')}
+                         alt={name}/>
                 </div>
             )}
-
-            <div id={"icon-" + id} className={`icon-name ${isOverflow ? 'overflow' : ''}`}>{name}</div>
+            <div id={"icon-" + id} className={`icon-name ${isOverflow ? 'overflow' : ''}`}>{appType !== 'component' ? name : ''}</div>
         </div>
     );
 };

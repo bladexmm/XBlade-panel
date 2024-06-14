@@ -407,6 +407,7 @@ function App() {
                             </Grid>
                         </Search>
                         <Header editing={paneDraggable}
+                                setPaneDraggable = {setPaneDraggable}
                                 StopPaneEditing={() => {
                                     setPaneDraggable(false);
                                     saveLayouts(paneLayouts, defaultLayout);
