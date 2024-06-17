@@ -7,7 +7,8 @@ import Input from "@mui/joy/Input";
 import Button from "@mui/joy/Button";
 import "./index.css";
 import Chart from "react-apexcharts";
-
+import Select from '@mui/joy/Select';
+import Option from '@mui/joy/Option';
 
 export default function CustomGrid({id}) {
     const [gridStyle, setGridStyle] = React.useState({});
@@ -29,19 +30,25 @@ export default function CustomGrid({id}) {
             method: method
         };
         for (let i = 0; i < nodes.length; i++) {
-            if (nodes[i].type !== "grid_input") {
-                continue;
+            if(nodes[i].type === "grid_input"){
+                let inputNode = document.getElementsByClassName(nodes[i].id);
+                inputNode = inputNode[0].getElementsByTagName('input')[0];
+                nodes[i].value = inputNode.value;
             }
-            let inputNode = document.getElementsByClassName(nodes[i].id);
-            inputNode = inputNode[0].getElementsByTagName('input')[0];
-            nodes[i].value = inputNode.value;
+
+            if(nodes[i].type === "grid_selector"){
+                let inputNode = document.getElementsByClassName(nodes[i].id);
+                inputNode = inputNode[0].getElementsByTagName('input')[0];
+                nodes[i].value = inputNode.value;
+            }
+
         }
         request({
             url: "/api/apps/open?id=" + id + "&nodes=" + encodeURIComponent(JSON.stringify(nodes)) + "&startNode=" + JSON.stringify(StartNode),
             method: "GET",
             headers: {"Content-Type": "application/json"},
         }).then((data) => {
-            if(data.data != null){
+            if(data.data != null && Object.keys(data.data).includes("style")){
                 setGridStyle(data.data.style)
                 setNodes(data.data.nodes)
             }
@@ -98,6 +105,12 @@ export default function CustomGrid({id}) {
                 } else if (node.type === 'grid_button') {
                     return <Button key={node.id} sx={node.style} {...node.properties} className={node.id}
                                    onClick={() => GridClick(node.nid, node.id, 'onClick')}>{node.placeholder}</Button>
+                }else if (node.type === 'grid_selector') {
+                    return <Select key={node.id} sx={node.style} {...node.properties} className={node.id}>
+                        {Object.entries(node.options).map(([key, value]) => (
+                            <Option value={key}>{value}</Option>
+                        ))}
+                    </Select>
                 }
             })}
         </div>

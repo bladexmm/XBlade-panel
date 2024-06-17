@@ -4,7 +4,6 @@ from flask import Flask, send_from_directory
 from flask_restful import Api
 
 import threading
-import tkinter as tk
 import pystray
 from pystray import MenuItem, Menu
 from PIL import Image
@@ -104,6 +103,6 @@ def windows():
 
 
 if __name__ == "__main__":
-    windows()
-    # socket.run(app = app, host = "0.0.0.0", port = default_port(), debug = True, allow_unsafe_werkzeug = True)
+    # windows()
+    socket.run(app = app, host = "0.0.0.0", port = default_port(), debug = True, allow_unsafe_werkzeug = True)
     # socket.run(app = app, host = "0.0.0.0", port = default_port(), allow_unsafe_werkzeug = True)

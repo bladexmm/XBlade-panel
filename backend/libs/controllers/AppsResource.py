@@ -126,7 +126,7 @@ class OpenResource(Resource):
         if nodes is not None:
             nodes = json.loads(nodes)
             start = json.loads(start)
-            initNode = [node for node in nodes if node["type"] == "grid_input"]
+            initNode = [node for node in nodes if node["type"] in ["grid_input","grid_selector"]]
             for node in app['path']['nodes']:
                 findInputNode = [nd for nd in initNode if nd["nid"] == node['id']]
                 if start['nid'] == node['id']:

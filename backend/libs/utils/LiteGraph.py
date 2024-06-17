@@ -1,5 +1,6 @@
-from libs.utils.graph import XbladeGraph
-from libs.utils.tools import list_to_dict, has_intersection, prt
+from libs.utils.nodes.graph import call_by_alias
+from libs.utils.log import Logger
+from libs.utils.tools import list_to_dict, has_intersection
 
 
 class LiteGraph(object):
@@ -17,8 +18,9 @@ class LiteGraph(object):
         self.ran = 0  # 运行节点数次数
         self.inputNodes = ["TextInput", "ArrayInput", "ImageInput"]  # 默认输入节点
         self.exitNodes = ["CMDEnd", "DisplayGrid", "SubgraphOutput"]
-        self.gridNodes = ["DisplayImage", "DisplayText", "DisplayInput", "DisplayLineChart", "DisplayButton"]
-        self.SubGraphNodes = ['SubgraphInput']
+        self.gridNodes = ["DisplayImage", "DisplayText", "DisplayInput", "DisplayLineChart", "DisplayButton",
+                          "DisplaySelector"]  # 绘图节点
+        self.SubGraphNodes = ['SubgraphInput']  # 子函数输入节点
         self.logs = []
         self.linkNow = {}
 
@@ -40,10 +42,10 @@ class LiteGraph(object):
                 logs, outputs = LiteGraph(self.app, self.parent, startNode).execute()
                 nextNode['result'] = logs
                 nextNode['params'] = outputs
-                outputs = XbladeGraph.call_func_by_alias(nextNode['type'], nextNode)
+                outputs = call_by_alias(nextNode['type'], nextNode)
                 outputs['nodes'] = nextNode['result']
             else:
-                outputs = XbladeGraph.call_func_by_alias(nextNode['type'], nextNode)
+                outputs = call_by_alias(nextNode['type'], nextNode)
             self.outputs[nextNode['id']] = outputs['data']  # save outputs
             self.logs.append(outputs)  # save logs
             # try:
@@ -111,7 +113,9 @@ class LiteGraph(object):
         # set output slot value
         inputNodes = [node for node in self.nodes if has_intersection(initNodes, node['type'])]
         for node in inputNodes:
-            output = XbladeGraph.call_func_by_alias(node['type'], node)
+            output = call_by_alias(node['type'], node)
+            Logger.debug(f"nodeType:{node['type']}")
+            Logger.debug(f"output:{output}")
             self.outputs[node['id']] = output['data']
 
     def findNextNode(self, node, slotName):

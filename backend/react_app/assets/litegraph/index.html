@@ -83,6 +83,13 @@
                     </div>
                 </div>
 
+
+                <div class="flex-col gap-1 grid-apps-display grid-stack-item newWidget">
+                    <div class="grid-stack-item-content" onclick="gridAdd('选择框','grid_selector')">
+                        <span class="grid-app-new">选择框</span>
+                    </div>
+                </div>
+
                 
 
             </div>
@@ -127,6 +134,7 @@
         LiteGraph.registerNodeType("绘图/输入框(DisplayInput)", DisplayInput);
         LiteGraph.registerNodeType("绘图/折线图(DisplayLineChart)", DisplayLineChart);
         LiteGraph.registerNodeType("绘图/按钮(DisplayButton)", DisplayButton);
+        LiteGraph.registerNodeType("绘图/选择框(DisplaySelector)", DisplaySelector);
 
 
         LiteGraph.registerNodeType("编程/等待(TimeWait)", TimeWait);
@@ -163,9 +171,7 @@
         LiteGraph.registerNodeType("模拟/鼠标右键(MouseRight)", MouseRight);
 
 
-        // let nodes = ['绘图/图片(DisplayImage)','绘图/文字(DisplayText)',
-        // '绘图/输入框(DisplayInput)','绘图/图表(DisplayChart)','绘图/按钮(DisplayButton)',
-        // '绘图/布局(DisplayGrid)'];
+        // let nodes = ['绘图/布局(DisplayGrid)'];
         // for (let idx = 0; idx < nodes.length; idx++) {
         //     const element = nodes[idx];
         //     const ACimg = LiteGraph.createNode(element);

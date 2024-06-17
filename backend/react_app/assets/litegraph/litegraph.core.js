@@ -74,6 +74,7 @@
             'grid_input': '#28b463',
             'grid_line_chart': '#138d75',
             'grid_button': '#2e86c1',
+            'grid_selector': '#8f9a27',
         },
         SLOT_SHAPE: {
             'image': 8,
@@ -87,6 +88,7 @@
             'grid_input': 6,
             'grid_line_chart': 6,
             'grid_button': 6,
+            'grid_selector': 6,
         },
         SLOT_TYPES: ['image', 'text', 'location', 'response', 'cmd'],
 

@@ -212,3 +212,42 @@ function DisplayButton() {
 }
 
 DisplayButton.title = "按钮";
+
+
+
+
+function DisplaySelector() {
+    this.desc = "选择框";
+    this.addInput("placeholder", "text")
+    this.addInput("style", "text");
+    this.addInput("data", "array");
+    this.addInput("default", "text");
+
+
+
+    this.addOutput("out", "grid_selector")
+    this.addOutput("onChange", "cmd")
+    this.addOutput("value", "text")
+
+    this.addProperty("variant", 'outlined');
+    this.inputTypeWidget = this.addWidget("combo", "variant", 'outlined', {
+        values: MuiVariant,
+        property: "variant"
+    });
+
+    this.addProperty("color", 'primary');
+    this.inputTypeWidget = this.addWidget("combo", "color", 'primary', {
+        values: MuiColor,
+        property: "color"
+    });
+
+    this.addProperty("size", 'md');
+    this.inputTypeWidget = this.addWidget("combo", "size", 'md', {
+        values: ["sm", "md","lg"],
+        property: "size"
+    });
+
+    this.size = [160, 160];
+}
+
+DisplaySelector.title = "选择框";
