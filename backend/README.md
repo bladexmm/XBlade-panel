@@ -5,7 +5,7 @@ python: 3.10.4
 ```shell
 nuitka --standalone `
   --windows-company-name=bladexmm `
-  --windows-file-version=1.2.1 `
+  --windows-file-version=2.0.1 `
   --windows-product-name=XBLADE-PANEL `
   --include-data-dir=data=data `
   --include-data-dir=react_app=react_app `
@@ -14,7 +14,6 @@ nuitka --standalone `
   --nofollow-imports `
   --disable-console `
   --include-package=flask `
-  --plugin-enable=tk-inter `
   --include-module=win32com `
   -o XBLADE main.py
 ```

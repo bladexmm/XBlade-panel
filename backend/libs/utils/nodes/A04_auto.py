@@ -41,10 +41,10 @@ def FindImage(node):
                     image_path,
                     grayscale = node['properties']['grayscale'],
                     confidence = round(node['properties']['confidence'], 2))
-                return nodeOutput(1, node, str(idx + 1), [[], [int(x), int(y)]])
+                return nodeOutput(1, node, str(idx + 1), [[int(x), int(y)], ''])
             except pyautogui.ImageNotFoundException:
                 pass
-    return nodeOutput(1, node, 'error', [])
+    return nodeOutput(1, node, 'error', '')
 
 
 @alias("自动化/运行软件(startApp)")
@@ -64,4 +64,3 @@ def openLink(node):
     if link is not None:
         webbrowser.open(link)
     return nodeOutput(1, node, 'out', [''])
-

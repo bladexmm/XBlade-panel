@@ -36,22 +36,23 @@ class LiteGraph(object):
         if nextNode is None:
             return self.logs
         while nextNode is not None and self.ran < self.max_run:
+            Logger.info(f"Executing LiteGraph Node[{nextNode['id']}]:{nextNode['type']}")
             # 处理组件函数
             if "Subgraph" in nextNode['type']:
                 startNode = self.InitSubGraphInput(nextNode)
                 logs, outputs = LiteGraph(self.app, self.parent, startNode).execute()
                 nextNode['result'] = logs
                 nextNode['params'] = outputs
+            try:
                 outputs = call_by_alias(nextNode['type'], nextNode)
+            except Exception as e:
+                outputs = {"code": 3, "name": "error", "data": str(e)}
+
+            if "Subgraph" in nextNode['type']:
                 outputs['nodes'] = nextNode['result']
-            else:
-                outputs = call_by_alias(nextNode['type'], nextNode)
             self.outputs[nextNode['id']] = outputs['data']  # save outputs
             self.logs.append(outputs)  # save logs
-            # try:
-            #     outputs = XbladeGraph.call_func_by_alias(nextNode['type'], nextNode)
-            # except Exception as e:
-            #     outputs = {"code": 0, "data": str(e)}
+            Logger.info(f"Executing LiteGraph Node[{nextNode['id']}] outputs :{outputs}")
 
             # finish execute
             if outputs['code'] == 3:
@@ -96,6 +97,9 @@ class LiteGraph(object):
     def initNodes(self):
         for node in self.nodes:
             nodeFullType = node['type']
+            if isinstance(nodeFullType, list):
+                nodeFullType = nodeFullType[2]
+                node['type'] = nodeFullType
             node['type'] = node['type'].split('(')
             if len(node['type']) == 2:
                 node['type'][1] = node['type'][1].replace(')', '')
@@ -114,8 +118,8 @@ class LiteGraph(object):
         inputNodes = [node for node in self.nodes if has_intersection(initNodes, node['type'])]
         for node in inputNodes:
             output = call_by_alias(node['type'], node)
-            Logger.debug(f"nodeType:{node['type']}")
-            Logger.debug(f"output:{output}")
+            Logger.info(f"Init node Type:{node['type']}")
+            Logger.info(f"Init node output:{output}")
             self.outputs[node['id']] = output['data']
 
     def findNextNode(self, node, slotName):
