@@ -41,10 +41,9 @@ MultiMerge.desc = "多个执行合并成一个";
 function JumpNode(){
     this.addInput("in", "cmd");
     this.addOutput("out", "cmd");
-    // this.horizontal = true;
-
-    this.addProperty("name", 'node1');
-    this.addWidget("text","name", 'node1', "name");
+    var randomName = Math.random().toString(36).substring(2, 7);
+    this.addProperty("name", randomName);
+    this.addWidget("text","name", randomName, "name");
 
     this.size = [130, 50];
 }
