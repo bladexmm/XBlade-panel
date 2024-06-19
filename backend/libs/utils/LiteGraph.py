@@ -128,6 +128,17 @@ class LiteGraph(object):
             return None
         cmdOutput = [output for output in node['outputs'] if output['type'] == 'cmd' and output['name'] == slotName]
         cmdOutput = None if len(cmdOutput) == 0 else cmdOutput[0]
+        # jumpNode output links is none | start find jump target node
+        if "JumpNode" in node['type'] and (cmdOutput is None or cmdOutput['links'] is None):
+            # filter nodes to get jumpNodes
+            jumpNodes = [_node for _node in self.nodes if node['id'] != _node['id'] and "JumpNode" in _node['type']]
+            # find out the same name jumpNodes
+            jumpNodes = [_node for _node in jumpNodes if node['properties']['name'] == _node['properties']['name']]
+            # find outputs slot is linked node
+            jumpNodes = [_node for _node in jumpNodes if _node['outputs'][0]['links'] is not None and _node['inputs'][0]['link'] is None]
+            if len(jumpNodes) == 0:
+                return None
+            return jumpNodes[0]
         if cmdOutput is None:
             return None
         if cmdOutput['links'] is None:
@@ -138,7 +149,6 @@ class LiteGraph(object):
             return None
         # return nextNode
         self.linkNow = self.links[outputLinkID]
-
         nextNode = self.nodesDict[self.linkNow['input_id']]
         if "DisplayGrid" in nextNode['type']:
             self.initNodesData(self.gridNodes)

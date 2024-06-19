@@ -38,6 +38,23 @@ MultiMerge.desc = "多个执行合并成一个";
 
 
 
+function JumpNode(){
+    this.addInput("in", "cmd");
+    this.addOutput("out", "cmd");
+    // this.horizontal = true;
+
+    this.addProperty("name", 'node1');
+    this.addWidget("text","name", 'node1', "name");
+
+    this.size = [130, 50];
+}
+
+JumpNode.title = "跳转运行";
+JumpNode.desc = "跳转节点跳转到指定节点继续运行";
+
+
+
+
 function CMDDebug() {
     this.addInput("in", "cmd");
     this.addOutput("out", "cmd");
