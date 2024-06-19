@@ -5,11 +5,12 @@ python: 3.10.4
 ```shell
 nuitka --standalone `
   --windows-company-name=bladexmm `
-  --windows-file-version=2.0.1 `
+  --windows-file-version=2.1.1 `
   --windows-product-name=XBLADE-PANEL `
   --include-data-dir=data=data `
   --include-data-dir=react_app=react_app `
   --windows-icon-from-ico=data/blade.ico `
+  --windows-force-stderr-spec='logs/err.log' `
   --windows-uac-admin `
   --nofollow-imports `
   --disable-console `
@@ -31,6 +32,8 @@ nuitka --mingw64 `
   --plugin-enable=tk-inter `
   --nofollow-imports `
   --standalone `
+  --enable-console `
+  --debug
   -o XBLADE main.py 
 ```
 优化包大小版

@@ -34,3 +34,6 @@ copy('default/data/database.db', './main.dist/data/database.db', True)
 clear_apps()
 copy_dir('./default/assets', './main.dist/react_app/assets')
 copy_dir('./default/img', './main.dist/react_app/img')
+
+if not os.path.exists('./main.dist/logs'):
+     os.mkdir('./main.dist/logs')
