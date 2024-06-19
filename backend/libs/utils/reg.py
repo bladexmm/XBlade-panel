@@ -52,7 +52,7 @@ def delete_register_key(key_path, value_name, root_key = winreg.HKEY_CLASSES_ROO
                         # 没有更多的值时会引发OSError异常，此时退出循环
                         break
     except Exception as e:
-        print(f'发生错误: {e}')
+        print(f'error: {e}')
 
 
 def registry_values(key_path, reg_key = winreg.HKEY_CLASSES_ROOT):

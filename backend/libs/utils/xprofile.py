@@ -10,7 +10,7 @@ def profile(func):
         result = func(*args, **kwargs)
         end_time = time.time()
         execution_time = end_time - start_time
-        print(f"函数 {func.__name__} 执行时间：{execution_time}")
+        print(f"Function: {func.__name__} executed：{execution_time}")
         return result
     
     return wrapper

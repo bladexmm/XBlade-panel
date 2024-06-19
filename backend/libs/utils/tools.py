@@ -155,9 +155,9 @@ def open_with_default_program(file_path):
         elif system == "Linux":
             os.system(f'xdg-open {file_path}')
         else:
-            print("不支持的操作系统")
+            print("unsupport system")
     except Exception as e:
-        print("打开文件时出错:", e)
+        print("open file error:", e)
 
 
 def get_local_ip():
@@ -167,7 +167,7 @@ def get_local_ip():
 
         return local_ip
     except Exception as e:
-        print(f"获取本地IP时发生错误：{e}")
+        print(f"find ip error：{e}")
         return None
 
 
@@ -223,7 +223,7 @@ def delete_folder(temp_folder):
             elif os.path.isdir(file_path):
                 shutil.rmtree(file_path)
         except Exception as e:
-            print(f"无法删除 {file_path}: {e}")
+            print(f"can not delete: {file_path}: {e}")
 
 
 def format_date(format = "%Y-%m-%d_%H-%M-%S"):
