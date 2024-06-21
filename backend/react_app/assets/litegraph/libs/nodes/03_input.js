@@ -1,3 +1,4 @@
+let host = getUserSettings('settings.host');
 
 function TextInput() {
     this.addOutput("text", "text");
@@ -51,7 +52,7 @@ function ImageInput() {
 
         reader.onload = function (event) {
             const src = event.target.result;
-            img.src = src; // 读取图片后，更新图片的 src
+            img.src = host + src; // 读取图片后，更新图片的 src
         };
 
         reader.readAsDataURL(file);
@@ -108,7 +109,7 @@ function ImageInput() {
             if (result.code === 1) {
                 const imageUrl = result.data;
                 if (imageUrl != null) {
-                    img.src = imageUrl
+                    img.src = host + imageUrl
                     self.setProperty('image', imageUrl);
                 }
 
@@ -124,7 +125,7 @@ function ImageInput() {
     this.onPropertyChanged = function (name, value) {
         if (name === 'image' && value != null) {
             self.setProperty('image', value);
-            img.src = value;
+            img.src = host + value;
         }
     }
 

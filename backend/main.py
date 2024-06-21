@@ -1,19 +1,18 @@
 import os
 
-from flask import Flask, send_from_directory
 from flask_restful import Api
-
-import threading
-import pystray
-from pystray import MenuItem, Menu
-from PIL import Image
-import webbrowser
+from flask_cors import CORS
 from flask_socketio import SocketIO, emit
+from flask import Flask, send_from_directory
+
+import pystray
+import threading
+import webbrowser
+from PIL import Image
+from pystray import MenuItem, Menu
 
 from libs import router
-
 from libs.model.models import db
-from flask_cors import CORS
 from libs.service import systemInfo
 from libs.utils.installedApps import init_windows_apps
 from libs.utils.tools import get_local_ip, default_port

@@ -1,6 +1,7 @@
 {
   "name": "xblade-frontend",
   "version": "0.1.0",
+  "homepage": ".",
   "private": true,
   "dependencies": {
     "@emotion/react": "^11.11.3",
@@ -23,6 +24,7 @@
     "react-file-icon": "^1.4.0",
     "react-grid-layout": "^1.4.4",
     "react-imask": "^7.5.0",
+    "react-router-dom": "^6.23.1",
     "react-scripts": "5.0.1",
     "reactflow": "^11.10.4",
     "socket.io-client": "^4.7.5",

@@ -1,7 +1,7 @@
 from libs.controllers.AppsResource import AppsResource, OpenResource, FetchResource, ShareResource
 from libs.controllers.IconResource import IconResource
 from libs.controllers.LayoutsResource import LayoutsResource, SaveResource
-from libs.controllers.ToolsResource import CMDResource, StreamResource, WallpaperResource, UploadResource, \
+from libs.controllers.ToolsResource import CMDResource, StreamResource, TestResource, WallpaperResource, UploadResource, \
     ScriptResource, BackupResource, ImportResource
 
 resources = (
@@ -10,7 +10,8 @@ resources = (
     (WallpaperResource, '/api/tools/wallpaper'),
     (BackupResource, '/api/tools/backup'),
     (ImportResource, '/api/tools/import'),
-
+    (TestResource, '/api/tools/test'),
+    
     (UploadResource, '/api/upload/image'),
     (ScriptResource, '/api/upload/script'),
 

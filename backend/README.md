@@ -10,7 +10,6 @@ nuitka --standalone `
   --include-data-dir=data=data `
   --include-data-dir=react_app=react_app `
   --windows-icon-from-ico=data/blade.ico `
-  --windows-force-stderr-spec='logs/err.log' `
   --windows-uac-admin `
   --nofollow-imports `
   --disable-console `
@@ -20,33 +19,19 @@ nuitka --standalone `
 ```
 开发版打包
 ```shell
-nuitka --mingw64 `
+nuitka --standalone `
   --windows-company-name=bladexmm `
-  --windows-file-version=1.0.1 `
+  --windows-file-version=2.1.1 `
   --windows-product-name=XBLADE-PANEL `
   --include-data-dir=data=data `
   --include-data-dir=react_app=react_app `
+  --windows-icon-from-ico=data/blade.ico `
+  --windows-force-stderr-spec='logs/err.log' `
+  --windows-uac-admin `
+  --nofollow-imports `
+  --enable-console `
   --include-package=flask `
   --include-module=win32com `
-  --windows-icon-from-ico=data/blade.ico `
-  --plugin-enable=tk-inter `
-  --nofollow-imports `
-  --standalone `
-  --enable-console `
-  --debug
-  -o XBLADE main.py 
-```
-优化包大小版
-```shell
-nuitka --standalone `
-  --onefile `
-  --include-data-dir=data=data `
-  --include-data-dir=react_app=react_app `
-  --nofollow-imports `
-  --windows-icon-from-ico=data/blade.ico `
-  --plugin-enable=tk-inter `
-  --disable-console `
-  --include-package=flask `
   -o XBLADE main.py
 ```
 ## 节点简介

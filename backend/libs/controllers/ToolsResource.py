@@ -98,6 +98,10 @@ class BackupResource(Resource):
         return result(data = files, msg = "恢复成功")
 
 
+class TestResource(Resource):
+    def get(self):
+        return result(data=time.time(),msg="success")
+
 class ImportResource(Resource):
     def put(self):
         layout_open = request.form.get('layout', 'pane')

@@ -11,7 +11,18 @@
     <link rel="stylesheet" href="libs/grid/gridstack.min.css">
     <script src="libs/grid/gridstack-all.js"></script>
     <script src="libs/jquery-3.6.0.min.js" crossorigin="anonymous"></script>
-
+    
+    <script src="libs/utils.js"></script>
+    <script src="libs/nodes/00_basic.js"></script>
+    <script src="libs/nodes/01_draw.js"></script>
+    <script src="libs/nodes/02_program.js"></script>
+    <script src="libs/nodes/03_input.js"></script>
+    <script src="libs/nodes/04_auto.js"></script>
+    <script src="libs/nodes/05_components.js"></script>
+    <script src="libs/nodes/06_simulation.js"></script>
+    <script src="libs/components/keys.js"></script>
+    <script src="libs/components/virtual-keyboard.js"></script>
+    <script src="libs/components/display-grid-edit.js"></script>
 </head>
 
 <body>
@@ -108,16 +119,7 @@
     </div>
 
     <canvas id='mycanvas'></canvas>
-    <script src="libs/nodes/00_basic.js"></script>
-    <script src="libs/nodes/01_draw.js"></script>
-    <script src="libs/nodes/02_program.js"></script>
-    <script src="libs/nodes/03_input.js"></script>
-    <script src="libs/nodes/04_auto.js"></script>
-    <script src="libs/nodes/05_components.js"></script>
-    <script src="libs/nodes/06_simulation.js"></script>
-    <script src="libs/components/keys.js"></script>
-    <script src="libs/components/virtual-keyboard.js"></script>
-    <script src="libs/components/display-grid-edit.js"></script>
+    
     <script>
         var graph = new LGraph();
         var canvas = new LGraphCanvas("#mycanvas", graph);

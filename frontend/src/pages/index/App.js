@@ -7,6 +7,7 @@ import XBladeIcon from "../../components/XBladeIcon";
 
 import * as React from 'react';
 import {useEffect, useState} from "react";
+import {BrowserRouter as Router, Route, Switch, Link, useNavigate} from 'react-router-dom';
 
 import SettingsDialog from "../../components/Settings";
 import {getUserSettings, saveUserSettings} from "../../utils/settings";
@@ -53,7 +54,7 @@ function App() {
     const [rightClickMenuDel, setRightClickMenuDel] = useState(false);
     const [rightClickMenuApp, setRightClickMenuApp] = useState(null);
 
-    const host = '';
+    let host = getUserSettings('settings.host');
     // const host = 'http://localhost:58433';
 
     const [dockLayouts, setDockLayouts] = React.useState([]);
@@ -109,11 +110,30 @@ function App() {
 
     // 当组件挂载时获取用户设置
     useState(() => {
-        saveUserSettings('settings.host', host)
-        const wallpaper = getUserSettings('settings.host', host) + getUserSettings('settings.wallpaper', wallPaper);
-        setWallPaper(wallpaper);
-        setThemeMode(getUserSettings('settings.theme', 'dark'));
-        updateLayouts()
+        // saveUserSettings('settings.host', host)
+        host = getUserSettings('settings.host')
+        if (host === '') {
+            window.location.href = "./connect.html"
+        }
+        fetch(host + "/api/tools/test")
+        .then((response) => {
+            // 请求成功，检查响应状态码
+            if (response.ok) {
+                return response.json();
+            } else {
+                window.location.href = "./connect.html"
+                throw new Error("Error: " + response.statusText);
+            }
+        }).catch((error) => {
+            window.location.href = "./connect.html"
+        }).then((data) => {
+            const wallpaper = getUserSettings('settings.host', host) + getUserSettings('settings.wallpaper', wallPaper);
+            setWallPaper(wallpaper);
+            setThemeMode(getUserSettings('settings.theme', 'dark'));
+            updateLayouts()
+        });
+
+
     }, [wallPaper]);
 
     /**
@@ -345,7 +365,7 @@ function App() {
                                         pinBtn={pinApp} commandBtn={() => {
                             setCommandOpen(true);
                         }}
-                        setMenuVisible={setMenuVisible} layoutType={rightClickMenuLayout}/>
+                                        setMenuVisible={setMenuVisible} layoutType={rightClickMenuLayout}/>
                     )}
 
                     <div className="video-background">
@@ -408,7 +428,7 @@ function App() {
                         </Search>
                         <Header editing={paneDraggable}
                                 defaultLayout={defaultLayout}
-                                setPaneDraggable = {setPaneDraggable}
+                                setPaneDraggable={setPaneDraggable}
                                 StopPaneEditing={() => {
                                     setPaneDraggable(false);
                                     saveLayouts(paneLayouts, defaultLayout);
@@ -488,7 +508,12 @@ function App() {
                                             }
                                         })}
                                     </div>
-                                    <div style={{backgroundColor: "#ffffff73",width:"1px", height: "5rem", margin: "auto 0 auto 0.5rem"}}></div>
+                                    <div style={{
+                                        backgroundColor: "#ffffff73",
+                                        width: "1px",
+                                        height: "5rem",
+                                        margin: "auto 0 auto 0.5rem"
+                                    }}></div>
 
                                     <GridLayout className="layout" layout={dockLayouts}
                                                 cols={42} rowHeight={90} compactType={'horizontal'}

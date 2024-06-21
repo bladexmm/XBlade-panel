@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>主机配置</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <link rel="stylesheet" href="./assets/connect/style.css">
+    <script src="./assets/litegraph/libs/utils.js"></script>
+</head>
+
+<body>
+    <!-- partial:index.partial.html -->
+    <!-- check the Comments for more info -->
+
+    <body class="back-row-toggle splat-toggle">
+        
+        
+
+        <div class="rain front-row"></div>
+        <div class="rain back-row"></div>
+
+        <div class="mid">
+            <h2>添加主机</h2>
+            <div class="input">
+                <input type="text" class="host-input">
+                <button class="button-86" onclick="addHost()" role="button">添加</button>
+                <button class="button-86" onclick="GoHome()" role="button">完成</button>
+            </div>
+            <h4>主机列表</h4>
+            <div class="list">
+              
+            </div>
+        </div>
+
+    </body>
+    <!-- partial -->
+    <script src='./assets/connect/jquery-2.2.4.min.js'></script>
+    <script src="./assets/connect/script.js"></script>
+    <script src="./assets/connect/host.js"></script>
+
+</body>
+<script>
+    initHosts()
+</script>
+
+</html>
