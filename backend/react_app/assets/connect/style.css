@@ -281,3 +281,16 @@ body.single-toggle .drop:nth-child(10) {
 .small{
   margin-left: 1rem;
 }
+
+
+#bcid {
+  background: rgb(17, 17, 17);
+  margin: 2rem auto;
+  height: 20rem;
+  width: 20rem;
+}
+
+.hidden{
+  display: none;
+}
+

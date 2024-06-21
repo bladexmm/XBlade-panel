@@ -13,5 +13,5 @@ main.build
 main.dist
 nuitka-crash-report.xml
 main.onefile-build
-
+react_app/unpackage
 logs

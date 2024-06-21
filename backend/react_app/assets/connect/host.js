@@ -48,11 +48,21 @@ function addHost() {
     if (hosts.includes(inputVal) == false) {
         hosts.push(inputVal)
         saveUserSettings('settings.hosts', hosts);
-        console.log("addd")
     }
     initHosts()
 }
 
+
+function addHostScan(hostName) {
+    let hosts = getUserSettings('settings.hosts', []);
+    if (hosts.includes(hostName) == false) {
+        hosts.push(hostName)
+        saveUserSettings('settings.hosts', hosts);
+    }
+    saveUserSettings('settings.host', hostName);
+    initHosts()
+}
+
 function GoHome(){
-    window.location.href="/index.html"
+    window.location.href="./index.html"
 }

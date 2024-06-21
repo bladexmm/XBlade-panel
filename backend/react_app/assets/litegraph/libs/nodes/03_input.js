@@ -1,5 +1,3 @@
-let host = getUserSettings('settings.host');
-
 function TextInput() {
     this.addOutput("text", "text");
     this.addProperty("text", "");

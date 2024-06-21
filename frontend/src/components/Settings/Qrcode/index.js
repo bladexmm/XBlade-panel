@@ -31,6 +31,7 @@ import Input from "@mui/joy/Input";
 import { CopyToClipboard } from 'react-copy-to-clipboard';
 import PlaylistRemoveIcon from '@mui/icons-material/PlaylistRemove';
 import PlaylistAddIcon from '@mui/icons-material/PlaylistAdd';
+import FlightTakeoffRoundedIcon from '@mui/icons-material/FlightTakeoffRounded';
 
 const VisuallyHiddenInput = styled('input')`
     clip: rect(0 0 0 0);
@@ -129,6 +130,10 @@ export default function Qrcode({defaultLayout}) {
         }).then((res) => {
             showMessage(res.msg, res.code);
         })
+    }
+
+    const hostManager = () =>{
+        window.location.href = "./connect.html"
     }
 
     const copyLink = () => {
@@ -283,6 +288,29 @@ export default function Qrcode({defaultLayout}) {
                     <Button variant="soft" className="system-recover-btn" color="neutral"
                             startDecorator={<FolderIcon sx={{fontSize: "1rem"}}/>} onClick={browserWallpapers}>
                         浏览壁纸
+                    </Button>
+                </Grid>
+            </Grid>
+
+
+
+            <Grid xs={6} sm={8} md={12} container direction="rows" justifyContent="center" alignItems="center"
+                  spacing={2} columns={{xs: 6, sm: 8, md: 12}}>
+                <Grid xs={6} sm={8} md={3}>
+                    <ListItemContent>
+                        <Typography level="title-lg">
+                            主机管理
+                        </Typography>
+                        <Typography level="body-xs" fontFamily="monospace" sx={{opacity: '70%'}}>
+                            添加、删除、选择主机
+                        </Typography>
+                    </ListItemContent>
+                </Grid>
+                <Grid xs={0} sm={0} md={5}></Grid>
+                <Grid xs={6} sm={8} md={3}>
+                    <Button variant="soft" className="system-recover-btn" color="neutral"
+                            startDecorator={<FlightTakeoffRoundedIcon sx={{fontSize: "1rem"}}/>} onClick={hostManager}>
+                        立即前往
                     </Button>
                 </Grid>
             </Grid>
