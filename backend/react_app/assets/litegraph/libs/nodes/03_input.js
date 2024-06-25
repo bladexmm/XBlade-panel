@@ -1,7 +1,7 @@
 function TextInput() {
     this.addOutput("text", "text");
     this.addProperty("text", "");
-    this.widget = this.addWidget("text", "text", "", "text",{multiline: true});  //link to property value
+    this.widget = this.addWidget("text", "text", "", "text", { multiline: true });  //link to property value
     this.widgets_up = true;
     this.size = [180, 30];
 }
@@ -15,7 +15,7 @@ TextInput.desc = "文本";
 function ArrayInput() {
     this.addOutput("array", "array");
     this.addProperty("value", "");
-    this.addWidget("text", "array", "", "value",{multiline: true});  //link to property value
+    this.addWidget("text", "array", "", "value", { multiline: true });  //link to property value
     this.widgets_up = true;
     this.size = [180, 30];
 }
@@ -50,7 +50,7 @@ function ImageInput() {
 
         reader.onload = function (event) {
             const src = event.target.result;
-            img.src = host + src; // 读取图片后，更新图片的 src
+            img.src = src === '' ? '' : host + src; // 读取图片后，更新图片的 src
         };
 
         reader.readAsDataURL(file);
@@ -88,7 +88,7 @@ function ImageInput() {
 
 
     this.addWidget("button", "查看图片", null, function () {
-        if(img.src != ''){
+        if (img.src != '') {
             window.open(img.src, '_blank');
         }
     });
@@ -107,7 +107,7 @@ function ImageInput() {
             if (result.code === 1) {
                 const imageUrl = result.data;
                 if (imageUrl != null) {
-                    img.src = host + imageUrl
+                    img.src = imageUrl === '' ? '' : host + imageUrl;
                     self.setProperty('image', imageUrl);
                 }
 
@@ -123,7 +123,7 @@ function ImageInput() {
     this.onPropertyChanged = function (name, value) {
         if (name === 'image' && value != null) {
             self.setProperty('image', value);
-            img.src = host + value;
+            img.src = value === '' ? '' : host + value;
         }
     }
 

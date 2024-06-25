@@ -136,6 +136,8 @@ class OpenResource(Resource):
                 node['value'] = findInputNode[0]['value']
         dg = LiteGraph(app, parent, startNode)
         logs = dg.execute()
+        if len(logs) == 0:
+            return result(3, logs, '数据已经生成')
         if 'data' not in logs[-1]:
             return result(3, logs, '数据已经生成')
         layout = logs[-1]['data'] if 'grid-template-areas' in logs[-1]['data'] else None

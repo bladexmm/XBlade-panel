@@ -70,8 +70,8 @@ export default function CustomGrid({id}) {
             body: {},
         }).then((data) => {
             if (data.data != null) {
-                setGridStyle(data.data.style)
-                setNodes(data.data.nodes)
+                setGridStyle(data.data.style);
+                setNodes(data.data.nodes != null ? data.data.nodes : []);
             }
         });
     }, [id])

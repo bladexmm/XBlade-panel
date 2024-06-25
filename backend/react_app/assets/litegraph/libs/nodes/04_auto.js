@@ -91,7 +91,7 @@ function LocateOnScreenNode() {
 
         reader.onload = function (event) {
             const src = event.target.result;
-            img.src = host + src; // 读取图片后，更新图片的 src
+            img.src = src === '' ? '' : host + src;
             // 在图像加载完成后更新宽高比
             img.onload = function () {
                 aspectRatio = img.width / img.height;
@@ -173,7 +173,7 @@ function LocateOnScreenNode() {
     this.onPropertyChanged = function (name, value) {
         if (name === 'image') {
             self.setProperty('image', value);
-            img.src = host + value;
+            img.src = value === '' ? '' : host + value;
         }
     }
     // 在背景绘制方法中绘制图片

@@ -29,6 +29,7 @@ def FetchApi(node):
         # 解析并转换header
         headers = {k.strip(): v.strip() for k, v in (item.split(':') for item in header_str.split('\n') if item)}
     data = {}
+    Logger.debug(f"url:{url}")
     if data_str is not None:
         # GET请求不处理data，除非需要将其转换为查询参数，这里先忽略此情况
         data = [item.split(':') for item in data_str.split('\n') if item]
@@ -50,11 +51,10 @@ def FetchApi(node):
     system_proxies = urllib.request.getproxies()
     if system_proxies:
         proxies.update({"http": system_proxies['http'], "https": system_proxies['http']})
-
+    Logger.debug(f"data:{data}")
     response = requests.request(method, url, headers = headers, proxies = proxies, timeout = 5,
                                 data = data if data is not None and method.lower() != 'get' else None)
-    Logger.debug(f"url:{url}")
-    Logger.debug(f"data:{data}")
+    
     Logger.debug(f"response:{response.text}")
     return nodeOutput(1, node, 'out', ['', response.text, ''])
 
@@ -82,7 +82,7 @@ def GetJson(node):
     ArrayOutput = result
     if len(params) == 1:
         # 处理单个参数
-        textOutput = ','.join(result[0])
+        textOutput = str(result[0][0])
         ArrayOutput = result[0]
     else:
         # 处理多个参数
