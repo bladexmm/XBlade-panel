@@ -23,6 +23,7 @@ import {Divider, ThemeProvider} from "@mui/joy";
 import Layouts from "../../components/Layouts";
 import Commands from "../../components/Commands";
 import {SnackbarProvider} from "../../components/SnackbarUtil/SnackbarUtil";
+import Wallpapers from '../../components/Wallpapers';
 
 function App() {
 
@@ -108,15 +109,22 @@ function App() {
         });
     }
 
+    // Rough implementation. Untested.
+    function timeout(ms, promise) {
+        return new Promise(function (resolve, reject) {
+            setTimeout(function () {
+                reject(new Error("timeout"))
+            }, ms)
+            promise.then(resolve, reject)
+        })
+    }
+
     // 当组件挂载时获取用户设置
     useState(() => {
         // saveUserSettings('settings.host', host)
         host = getUserSettings('settings.host')
-        if (host === '') {
-            window.location.href = "./connect.html"
-        }
-        fetch(host + "/api/tools/test")
-        .then((response) => {
+
+        timeout(1000, fetch(host + "/api/tools/test")).then((response) => {
             // 请求成功，检查响应状态码
             if (response.ok) {
                 return response.json();
@@ -132,7 +140,6 @@ function App() {
             setThemeMode(getUserSettings('settings.theme', 'dark'));
             updateLayouts()
         });
-
 
     }, [wallPaper]);
 
@@ -482,9 +489,9 @@ function App() {
                                                         <XBladeIcon id="btn|home" name="首页"
                                                                     iconPath={host + "/assets/icons/home.png"}
                                                                     onClickedBtn={(id, location, setOpenLoad) => {
-                                                                        // pageGo('pane')
-                                                                        // setOpenLoad(false)
-                                                                        window.location.reload();
+                                                                        pageGo('pane')
+                                                                        setOpenLoad(false)
+                                                                        // window.location.reload();
                                                                     }}/>
                                                     </div>
 
@@ -565,13 +572,7 @@ function App() {
 
                             </HorizontalScrollbar>
                         </div>
-                        {wallPaper.endsWith(".mp4") ? (
-                            <video className="wallpapers-video" autoPlay loop muted key={wallPaper}>
-                                <source src={wallPaper} type="video/mp4"/>
-                            </video>
-                        ) : (
-                            <img className="wallpapers-img" key={wallPaper} src={wallPaper} alt="图标"/>
-                        )}
+                        <Wallpapers path={wallPaper}/>
                     </div>
                 </SnackbarProvider>
             </CssVarsProvider>

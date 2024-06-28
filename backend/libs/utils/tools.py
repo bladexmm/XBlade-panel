@@ -162,12 +162,12 @@ def open_with_default_program(file_path):
 
 def get_local_ip():
     try:
-        host_name = socket.gethostname()
-        local_ip = socket.gethostbyname(host_name)
-
+        s = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)
+        s.connect(("8.8.8.8", 80))
+        local_ip = s.getsockname()[0]
+        s.close()
         return local_ip
     except Exception as e:
-        print(f"find ip error：{e}")
         return None
 
 

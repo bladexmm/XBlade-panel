@@ -1,7 +1,6 @@
 import os
 import shutil
 
-
 delete_files = [
     'main.dist/data/database.db'
 ]
@@ -22,6 +21,7 @@ def delete_folder(directory):
         print(f"The folder '{directory}' has been deleted.")
     else:
         print(f"The folder '{directory}' does not exist or is not a directory.")
+
 
 # 示例用法
 directory = 'main.dist/react_app/assets/wallpapers'

@@ -46,7 +46,9 @@ export default function CommandEdit({
             <div className="pane-content" style={{overflowY:'hidden'}}>
                 <iframe id="embeddedIframe"
                         style={{width: '100%', height: '100%',border:'none'}}
-                        src={host+'/assets/litegraph/index.html'}
+                        // src={host+'/assets/litegraph/index.html'}
+                        src={'./assets/litegraph/index.html'}
+
                         title="Embedded Webpage"/>
             </div>
         </div>

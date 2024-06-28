@@ -5,7 +5,7 @@ python: 3.10.4
 ```shell
 nuitka --standalone `
   --windows-company-name=bladexmm `
-  --windows-file-version=2.1.1 `
+  --windows-file-version=2.1.2 `
   --windows-product-name=XBLADE-PANEL `
   --include-data-dir=data=data `
   --include-data-dir=react_app=react_app `
@@ -36,7 +36,7 @@ nuitka --standalone `
 ```
 ## 节点简介
 
-### 绘图/折线图(DisplayLineChart))
+### 绘图/折线图(DisplayLineChart)
 #### options
 ```python
 var = {

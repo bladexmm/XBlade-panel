@@ -22,6 +22,8 @@ def clear_apps():
     print("Table 'system_apps' has been dropped if it existed.")
 
 
+if not os.path.exists('./main.dist/react_app/backup'):
+    os.mkdir('./main.dist/react_app/backup')
 # 删除旧数据
 delete_folder('./main.dist/react_app/backup')
 delete_folder('./main.dist/react_app/img')
@@ -36,4 +38,4 @@ copy_dir('./default/assets', './main.dist/react_app/assets')
 copy_dir('./default/img', './main.dist/react_app/img')
 
 if not os.path.exists('./main.dist/logs'):
-     os.mkdir('./main.dist/logs')
+    os.mkdir('./main.dist/logs')
