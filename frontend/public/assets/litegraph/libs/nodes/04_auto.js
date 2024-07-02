@@ -103,7 +103,7 @@ function LocateOnScreenNode() {
         // 上传图片到服务器
         const formData = new FormData();
         formData.append('file', file);
-        fetch('/api/upload/script', {
+        fetch(host + '/api/upload/script', {
             method: 'POST',
             body: formData
         }).then(response => {
@@ -133,7 +133,7 @@ function LocateOnScreenNode() {
     // });
 
     this.addWidget("button", "粘贴图片", null, function () {
-        fetch('/api/system/grabclipboard', {
+        fetch(host + '/api/system/grabclipboard', {
             method: 'GET',
         }).then(response => {
             if (response.ok) {

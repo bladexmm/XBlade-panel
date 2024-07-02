@@ -27,7 +27,7 @@ body, html {
     height: 2rem;
     margin-right: 1rem;
     width: 4rem;
-    border-radius: 1rem;
+    border-radius: .5rem;
 }
 
 .hidden {

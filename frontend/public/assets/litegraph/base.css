@@ -26,3 +26,77 @@ input[type="number"]::-webkit-inner-spin-button {
 input[type="number"] {
   -moz-appearance: textfield; /* 针对Firefox */
 }
+
+.console-log-board{
+    position: fixed;
+    top: 3rem;
+    right: 0;
+    height: 100%;
+    width: 30%;
+    background-color: rgb(50 50 50 / 58%);
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.console-btn-list{
+    display: flex;
+    flex-direction: row;
+    justify-content: space-around;
+    align-items: center;
+    width: 90%;
+    height: 10%;
+}
+
+.console-display{
+    width: 90%;
+    display: flex;
+    flex-direction: column;
+    justify-content: start;
+    align-items: center;
+    height: 80%;
+    background-color: #3c3c3c;
+    overflow-y: auto;
+    border-radius: .5rem;
+}
+
+.console-log-item{
+    display: grid;
+    grid-template-columns: 2fr 2fr 1fr;
+    height: 3rem;
+    width: 90%;
+    align-items: center;
+    margin-top: 1rem;
+    border-radius: .5rem;
+}
+
+.success{
+    background-color: #8a8;
+}
+
+.normal{
+    background-color: #000;
+}
+
+.error{
+    background-color: #f00;
+}
+
+.console-log-item span{
+    line-height: 3rem;
+    text-align: left;
+    font-size: xx-small;
+    text-overflow: ellipsis;
+    text-wrap: nowrap;
+    margin-left: 1rem;
+}
+
+.console-outputs{
+    overflow-y: auto;
+    height: 3rem;
+}
+
+.focus{
+    border: 1px solid #3367d9;
+}

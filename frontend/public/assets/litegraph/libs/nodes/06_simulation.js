@@ -64,9 +64,51 @@ function Hotkeys() {
         keyboard.classList.remove('hidden');
         keyboard_preview.innerHTML = findKeyLabel(JSON.parse(self.properties.value));
         virtual_keyboard_id = self.id
+
+
+        // 获取具有 virtual-keys-close 类名的元素
+        var closeButton = document.querySelector('.virtual-keys-close');
+
+        // 添加点击事件监听器
+        closeButton.addEventListener('click', function () {
+            var keyboard = document.querySelector('.virtual-keyboard');
+            keyboard.classList.add('hidden'); // 添加 visible 类
+        });
+
+
+        virtual_keyboards.forEach(function (keys) {
+            const keyboard_col = document.querySelector('.virtual-col.' + keys.name);
+            let html = "";
+            for (let i = 0; i < keys.cols.length; i++) {
+                html += addCols(keys.cols[i]);
+            }
+            keyboard_col.innerHTML += html;
+        });
+
+
+        const virtual_keys = document.querySelectorAll('.virtual-keys-click');
+        // 遍历所有元素，并为其添加点击事件监听器
+        virtual_keys.forEach(function (virtual_key) {
+            virtual_key.addEventListener('click', function () {
+                if (virtual_keyboard_id !== self.id) {
+                    return;
+                }
+                const keys = virtual_key.getAttribute('data-keys');
+                const key = keys.split(',');
+                const keyPress = key[0];
+                let keysPressed = JSON.parse(self.properties.value);
+                if (keyPress === 'del') {
+                    keysPressed.pop();
+                } else {
+                    keysPressed.push(keyPress);
+                }
+                self.setProperty('value', JSON.stringify(keysPressed));
+                keyboard_preview.innerHTML = findKeyLabel(keysPressed);
+            });
+        });
+
     });
     // 获取具有 virtual-keys-click 类名的所有元素
-    const virtual_keys = document.querySelectorAll('.virtual-keys-click');
     const self = this;
     const keyboard_del = document.querySelector('.virtual-keys-delete');
     keyboard_del.addEventListener('click', function () {
@@ -79,25 +121,7 @@ function Hotkeys() {
         keyboard_preview.innerHTML = findKeyLabel(keysPressed);
     })
 
-    // 遍历所有元素，并为其添加点击事件监听器
-    virtual_keys.forEach(function (virtual_key) {
-        virtual_key.addEventListener('click', function () {
-            if (virtual_keyboard_id !== self.id) {
-                return;
-            }
-            const keys = virtual_key.getAttribute('data-keys');
-            const key = keys.split(',');
-            const keyPress = key[0];
-            let keysPressed = JSON.parse(self.properties.value);
-            if (keyPress === 'del') {
-                keysPressed.pop();
-            } else {
-                keysPressed.push(keyPress);
-            }
-            self.setProperty('value', JSON.stringify(keysPressed));
-            keyboard_preview.innerHTML = findKeyLabel(keysPressed);
-        });
-    });
+
     this.widgets_up = true;
     this.size = [180, 90];
 }

@@ -14,20 +14,3 @@ function addCols(col) {
 
 
 
-// 获取具有 virtual-keys-close 类名的元素
-var closeButton = document.querySelector('.virtual-keys-close');
-
-// 添加点击事件监听器
-closeButton.addEventListener('click', function () {
-    var keyboard = document.querySelector('.virtual-keyboard');
-    keyboard.classList.add('hidden'); // 添加 visible 类
-});
-
-virtual_keyboards.forEach(function (keys) {
-    const keyboard_col = document.querySelector('.virtual-col.' + keys.name);
-    let html = "";
-    for (let i = 0; i < keys.cols.length; i++) {
-        html += addCols(keys.cols[i]);
-    }
-    keyboard_col.innerHTML += html;
-});

@@ -46,7 +46,7 @@ class LiteGraph(object):
             try:
                 outputs = call_by_alias(nextNode['type'], nextNode)
             except Exception as e:
-                outputs = {"code": 3, "name": "error", "data": str(e)}
+                outputs = {"code": 2, "name": "error", "data": str(e)}
 
             if "Subgraph" in nextNode['type']:
                 outputs['nodes'] = nextNode['result']

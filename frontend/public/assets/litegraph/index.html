@@ -11,8 +11,10 @@
     <link rel="stylesheet" href="libs/grid/gridstack.min.css">
     <script src="libs/grid/gridstack-all.js"></script>
     <script src="libs/jquery-3.6.0.min.js" crossorigin="anonymous"></script>
-    
+
     <script src="libs/utils.js"></script>
+    <script src="libs/test.js"></script>
+    <script src="libs/components/debug.js"></script>
     <script src="libs/nodes/00_basic.js"></script>
     <script src="libs/nodes/01_draw.js"></script>
     <script src="libs/nodes/02_program.js"></script>
@@ -26,220 +28,255 @@
 </head>
 
 <body>
-    <div class="virtual-keyboard hidden">
-        <div class="virtual-col keyboard-input-preview">
-            <div class="virtual-keys"><span class="virtual-keys-input"></span></div>
-            <div class="virtual-keys virtual-keys-delete"><span>删除</span></div>
-            <div class="virtual-keys virtual-keys-close"><span>确认</span></div>
-        </div>
-
-        <div class="virtual-col Fn"></div>
-        <div class="virtual-col first"></div>
-        <div class="virtual-col second"></div>
-        <div class="virtual-col third"></div>
-        <div class="virtual-col fourth"></div>
-        <div class="virtual-col fifth"></div>
-        <div class="virtual-col sixth"></div>
-
+<div class="virtual-keyboard hidden">
+    <div class="virtual-col keyboard-input-preview">
+        <div class="virtual-keys"><span class="virtual-keys-input"></span></div>
+        <div class="virtual-keys virtual-keys-delete"><span>删除</span></div>
+        <div class="virtual-keys virtual-keys-close"><span>确认</span></div>
     </div>
 
-    <div class="display-grid-edit hidden">
-        <div class="virtual-col grid-default-setting">
-            <hr>
-            <input class="grid-layout-input layout-x" type="number" value="3" />
-            <div class="grid-text"><span>X</span></div>
-            <input class="grid-layout-input layout-y" type="number" value="3" />
-            <div class="virtual-keys grid-layout-update" onclick="gridUpdate()"><span>更新布局</span></div>
-            <div class="virtual-keys grid-layout-update" id="grid-save"><span>确认</span></div>
-            <hr>
-        </div>
+    <div class="virtual-col Fn"></div>
+    <div class="virtual-col first"></div>
+    <div class="virtual-col second"></div>
+    <div class="virtual-col third"></div>
+    <div class="virtual-col fourth"></div>
+    <div class="virtual-col fifth"></div>
+    <div class="virtual-col sixth"></div>
 
-        <div class="grid-content">
-            <!-- 应用管理 -->
-            <div class="grid-apps-layout">
+</div>
+
+<div class="console-log-board">
+    <div class="console-btn-list">
+        <button class="btn" onclick="logPlay()">播放</button>
+        <button class="btn" onclick="logPreview()">上一个</button>
+        <button class="btn" onclick="logPause()">暂停</button>
+        <button class="btn" onclick="logNext()">下一个</button>
+        <button class="btn" id="console-log-close">关闭</button>
+    </div>
+    <div class="console-display">
+
+    </div>
+</div>
+
+<div class="display-grid-edit hidden">
+    <div class="virtual-col grid-default-setting">
+        <hr>
+        <input class="grid-layout-input layout-x" type="number" value="3"/>
+        <div class="grid-text"><span>X</span></div>
+        <input class="grid-layout-input layout-y" type="number" value="3"/>
+        <div class="virtual-keys grid-layout-update" onclick="gridUpdate()"><span>更新布局</span></div>
+        <div class="virtual-keys grid-layout-update" id="grid-save"><span>确认</span></div>
+        <hr>
+    </div>
+
+    <div class="grid-content">
+        <!-- 应用管理 -->
+        <div class="grid-apps-layout">
 
 
-                <div class="flex-col gap-1 grid-apps-display" id="grid-app-trash">
-                    <div class="grid-app"><span>删除</span></div>
+            <div class="flex-col gap-1 grid-apps-display" id="grid-app-trash">
+                <div class="grid-app"><span>删除</span></div>
+            </div>
+
+
+            <div class="flex-col gap-1 grid-apps-display grid-stack-item newWidget">
+                <div class="grid-stack-item-content" onclick="gridAdd('图片','grid_image')">
+                    <span class="grid-app-new">图片</span>
                 </div>
+            </div>
 
-
-                <div class="flex-col gap-1 grid-apps-display grid-stack-item newWidget">
-                    <div class="grid-stack-item-content" onclick="gridAdd('图片','grid_image')">
-                        <span class="grid-app-new" >图片</span>
-                    </div>
+            <div class="flex-col gap-1 grid-apps-display grid-stack-item newWidget">
+                <div class="grid-stack-item-content" onclick="gridAdd('文字','grid_string')">
+                    <span class="grid-app-new">文字</span>
                 </div>
+            </div>
 
-                <div class="flex-col gap-1 grid-apps-display grid-stack-item newWidget">
-                    <div class="grid-stack-item-content" onclick="gridAdd('文字','grid_string')">
-                        <span class="grid-app-new">文字</span>
-                    </div>
+            <div class="flex-col gap-1 grid-apps-display grid-stack-item newWidget">
+                <div class="grid-stack-item-content" onclick="gridAdd('输入框','grid_input')">
+                    <span class="grid-app-new" data-type="input">输入框</span>
                 </div>
+            </div>
 
-                <div class="flex-col gap-1 grid-apps-display grid-stack-item newWidget">
-                    <div class="grid-stack-item-content" onclick="gridAdd('输入框','grid_input')">
-                        <span class="grid-app-new" data-type="input">输入框</span>
-                    </div>
+            <div class="flex-col gap-1 grid-apps-display grid-stack-item newWidget">
+                <div class="grid-stack-item-content" onclick="gridAdd('折线图','grid_line_chart')">
+                    <span class="grid-app-new">折线图</span>
                 </div>
+            </div>
 
-                <div class="flex-col gap-1 grid-apps-display grid-stack-item newWidget">
-                    <div class="grid-stack-item-content" onclick="gridAdd('折线图','grid_line_chart')">
-                        <span class="grid-app-new">折线图</span>
-                    </div>
+            <div class="flex-col gap-1 grid-apps-display grid-stack-item newWidget">
+                <div class="grid-stack-item-content" onclick="gridAdd('按钮','grid_button')">
+                    <span class="grid-app-new">按钮</span>
                 </div>
-                
-                <div class="flex-col gap-1 grid-apps-display grid-stack-item newWidget">
-                    <div class="grid-stack-item-content" onclick="gridAdd('按钮','grid_button')">
-                        <span class="grid-app-new">按钮</span>
-                    </div>
+            </div>
+
+
+            <div class="flex-col gap-1 grid-apps-display grid-stack-item newWidget">
+                <div class="grid-stack-item-content" onclick="gridAdd('选择框','grid_selector')">
+                    <span class="grid-app-new">选择框</span>
                 </div>
-
-
-                <div class="flex-col gap-1 grid-apps-display grid-stack-item newWidget">
-                    <div class="grid-stack-item-content" onclick="gridAdd('选择框','grid_selector')">
-                        <span class="grid-app-new">选择框</span>
-                    </div>
-                </div>
-
-                
-
             </div>
 
 
         </div>
 
-        <div class="grid"></div>
+
     </div>
 
-    <div class="header">
-        <!-- <button class="btn" id="draw">绘图</button> -->
-        <button class="btn" id="debug">运行</button>
-        <button class="btn" id="save">保存</button>
-        <button class="btn" id="close">关闭</button>
-    </div>
+    <div class="grid"></div>
+</div>
 
-    <canvas id='mycanvas'></canvas>
-    
-    <script>
-        var graph = new LGraph();
-        var canvas = new LGraphCanvas("#mycanvas", graph);
+<div class="header">
+    <button class="btn" id="debug">运行</button>
+    <button class="btn" id="logs">日志</button>
+    <button class="btn" id="save">保存</button>
+    <button class="btn" id="close">关闭</button>
+</div>
 
-        LiteGraph.registerNodeType("基础/开始(CMDStart)", CMDStart);
-        LiteGraph.registerNodeType("基础/结束(CMDEnd)", CMDEnd);
-        LiteGraph.registerNodeType("基础/合并运行(MultiMerge)", MultiMerge);
-        LiteGraph.registerNodeType("基础/跳转运行(JumpNode)", JumpNode);
+<canvas id='mycanvas'></canvas>
 
-
-        LiteGraph.registerNodeType("绘图/开始(DisplayStart)", DisplayStart);
-        LiteGraph.registerNodeType("绘图/布局(DisplayGrid)", DisplayGrid);
-        LiteGraph.registerNodeType("绘图/图片(DisplayImage)", DisplayImage);
-        LiteGraph.registerNodeType("绘图/文字(DisplayText)", DisplayText);
-        LiteGraph.registerNodeType("绘图/输入框(DisplayInput)", DisplayInput);
-        LiteGraph.registerNodeType("绘图/折线图(DisplayLineChart)", DisplayLineChart);
-        LiteGraph.registerNodeType("绘图/按钮(DisplayButton)", DisplayButton);
-        LiteGraph.registerNodeType("绘图/选择框(DisplaySelector)", DisplaySelector);
+<script>
+    const graph = new LGraph();
+    const canvas = new LGraphCanvas("#mycanvas", graph);
+    let outputsFocusIdx = 0;
 
 
-        LiteGraph.registerNodeType("编程/等待(TimeWait)", TimeWait);
-        LiteGraph.registerNodeType("编程/请求接口(FetchApi)", FetchApi);
-        LiteGraph.registerNodeType("编程/获取JSON参数(GetJson)", GetJson);
-        LiteGraph.registerNodeType("编程/判断(IfValid)", IfValid);
-        LiteGraph.registerNodeType("编程/选择结构(switchValid)", SwitchValid);
-        LiteGraph.registerNodeType("编程/格式化字符串(FormatText)", FormatText);
-        LiteGraph.registerNodeType("编程/记录日志(logDebug)", logDebug);
-        LiteGraph.registerNodeType("编程/配置局部变量(SetLocalVariables)", SetLocalVariables);
-        LiteGraph.registerNodeType("编程/获取局部变量(GetLocalVariables)", GetLocalVariables);
-        LiteGraph.registerNodeType("编程/配置全局变量(SetGlobalVariables)", SetGlobalVariables);
-        LiteGraph.registerNodeType("编程/获取全局变量(GetGlobalVariables)", GetGlobalVariables);
+    LiteGraph.registerNodeType("基础/开始(CMDStart)", CMDStart);
+    LiteGraph.registerNodeType("基础/结束(CMDEnd)", CMDEnd);
+    LiteGraph.registerNodeType("基础/合并运行(MultiMerge)", MultiMerge);
+    LiteGraph.registerNodeType("基础/跳转运行(JumpNode)", JumpNode);
 
 
-        LiteGraph.registerNodeType("输入/文本(TextInput)", TextInput);
-        LiteGraph.registerNodeType("输入/列表(ArrayInput)", ArrayInput);
-        LiteGraph.registerNodeType("输入/图片(ImageInput)", ImageInput);
-
-        LiteGraph.registerNodeType("自动化/图片定位(LocateOnScreenNode)", LocateOnScreenNode);
-        LiteGraph.registerNodeType("自动化/查找图片(FindImage)", FindImage);
-        LiteGraph.registerNodeType("自动化/运行软件(startApp)", startApp);
-        LiteGraph.registerNodeType("自动化/打开链接(openLink)", openLink);
-
-        LiteGraph.registerNodeType("组件/实例化(Subgraph)", Subgraph);
-        LiteGraph.registerNodeType("组件/输入(SubgraphInput)", SubgraphInput);
-        LiteGraph.registerNodeType("组件/输出(SubgraphOutput)", SubgraphOutput);
-
-        LiteGraph.registerNodeType("模拟/快捷键(Hotkeys)", Hotkeys);
-        LiteGraph.registerNodeType("模拟/文本输入(TypeText)", Type_Text);
-        LiteGraph.registerNodeType("模拟/鼠标移动(MouseMove)", MouseMove);
-        LiteGraph.registerNodeType("模拟/鼠标左键(MouseLeft)", MouseLeft);
-        LiteGraph.registerNodeType("模拟/鼠标中键(MouseMiddle)", MouseMiddle);
-        LiteGraph.registerNodeType("模拟/鼠标右键(MouseRight)", MouseRight);
+    LiteGraph.registerNodeType("绘图/开始(DisplayStart)", DisplayStart);
+    LiteGraph.registerNodeType("绘图/布局(DisplayGrid)", DisplayGrid);
+    LiteGraph.registerNodeType("绘图/图片(DisplayImage)", DisplayImage);
+    LiteGraph.registerNodeType("绘图/文字(DisplayText)", DisplayText);
+    LiteGraph.registerNodeType("绘图/输入框(DisplayInput)", DisplayInput);
+    LiteGraph.registerNodeType("绘图/折线图(DisplayLineChart)", DisplayLineChart);
+    LiteGraph.registerNodeType("绘图/按钮(DisplayButton)", DisplayButton);
+    LiteGraph.registerNodeType("绘图/选择框(DisplaySelector)", DisplaySelector);
 
 
-        // let nodes = ['绘图/布局(DisplayGrid)'];
-        // for (let idx = 0; idx < nodes.length; idx++) {
-        //     const element = nodes[idx];
-        //     const ACimg = LiteGraph.createNode(element);
-        //     ACimg.pos = [200, 120 * (idx + 1)];
-        //     graph.add(ACimg);
-        // }
-        
-        
+    LiteGraph.registerNodeType("编程/等待(TimeWait)", TimeWait);
+    LiteGraph.registerNodeType("编程/请求接口(FetchApi)", FetchApi);
+    LiteGraph.registerNodeType("编程/获取JSON参数(GetJson)", GetJson);
+    LiteGraph.registerNodeType("编程/判断(IfValid)", IfValid);
+    LiteGraph.registerNodeType("编程/选择结构(switchValid)", SwitchValid);
+    LiteGraph.registerNodeType("编程/格式化字符串(FormatText)", FormatText);
+    LiteGraph.registerNodeType("编程/记录日志(logDebug)", logDebug);
+    LiteGraph.registerNodeType("编程/配置局部变量(SetLocalVariables)", SetLocalVariables);
+    LiteGraph.registerNodeType("编程/获取局部变量(GetLocalVariables)", GetLocalVariables);
+    LiteGraph.registerNodeType("编程/配置全局变量(SetGlobalVariables)", SetGlobalVariables);
+    LiteGraph.registerNodeType("编程/获取全局变量(GetGlobalVariables)", GetGlobalVariables);
 
 
-        const node_const = LiteGraph.createNode("基础/开始(CMDStart)");
-        node_const.pos = [100, 100];
-        graph.add(node_const);
-        const node_watch = LiteGraph.createNode("基础/结束(CMDEnd)");
-        node_watch.pos = [700, 100];
-        graph.add(node_watch);
-        node_const.connect(0, node_watch, 0);
+    LiteGraph.registerNodeType("输入/文本(TextInput)", TextInput);
+    LiteGraph.registerNodeType("输入/列表(ArrayInput)", ArrayInput);
+    LiteGraph.registerNodeType("输入/图片(ImageInput)", ImageInput);
 
-        graph.start()
+    LiteGraph.registerNodeType("自动化/图片定位(LocateOnScreenNode)", LocateOnScreenNode);
+    LiteGraph.registerNodeType("自动化/查找图片(FindImage)", FindImage);
+    LiteGraph.registerNodeType("自动化/运行软件(startApp)", startApp);
+    LiteGraph.registerNodeType("自动化/打开链接(openLink)", openLink);
 
-        function resizeCanvas() {
-            var canvasElement = document.getElementById('mycanvas');
-            canvasElement.width = window.innerWidth;
-            canvasElement.height = window.innerHeight;
+    LiteGraph.registerNodeType("组件/实例化(Subgraph)", Subgraph);
+    LiteGraph.registerNodeType("组件/输入(SubgraphInput)", SubgraphInput);
+    LiteGraph.registerNodeType("组件/输出(SubgraphOutput)", SubgraphOutput);
+
+    LiteGraph.registerNodeType("模拟/快捷键(Hotkeys)", Hotkeys);
+    LiteGraph.registerNodeType("模拟/文本输入(TypeText)", Type_Text);
+    LiteGraph.registerNodeType("模拟/鼠标移动(MouseMove)", MouseMove);
+    LiteGraph.registerNodeType("模拟/鼠标左键(MouseLeft)", MouseLeft);
+    LiteGraph.registerNodeType("模拟/鼠标中键(MouseMiddle)", MouseMiddle);
+    LiteGraph.registerNodeType("模拟/鼠标右键(MouseRight)", MouseRight);
+
+
+    const node_const = LiteGraph.createNode("基础/开始(CMDStart)");
+    node_const.pos = [100, 100];
+    graph.add(node_const);
+    const node_watch = LiteGraph.createNode("基础/结束(CMDEnd)");
+    node_watch.pos = [700, 100];
+    graph.add(node_watch);
+    node_const.connect(0, node_watch, 0);
+
+    graph.start()
+    let outputs = [];
+
+    // outputs = outputDefault;
+    // canvas.graph.configure(defaultLayout);
+
+    function resizeCanvas() {
+        var canvasElement = document.getElementById('mycanvas');
+        canvasElement.width = window.innerWidth;
+        canvasElement.height = window.innerHeight;
+    }
+
+    resizeCanvas();
+    window.addEventListener('resize', resizeCanvas);
+    // 关闭按钮
+    document.getElementById('close').addEventListener('click', function () {
+        clearInterval(timer);
+        parent.postMessage({method: 'close'}, "*");
+    });
+    // 保存脚本按钮
+    document.getElementById('save').addEventListener('click', function () {
+        const serializedData = canvas.graph.serialize();
+        clearInterval(timer);
+        parent.postMessage({method: "save", data: serializedData}, "*");
+    });
+    // 运行按钮
+    document.getElementById('debug').addEventListener('click', function () {
+        const formdata = new FormData();
+        formdata.append("cmd", JSON.stringify(canvas.graph.serialize()));
+
+        const requestOptions = {
+            method: 'POST',
+            body: formdata,
+            redirect: 'follow'
+        };
+
+        fetch(host + "/api/tools/commands", requestOptions)
+            .then(response => response.json())
+            .then(result => {
+                outputs = result.data;
+                initConsoleLogs();
+                clearInterval(timer);
+                outputsFocusIdx = 0;
+            })
+            .catch(error => console.log('error', error));
+    });
+
+
+    document.getElementById('logs').addEventListener('click', function () {
+        const elements = document.querySelectorAll('.console-log-board');
+        elements.forEach(function (element) {
+            element.classList.remove('hidden');
+        });
+    })
+
+
+    document.getElementById('console-log-close').addEventListener('click', function () {
+        const elements = document.querySelectorAll('.console-log-board');
+        elements.forEach(function (element) {
+            element.classList.add('hidden');
+        });
+        clearInterval(timer);
+    })
+
+
+    //回调函数
+    function receiveMessageFromIndex(event) {
+        if (event.data !== null && typeof event.data === 'string') {
+            canvas.graph.configure(JSON.parse(event.data));
         }
+    }
 
-        resizeCanvas();
-        window.addEventListener('resize', resizeCanvas);
-        document.getElementById('close').addEventListener('click', function () {
-            parent.postMessage({ method: 'close' }, "*");
-        });
-        document.getElementById('save').addEventListener('click', function () {
-            const serializedData = canvas.graph.serialize();
-            parent.postMessage({ method: "save", data: serializedData }, "*");
-        });
+    initConsoleLogs();
 
-        document.getElementById('debug').addEventListener('click', function () {
-            const formdata = new FormData();
-            formdata.append("cmd", JSON.stringify(canvas.graph.serialize()));
-
-            const requestOptions = {
-                method: 'POST',
-                body: formdata,
-                redirect: 'follow'
-            };
-
-            fetch("/api/tools/commands", requestOptions)
-                .then(response => response.json())
-                .then(result => console.log(result))
-                .catch(error => console.log('error', error));
-        });
+    //监听message事件
+    window.addEventListener("message", receiveMessageFromIndex, false);
 
 
-        //回调函数
-        function receiveMessageFromIndex(event) {
-            if (event.data !== null && typeof event.data === 'string') {
-                canvas.graph.configure(JSON.parse(event.data));
-            }
-        }
-
-        //监听message事件
-        window.addEventListener("message", receiveMessageFromIndex, false);
-
-
-    </script>
+</script>
 </body>
 
 </html>
